@@ -46,24 +46,32 @@ You can grab a zipped copy here.
 
 1. Dowload the [zipped test project and SDK](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android.zip) to the folder of your choice
 
+1. Unzip it to your development workspace
+
 OR clone this project and open it in Xcode.
 
 1. CD into your development directory.
+
 1. Run `git clone git://github.com/kindredprints/kindredprints-android.git` in the command line
 
 Then,
 
-1. Open up Eclipse/Android Development Tools
-2. Go to **File -> Import** and choose **Existing Android Code into Workspace** under the Android folder
+3. Open up Eclipse/Android Development Tools
+
+3. Go to **File -> Import** and choose **Existing Android Code into Workspace** under the Android folder
+
 3. Select the **KindredPrints-Android-SDK**
-4. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
-5. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
+
+3. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
+
+3. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
 
 ```java
 private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
 ```
-6. Run the project and play with the test app.
-7. All the publicly callable SDK functions are demonstrated in **MainActivity.java** 
+3. Run the project and play with the test app.
+
+3. All the publicly callable SDK functions are demonstrated in **MainActivity.java** 
 
 ### Download the raw SDK files
 
