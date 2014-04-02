@@ -77,7 +77,7 @@ private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
 
 If you would prefer to just add the SDK folder to your project and get started right away with out looking at the test app, follow these instructions.
 
-1. You can grab a zipped copy of the ***KindredPrints-Android-SDK** folder [here](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android-SDK.zip)
+1. You can grab a zipped copy of the **KindredPrints-Android-SDK** folder [here](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android-SDK.zip)
 
 Or use the **KindredPrints-Android-SDK** folder out of the test project folder (instructions on downloading above)
 
