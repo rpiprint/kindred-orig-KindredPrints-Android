@@ -44,32 +44,40 @@ Follow the instructions in this section if you want to see how an example test a
 
 You can grab a zipped copy here.
 
-1. Dowload `AWS link to zip of Android project` to the folder of your choice
+1. Dowload the [zipped test project and SDK](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android.zip) to the folder of your choice
+
+1. Unzip it to your development workspace
 
 OR clone this project and open it in Xcode.
 
-1. CD into your development directory.
+1. `cd` into your development directory.
+
 1. Run `git clone git://github.com/kindredprints/kindredprints-android.git` in the command line
 
 Then,
 
-1. Open up Eclipse/Android Development Tools
-1. Go to **File -> Import** and choose **Existing Android Code into Workspace** under the Android folder
-1. Select the **KindredPrints-Android-SDK**
-1. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
-1. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up here 'add link to signup')
-   ```java
+3. Open up Eclipse/Android Development Tools
+
+3. Go to **File -> Import** and choose **Existing Android Code into Workspace** under the Android folder
+
+3. Select the **KindredPrints-Android-SDK**
+
+3. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
+
+3. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
+
+```java
 private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
-   ```
-1. Run the project and play with the test app.
-1. All the publicly callable SDK functions are demonstrated in **MainActivity.java** 
+```
+3. Run the project and play with the test app.
+
+3. All the publicly callable SDK functions are demonstrated in **MainActivity.java** 
 
 ### Download the raw SDK files
 
 If you would prefer to just add the SDK folder to your project and get started right away with out looking at the test app, follow these instructions.
 
-1. You can grab a zipped copy of the ***KindredPrints-Android-SDK** folder here
-`link to SDK`
+1. You can grab a zipped copy of the **KindredPrints-Android-SDK** folder [here](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android-SDK.zip)
 
 Or use the **KindredPrints-Android-SDK** folder out of the test project folder (instructions on downloading above)
 
@@ -132,7 +140,7 @@ import com.kindred.kindredprints_android_sdk.KindredOrderFlow;
 import com.kindred.kindredprints_android_sdk.KLOCPhoto;
 import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
    ```
-5. Create a method to handle the button click and insert this code into it:
+5. Create a method to handle the button click and insert this code into it. Make sure update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
    ```java
     KindredOrderFlow orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
     
@@ -142,13 +150,13 @@ import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
     Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
     startActivityForResult(i, 0);
    ```
-5. Replace the "KINDRED_APP_KEY" with your test or live key (depending on which mode you are in). You can get one for you app through the quick signup process here: `link to partner signup`
+5. Replace the "KINDRED_APP_KEY" with your test or live key (depending on which mode you are in). You can get one for you app through the quick signup process [here](http://sdk.kindredprints.com/signup/)
 
 5. You're done! Yea - it can really be that simple. We'll take care of the rest.
 
 **Callback Addendum:**
  If you want to register for a callback when the SDK finishes, override onActivityResult. To do this, follow these instructions:
-6. Override onActivityResult and look for our static result codes. An example can be found in our TestProject like so:
+6. Override onActivityResult and look for our static result codes. An example can be found in our TestProject like so.
    ```java
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
