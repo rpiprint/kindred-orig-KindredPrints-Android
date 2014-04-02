@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/txtTitle"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/login_page_vertical_margin"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/login_page_note_text_size" 
+    />
+    
+    <com.kindred.kindredprints_android_sdk.customviews.EditTextView 
+        android:id="@+id/editTextEmail"
+       	android:layout_width="match_parent"
+       	android:layout_height="@dimen/login_page_edit_text_height"
+       	android:layout_below="@+id/txtTitle"
+       	android:layout_marginTop="@dimen/login_page_vertical_margin"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:background="@drawable/edit_text_background" 
+        />
+    
+	<com.kindred.kindredprints_android_sdk.customviews.EditTextView 
+        android:id="@+id/editTextPassword"
+       	android:layout_width="match_parent"
+       	android:layout_height="@dimen/login_page_edit_text_height"
+       	android:layout_below="@+id/editTextEmail"
+       	android:layout_marginTop="@dimen/login_page_vertical_margin"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:background="@drawable/edit_text_background" 
+        />
+	
+	<TextView
+        android:id="@+id/txtError"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/editTextPassword"
+        android:layout_marginTop="@dimen/login_page_vertical_margin"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:paddingRight="@dimen/login_page_edit_text_side_margin"
+        android:paddingLeft="@dimen/login_page_edit_text_side_margin"
+        android:gravity="center"
+        android:textSize="@dimen/login_page_note_text_size" 
+    />
+
+</RelativeLayout>

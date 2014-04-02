@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+	<RelativeLayout 
+	    android:id="@+id/addContainer"
+       	android:layout_width="match_parent"
+       	android:layout_height="@dimen/shipping_list_add_new_size"
+       	android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/shipping_list_vertical_margin"
+        android:layout_marginLeft="@dimen/shipping_list_side_margin"
+        android:layout_marginRight="@dimen/shipping_list_side_margin">
+	    
+	    <com.kindred.kindredprints_android_sdk.customviews.PlusButtonView 
+	        android:id="@+id/cmdAdd"
+	        android:layout_height="@dimen/shipping_list_check_size"
+	        android:layout_width="@dimen/shipping_list_check_size"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentLeft="true" />
+	    
+	    <TextView
+	        android:id="@+id/txtAddTitle"
+	       	android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	       	android:layout_centerVertical="true"
+	       	android:layout_toRightOf="@+id/cmdAdd"
+	        android:layout_marginLeft="@dimen/shipping_list_side_margin"
+	        android:gravity="left"
+	        android:textSize="@dimen/shipping_list_text_size" 
+	        android:text="@string/shipping_add_title" />
+	    
+	</RelativeLayout>
+	
+	<View
+	    android:id="@+id/viewSeparator"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/shipping_list_separator_height"
+	    android:layout_below="@+id/addContainer"
+	   	android:layout_marginTop="@dimen/shipping_list_vertical_margin"
+        android:layout_marginLeft="@dimen/shipping_list_side_margin"
+        android:layout_marginRight="@dimen/shipping_list_side_margin" />
+	
+	<ListView
+        android:id="@+id/lvAddressList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/shipping_list_vertical_margin"
+        android:layout_marginLeft="@dimen/shipping_list_side_margin"
+        android:layout_marginRight="@dimen/shipping_list_side_margin"
+        android:layout_below="@+id/viewSeparator"
+        android:scrollbars="none" >
+	    
+    </ListView>
+
+</RelativeLayout>

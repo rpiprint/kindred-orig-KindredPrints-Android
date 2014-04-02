@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView
+        android:id="@+id/txtTotalTitle"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/viewBackground"
+        android:paddingRight="@dimen/order_total_size"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/order_total_text_size" 
+        android:text="@string/cart_subtotal"
+    />
+    
+	<View 
+        android:id="@+id/viewBackground"
+        android:layout_width="@dimen/order_total_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        />
+    
+    <TextView
+        android:id="@+id/txtTotal"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+        android:layout_alignLeft="@+id/viewBackground"
+        android:paddingLeft="@dimen/order_total_size"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/order_total_text_size" 
+    />
+</RelativeLayout>

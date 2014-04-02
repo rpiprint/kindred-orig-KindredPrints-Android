@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+	<ImageView
+        android:id="@+id/imgIcon"
+     	android:contentDescription="@string/img_content"
+        android:layout_width="@dimen/login_page_edit_text_height"
+        android:layout_height="@dimen/login_page_edit_text_height"
+        android:layout_margin="@dimen/login_page_edit_text_stroke"
+        android:padding="@dimen/login_page_edit_text_icon_padding"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/edit_text_icon_background"
+	/>
+	
+	<EditText
+	    android:id="@+id/editTextInput"
+	    android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/imgIcon"
+        android:inputType="textEmailAddress"
+        android:hint="@string/login_hint_email"
+        android:textSize="@dimen/login_page_edit_text_size"
+        android:gravity="center_vertical"
+	    >
+	    
+	</EditText>
+</RelativeLayout>

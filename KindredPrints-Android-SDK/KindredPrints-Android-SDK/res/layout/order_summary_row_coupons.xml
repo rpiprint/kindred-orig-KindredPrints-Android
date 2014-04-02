@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/order_summary_row_height" >
+    
+    <EditText
+        android:id="@+id/editTextCoupon"
+       	android:layout_width="match_parent"
+       	android:layout_height="match_parent"
+       	android:layout_alignParentLeft="true"
+        android:gravity="left|center_vertical"
+       	android:paddingLeft="@dimen/order_summary_padding"
+       	android:layout_marginRight="@dimen/order_summary_padding"
+       	android:layout_toLeftOf="@+id/cmdEditApplyCoupon"
+        android:textSize="@dimen/order_summary_text_size" 
+        android:hint="@string/order_summary_no_coupon"
+    />
+    <Button 
+        android:id="@+id/cmdEditApplyCoupon"
+        android:layout_width="@dimen/order_summary_edit_width"
+        android:layout_height="@dimen/order_summary_edit_height"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+       	android:textSize="@dimen/order_summary_text_size"
+        android:text="@string/order_summary_edit"
+        android:background="@drawable/cmd_rounded_button"
+        />
+	<View 
+        android:id="@+id/dividerView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_toLeftOf="@+id/cmdEditApplyCoupon"
+        android:layout_marginRight="@dimen/order_summary_padding"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_white"/>
+	
+</RelativeLayout>

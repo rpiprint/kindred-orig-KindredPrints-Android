@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/order_summary_row_height" >
+    
+    <TextView
+        android:id="@+id/txtLineItemQuantity"
+       	android:layout_width="@dimen/order_summary_quantity_width"
+       	android:layout_height="match_parent"
+       	android:layout_alignParentLeft="true"
+        android:gravity="right|center_vertical"
+        android:textStyle="bold"
+        android:textSize="@dimen/order_summary_quantity_text_size" 
+    />
+    
+    <TextView
+        android:id="@+id/txtLineItemDescription"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+		android:layout_toRightOf="@+id/txtLineItemQuantity"
+		android:paddingLeft="@dimen/order_summary_padding"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/order_summary_text_size" 
+    />
+    
+    <TextView
+        android:id="@+id/txtLineItemTotal"
+       	android:layout_width="@dimen/order_summary_amount_width"
+       	android:layout_height="match_parent"
+       	android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textSize="@dimen/order_summary_title_text_size" 
+        android:text="@string/order_summary_blank_total"
+    />
+    
+   
+</RelativeLayout>

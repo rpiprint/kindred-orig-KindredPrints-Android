@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	<TextView
+        android:id="@+id/txtTotal"
+       	android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentTop="true"
+       	android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/card_edit_vertical_margin"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/card_edit_text_size" 
+        android:text="@string/order_summary_total"
+    />
+	<TextView
+        android:id="@+id/txtTotalAmount"
+       	android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentTop="true"
+       	android:layout_toRightOf="@+id/txtTotal"
+        android:layout_marginTop="@dimen/card_edit_vertical_margin"
+        android:layout_marginLeft="@dimen/card_edit_padding"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/card_edit_text_size" 
+        android:textStyle="bold"
+    />
+	
+	<TextView
+        android:id="@+id/txtSubTitle"
+       	android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentLeft="true"
+       	android:layout_below="@+id/txtTotal"
+        android:layout_marginTop="@dimen/card_edit_padding"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/card_edit_text_size" 
+        android:text="@string/card_edit_title"
+        android:textStyle="bold"
+    />
+	
+	 <EditText
+	    android:id="@+id/editTextName"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_row_height"
+        android:layout_below="@+id/txtSubTitle"
+        android:layout_marginTop="@dimen/card_edit_vertical_margin"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:inputType="textCapWords"
+        android:hint="@string/card_edit_name_hint"
+        android:textSize="@dimen/card_edit_text_size"
+        android:gravity="left|center_vertical"
+        android:nextFocusDown="@+id/editTextCard"
+	    />
+    
+    <View
+        android:id="@+id/viewDiv0"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_divider_thickness"
+	    android:layout_below="@+id/editTextName"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+	/>
+    
+    <EditText
+	    android:id="@+id/editTextCard"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_row_height"
+        android:layout_below="@+id/viewDiv0"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:inputType="numberDecimal"
+        android:hint="@string/card_edit_number_hint"
+        android:textSize="@dimen/card_edit_text_size"
+        android:gravity="left|center_vertical"
+        android:nextFocusDown="@+id/editTextMonthYear"
+	    />
+    
+   	<View
+        android:id="@+id/viewDiv1"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_divider_thickness"
+	    android:layout_below="@+id/editTextCard"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+	/> 
+	
+   	<EditText
+	    android:id="@+id/editTextMonthYear"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_row_height"
+        android:layout_below="@+id/viewDiv1"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/viewDiv2"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:inputType="numberDecimal"
+        android:hint="@string/card_edit_monthyear"
+        android:textSize="@dimen/card_edit_text_size"
+        android:gravity="center_vertical"
+        android:nextFocusRight="@+id/editTextCode"
+        android:imeOptions="actionNext"
+	    />
+    
+    <View
+        android:id="@+id/viewDiv2"
+	    android:layout_width="@dimen/card_edit_divider_thickness"
+        android:layout_height="@dimen/shipping_edit_row_height"
+        android:layout_below="@+id/viewDiv1"
+	    android:layout_centerHorizontal="true"
+	/>
+    
+   	<EditText
+	    android:id="@+id/editTextCode"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_row_height"
+        android:layout_below="@+id/viewDiv1"
+        android:layout_toRightOf="@+id/viewDiv2"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:inputType="numberDecimal"
+        android:hint="@string/card_edit_code_hint"
+        android:textSize="@dimen/card_edit_text_size"
+        android:gravity="left|center_vertical"
+	    />
+   	
+   	<View
+        android:id="@+id/viewDiv3"
+	    android:layout_width="match_parent"
+        android:layout_height="@dimen/card_edit_divider_thickness"
+	    android:layout_below="@+id/editTextMonthYear"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+	/> 
+	
+   	<Button 
+        android:id="@+id/cmdCompleteOrder"
+        android:layout_width="@dimen/card_edit_complete_width"
+        android:layout_height="@dimen/card_edit_row_height"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/viewDiv3"
+        android:layout_marginTop="@dimen/card_edit_vertical_margin"
+       	android:textSize="@dimen/card_edit_text_size"
+        android:text="@string/order_summary_complete"
+        android:background="@drawable/cmd_rounded_filled_button"
+        />
+   	
+   	<TextView
+        android:id="@+id/txtError"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/cmdCompleteOrder"
+        android:layout_marginTop="@dimen/card_edit_vertical_margin"
+        android:layout_marginLeft="@dimen/card_edit_side_margin"
+        android:layout_marginRight="@dimen/card_edit_side_margin"
+        android:gravity="center"
+        android:textSize="@dimen/card_edit_text_size" 
+    />
+</RelativeLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
+    
+    <com.kindred.kindredprints_android_sdk.customviews.SideArrow 
+        android:id="@+id/cmdBack"
+        android:layout_width="@dimen/nav_back_button_width"
+        android:layout_height="@dimen/nav_back_button_width"
+        android:layout_alignParentLeft="true"/>
+    
+    <TextView
+        android:id="@+id/txtTitle"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="@dimen/nav_padding_size"
+        android:paddingRight="@dimen/nav_padding_size"
+        android:textSize="@dimen/nav_bar_text_size" 
+    />
+
+    <Button
+        android:id="@+id/cmdNext"
+        android:layout_width="@dimen/nav_next_button_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/nav_padding_size"
+        android:paddingRight="@dimen/nav_padding_size"
+        android:background="@drawable/cmd_nav_bar"
+        android:textSize="@dimen/nav_bar_text_size"
+    />
+</RelativeLayout>

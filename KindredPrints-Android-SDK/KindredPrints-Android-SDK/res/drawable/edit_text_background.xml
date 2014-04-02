@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape android:shape="rectangle">
+            <stroke 
+                android:width="@dimen/login_page_edit_text_stroke"
+                android:color="@color/color_white" />
+            <corners android:radius="@dimen/login_page_edit_text_corners" />
+        </shape>
+    </item>
+</layer-list>

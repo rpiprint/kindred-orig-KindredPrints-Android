@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/order_summary_row_height" >
+    
+	<TextView
+        android:id="@+id/txtSubtotalDescription"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+		android:layout_toLeftOf="@+id/txtSubtotalTotal"
+		android:layout_marginRight="@dimen/order_summary_padding"
+        android:gravity="right|center_vertical"
+        android:textSize="@dimen/order_summary_text_size" 
+        android:text="@string/order_summary_subtotal"
+    />
+
+    
+    <TextView
+        android:id="@+id/txtSubtotalTotal"
+       	android:layout_width="@dimen/order_summary_amount_width"
+       	android:layout_height="match_parent"
+       	android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textSize="@dimen/order_summary_text_size" 
+        android:text="@string/order_summary_blank_total"
+    />
+    
+    <View 
+        android:id="@+id/dividerView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/color_white"/>
+    
+    <View 
+        android:id="@+id/dividerViewTwo"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_grey"/>
+    
+</RelativeLayout>

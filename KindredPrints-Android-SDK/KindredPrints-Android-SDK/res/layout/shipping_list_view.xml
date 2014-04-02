@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+    <com.kindred.kindredprints_android_sdk.customviews.CheckBoxView 
+        android:id="@+id/chkBoxChecked"
+        android:layout_width="@dimen/shipping_list_check_size"
+        android:layout_height="@dimen/shipping_list_check_size"
+        android:layout_marginTop="@dimen/shipping_list_vertical_margin"
+        android:layout_marginBottom="@dimen/shipping_list_vertical_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+    
+    <RelativeLayout
+        android:id="@+id/textContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/shipping_list_padding"
+        android:layout_toRightOf="@+id/chkBoxChecked" >
+	    <TextView
+	        android:id="@+id/txtTitle"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:textSize="@dimen/shipping_list_text_size" />
+	    
+	    <TextView
+	        android:id="@+id/txtSubtitle"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:layout_below="@+id/txtTitle"
+	        
+	        android:textSize="@dimen/shipping_list_subtext_size" />
+    </RelativeLayout>
+    
+    <Button 
+        android:id="@+id/cmdEdit"
+        android:layout_width="@dimen/shipping_list_edit_width"
+        android:layout_height="@dimen/shipping_list_edit_height"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+       	android:textSize="@dimen/shipping_list_text_size"
+        android:text="@string/shipping_edit"
+        android:background="@drawable/cmd_rounded_button"
+        />
+	
+</RelativeLayout>

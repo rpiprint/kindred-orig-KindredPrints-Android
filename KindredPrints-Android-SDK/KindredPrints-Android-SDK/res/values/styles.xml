@@ -1,0 +1,21 @@
+<resources>
+	<color name="color_dark_grey">#FF111111</color>
+	<color name="color_transparent">#FF000000</color>
+	<color name="color_white_half_transparency">#55FFFFFF</color>
+	<color name="color_dark_grey_transparency">#99222222</color>
+	
+	<color name="color_white">#FFFFFFFF</color>
+	<color name="color_grey">#FFAAADAF</color>
+	<color name="color_tan_grey">#D5D5D8</color>
+	<color name="color_blue_highlight">#FF52ccef</color>
+	
+	<color name="color_red">#FF671A11</color>
+	
+	<color name="color_order_total">#FF7A7E82</color>
+	<color name="color_order_total_label">#FFA0A9AB</color>
+	
+	<color name="color_yellow_warning">#FFFBCB62</color>
+	
+	<color name="dialog_grey">#FFfffbfb</color>
+    <color name="dialog_grey_pressed">#FFaaaaaa</color>
+</resources>

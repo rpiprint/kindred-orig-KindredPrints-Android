@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/viewPager"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" />
+	
+	<TextView
+        android:id="@+id/txtEmptyCart"
+       	android:layout_width="wrap_content"
+       	android:layout_height="match_parent"
+        android:padding="@dimen/cart_page_blank_padding"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="@dimen/cart_page_blank_text_size" 
+        android:text="@string/cart_empty"
+    />
+	
+	<com.kindred.kindredprints_android_sdk.customviews.OrderTotalView
+	    android:id="@+id/orderTotal"
+	    android:layout_height="@dimen/order_total_height"
+	    android:layout_width="match_parent" 
+	    android:layout_alignParentBottom="true"
+	/>
+</RelativeLayout>

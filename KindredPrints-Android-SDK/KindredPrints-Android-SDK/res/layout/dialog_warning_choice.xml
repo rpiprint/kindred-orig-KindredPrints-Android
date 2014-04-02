@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/dialog_grey">
+   
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="@dimen/dialog_width"
+        android:layout_height="@dimen/dialog_title_height"
+        android:textColor="@color/color_dark_grey"
+        android:text="@string/dialog_warning_title"
+        android:textSize="@dimen/dialog_text_size"   
+        android:gravity="center"
+		android:background="@color/color_yellow_warning" />
+    <View
+        android:id="@+id/div1"
+        android:layout_height="@dimen/dialog_divider_height"
+        android:layout_width="@dimen/dialog_width"
+        android:layout_below="@+id/txtTitle"
+        android:layout_margin="0dp"
+        android:background="@color/color_yellow_warning" />
+    
+    <TextView
+        android:id="@+id/txtMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/div1"
+        android:layout_margin="@dimen/dialog_padding"
+        android:textColor="@color/color_dark_grey"
+        android:textSize="@dimen/dialog_text_size"   
+        android:text="@string/dialog_warning_description"
+        android:gravity="center" />
+    
+    <View
+        android:id="@+id/div2"
+        android:layout_height="@dimen/dialog_divider_height"
+        android:layout_width="@dimen/dialog_width"
+        android:layout_below="@+id/txtMessage"
+        android:layout_margin="0dp"
+        android:background="@color/color_yellow_warning"/>
+    
+    <LinearLayout 
+        android:id="@+id/layout"
+        android:layout_width="@dimen/dialog_width"
+    	android:layout_height="@dimen/dialog_title_height"
+    	android:orientation="horizontal"
+    	android:background="@color/dialog_grey"
+    	android:layout_below="@+id/div2" >
+    	<Button 
+            android:id="@+id/cmdCancel"
+            android:layout_width="@dimen/dialog_half_width"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"            
+            android:textColor="@color/color_dark_grey"
+        	android:textSize="@dimen/dialog_text_size"   
+            android:background="@drawable/cmd_dialog" 
+            android:text="@string/dialog_change"           
+            />
+        
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"            
+            android:background="#000000" />
+        
+        <Button 
+            android:id="@+id/cmdOK"
+            android:layout_width="@dimen/dialog_half_width"
+            android:layout_height="match_parent"
+            android:textColor="@color/color_dark_grey"
+        	android:textSize="@dimen/dialog_text_size"   
+            android:background="@drawable/cmd_dialog"     
+            android:text="@string/dialog_continue"       
+            />       
+       
+    </LinearLayout>
+    
+
+</RelativeLayout>

@@ -1,0 +1,138 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Test URL Images"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="5dp"
+        android:text="Paste an image URL here:" />
+
+    <EditText
+        android:id="@+id/editTxtUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_toLeftOf="@+id/cmdAddUrl"
+        android:ems="10"
+        android:inputType="textUri"
+        android:textSize="14sp" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/cmdAddUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editTxtUrl"
+        android:layout_alignBottom="@+id/editTxtUrl"
+        android:layout_alignParentRight="true"
+        android:text="Add" />
+
+    <Button
+        android:id="@+id/cmdAddThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editTxtUrl"
+        android:layout_below="@+id/cmdAddUrl"
+        android:layout_marginTop="10dp"
+        android:text="Add 3 test URL images" />
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cmdFromGallery"
+        android:layout_below="@+id/cmdFromGallery"
+        android:layout_marginTop="14dp"
+        android:text="User Related"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/cmdShowCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Show Cart" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/cmdShowCart"
+        android:layout_below="@+id/cmdAddThree"
+        android:layout_marginTop="5dp"
+        android:text="Memory/File images"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/cmdFromGallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cmdTakePhoto"
+        android:layout_below="@+id/cmdTakePhoto"
+        android:text="From Gallery (file sys)" />
+
+    <Button
+        android:id="@+id/cmdTakePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cmdAddThree"
+        android:layout_below="@+id/TextView01"
+        android:text="Take Photo (file sys)" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView01"
+        android:layout_below="@+id/TextView02"
+        android:text="Preregister an email:" />
+
+    <EditText
+        android:id="@+id/editTxtEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignRight="@+id/editTxtUrl"
+        android:layout_below="@+id/TextView03"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/cmdRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editTxtEmail"
+        android:layout_alignBottom="@+id/editTxtEmail"
+        android:layout_alignParentRight="true"
+        android:text="Reg" />
+
+</RelativeLayout>
