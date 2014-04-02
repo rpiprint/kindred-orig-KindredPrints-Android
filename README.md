@@ -57,7 +57,7 @@ Then,
 1. Go to **File -> Import** and choose **Existing Android Code into Workspace** under the Android folder
 1. Select the **KindredPrints-Android-SDK**
 1. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
-1. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up here 'add link to signup')
+1. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
    ```java
 private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
    ```
@@ -142,7 +142,7 @@ import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
     Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
     startActivityForResult(i, 0);
    ```
-5. Replace the "KINDRED_APP_KEY" with your test or live key (depending on which mode you are in). You can get one for you app through the quick signup process here: `link to partner signup`
+5. Replace the "KINDRED_APP_KEY" with your test or live key (depending on which mode you are in). You can get one for you app through the quick signup process [here](http://sdk.kindredprints.com/signup/)
 
 5. You're done! Yea - it can really be that simple. We'll take care of the rest.
 
