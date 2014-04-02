@@ -50,7 +50,7 @@ You can grab a zipped copy here.
 
 OR clone this project and open it in Xcode.
 
-1. CD into your development directory.
+1. `cd` into your development directory.
 
 1. Run `git clone git://github.com/kindredprints/kindredprints-android.git` in the command line
 
