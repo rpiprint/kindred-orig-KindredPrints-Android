@@ -58,9 +58,10 @@ Then,
 1. Select the **KindredPrints-Android-SDK**
 1. Make sure both **KindredPrints-SDK-TestBed** and **KindredPrints-Android-SDK** are selected and click Finish.
 1. View **MainActivity.java** in the **KindredPrints-SDK-TestBed** and update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
-   ```java
+
+```java
 private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
-   ```
+```
 1. Run the project and play with the test app.
 1. All the publicly callable SDK functions are demonstrated in **MainActivity.java** 
 
