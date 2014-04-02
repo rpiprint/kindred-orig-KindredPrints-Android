@@ -131,7 +131,7 @@ import com.kindred.kindredprints_android_sdk.KindredOrderFlow;
 import com.kindred.kindredprints_android_sdk.KLOCPhoto;
 import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
    ```
-5. Create a method to handle the button click and insert this code into it:
+5. Create a method to handle the button click and insert this code into it. Make sure update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
    ```java
     KindredOrderFlow orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
     
@@ -147,7 +147,7 @@ import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
 
 **Callback Addendum:**
  If you want to register for a callback when the SDK finishes, override onActivityResult. To do this, follow these instructions:
-6. Override onActivityResult and look for our static result codes. An example can be found in our TestProject like so:
+6. Override onActivityResult and look for our static result codes. An example can be found in our TestProject like so.
    ```java
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
