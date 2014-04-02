@@ -44,7 +44,7 @@ Follow the instructions in this section if you want to see how an example test a
 
 You can grab a zipped copy here.
 
-1. Dowload `AWS link to zip of Android project` to the folder of your choice
+1. Dowload the [zipped test project and SDK](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android.zip) to the folder of your choice
 
 OR clone this project and open it in Xcode.
 
@@ -68,8 +68,7 @@ private final static String KINDRED_APP_KEY = "YOUR TEST KEY HERE";
 
 If you would prefer to just add the SDK folder to your project and get started right away with out looking at the test app, follow these instructions.
 
-1. You can grab a zipped copy of the ***KindredPrints-Android-SDK** folder here
-`link to SDK`
+1. You can grab a zipped copy of the ***KindredPrints-Android-SDK** folder [here](https://s3-us-west-1.amazonaws.com/kindredmeta/KindredPrints-Android-SDK.zip)
 
 Or use the **KindredPrints-Android-SDK** folder out of the test project folder (instructions on downloading above)
 
