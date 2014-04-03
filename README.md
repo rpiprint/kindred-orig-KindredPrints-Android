@@ -102,11 +102,6 @@ Internet [required]: We absolutely require access to the internet. Hopefully you
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-External storage [required]: We do a lot of file caching with images due to the extreme memory constraints of the Android ecosystem. At any given time, our app should not required more than 18 mb of additional run time memory.
-```xml
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-```
-
 Contacts [Optional]: We offer the option for the user to import addresses from their contacts. We don't do anything with the contact permission aside from importing the details of the contact which the user selects. No other data touches our servers.
 ```xml
 <uses-permission android:name="android.permission.READ_CONTACTS"/>
