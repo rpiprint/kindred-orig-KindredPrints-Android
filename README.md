@@ -1,7 +1,8 @@
 # Kindred Prints Android SDK
 
 The Kindred Prints SDK makes it extremely easy to start selling and getting paid for physical printed photos straight from your app. You simply need drop the folder into your iPhone or iPad project, and add a photo through our simple SDK interface to send your user to the checkout flow.
-`small screens of sdk here`
+
+![Kindred Diagram](https://s3-us-west-1.amazonaws.com/kindredmetaimages/KindredDiagram.png)
 
 ## About the Kindred Prints SDK
 
@@ -30,9 +31,12 @@ Here are the details of what is included in the Kindred Printing platform
 ### Current Print Capabilities
 
 - 4" x 4" glossy premium print
-...`put picture here`
+
+![4x4 Prints](https://raw.githubusercontent.com/KindredPrints/KindredPrints-iOS/master/Documentation/4by4.jpg)
+
 - 4" x 6" glossy premium print
-...`put picture here`
+
+![4x6 Prints](https://raw.githubusercontent.com/KindredPrints/KindredPrints-iOS/master/Documentation/4by6.jpg)
 
 ## Android Specific Installation
 
