@@ -118,7 +118,7 @@ You need to register our order flow activity inside your manifest. Add the line 
 ```xml
 <application>
     ....
-    <activity android:name="com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity" />
+    <activity android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity" />
 </application>
 ```
 #### A note about testing
@@ -137,9 +137,9 @@ For this example, we assume that the photo is stored in local memory and you hav
 
 5. Add the appropriate imports to your class:
    ```java
-import com.kindred.kindredprints_android_sdk.KindredOrderFlow;
-import com.kindred.kindredprints_android_sdk.KLOCPhoto;
-import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
+import com.kindredprints.android.sdk.KindredOrderFlow;
+import com.kindredprints.android.sdk.KLOCPhoto;
+import com.kindredprints.android.sdk.KindredOrderFlowActivity;
    ```
 5. Create a method to handle the button click and insert this code into it. Make sure update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
    ```java
@@ -197,9 +197,9 @@ In this example, all photos are located on a remote server, and are passed to th
 
 7. Add the appropriate imports to your class:
    ```java
-import com.kindred.kindredprints_android_sdk.KindredOrderFlow;
-import com.kindred.kindredprints_android_sdk.KURLPhoto;
-import com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity;
+import com.kindredprints.android.sdk.KindredOrderFlow;
+import com.kindredprints.android.sdk.KURLPhoto;
+import com.kindredprints.android.sdk.KindredOrderFlowActivity;
    ```
 
 7. Create a method to handle the button click and insert this code into it:
