@@ -9,7 +9,6 @@ import com.kindred.kindredprints_android_sdk.helpers.prefs.UserPrefHelper;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 public class CartManager {
 	private ArrayList<CartObject> orders;
@@ -29,8 +28,8 @@ public class CartManager {
 		this.context_ = context;
 		this.userPrefHelper_ = new UserPrefHelper(context);
 		this.devPrefHelper_ = new DevPrefHelper(context);
-		this.orders = this.userPrefHelper_.getCartOrders();
-		this.selectedOrders = this.userPrefHelper_.getSelectedOrders();
+		this.orders = manager_.userPrefHelper_.getCartOrders();
+		this.selectedOrders = manager_.userPrefHelper_.getSelectedOrders();
 		this.ordersSema_ = new Semaphore(1);
 		this.selOrdersSema_ = new Semaphore(1);
 	}
@@ -42,7 +41,7 @@ public class CartManager {
 	public static CartManager getInstance(Context context) {
 		if (manager_ == null) {
 			manager_ = new CartManager(context);
-		}
+		} 
 		return manager_;
 	}
 	
@@ -229,7 +228,6 @@ public class CartManager {
 		        if ((pImage.getImage().getId() + "-" + pImage.getPrintType().getId()).equalsIgnoreCase(localId)) {
 		        	this.selectedOrders.get(i).setServerLineItemId(pid);
 		        	this.selectedOrders.get(i).setServerLineItemInit(true);
-		        	Log.i("KindredSDK", "line item init ! for " + localId);
 		        }
 		    }
 			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
@@ -347,7 +345,6 @@ public class CartManager {
 						for (PrintableImage pImage : prevSelection) {
 							if (pImage.getImage().getId().equalsIgnoreCase(cartObj.getImage().getId()) 
 									&& pImage.getPrintType().getId().equals(product.getId())) {
-								Log.i("KindredSDK", "found previous image and pi/li init = " + pImage.isServerInit() + ", " + pImage.isServerLineItemInit());
 								newPImage = pImage.copy();
 								if (pImage.getPrintType().getQuantity() != product.getQuantity()) {
 									newPImage.setServerLineItemInit(false);
@@ -362,8 +359,6 @@ public class CartManager {
 							lowDPI = true;
 						}
 						
-						Log.i("KindredSDK", "adding product and pi/li init = " + newPImage.isServerInit() + ", " + newPImage.isServerLineItemInit());
-
 						newPImage.setImage(cartObj.getImage().copy());
 						newPImage.setPrintType(product.copy());
 	
@@ -380,7 +375,6 @@ public class CartManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}	
-		Log.i("KindredSDK", "updating selected images, new orders = " + countOfNewOrders + " unchanged = " + countOfUnchanged);
 		if (countOfNewOrders != countOfUnchanged) {
 			this.devPrefHelper_.setNeedUpdateOrderId(true);
 		}
@@ -422,7 +416,7 @@ public class CartManager {
 			this.ordersSema_.acquire();
 			for (int i = 0; i<this.orders.size(); i++) {
 				CartObject image = this.orders.get(i);
-				if (image == null || image.getPrintProducts() == null) {
+				if (image == null) {
 					this.orders.remove(i);
 					i = i - 1;
 					needSave = true;

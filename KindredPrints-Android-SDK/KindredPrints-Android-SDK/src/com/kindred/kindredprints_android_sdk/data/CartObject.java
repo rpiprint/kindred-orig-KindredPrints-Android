@@ -55,6 +55,9 @@ public class CartObject {
 	}
 
 	public ArrayList<PrintProduct> getPrintProducts() {
+		if (printProducts == null) {
+			printProducts = new ArrayList<PrintProduct>();
+		}
 		return printProducts;
 	}
 

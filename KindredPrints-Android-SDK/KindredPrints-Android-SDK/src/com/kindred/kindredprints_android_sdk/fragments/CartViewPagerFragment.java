@@ -23,7 +23,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +110,10 @@ public class CartViewPagerFragment extends KindredFragment {
 		} else {
 			this.txtEmptyCart_.setVisibility(TextView.VISIBLE);
 		}
+	}
+	
+	private void resetOrderTotal() {
+		this.orderTotalView_.setOrderTotal(this.cartManager_.getOrderTotal());
 	}
 	
 	private void addToOrderTotal(int deltaTotal) {
@@ -250,12 +253,9 @@ public class CartViewPagerFragment extends KindredFragment {
 		@Override
 		public void ordersHaveAllBeenUpdated() {
 			if (cartDataAdapter_ != null) {
-				Log.i("KindredSDK","orders have ALL been updated with size");
 				for (int i = Math.max(currIndex_-1, 0); i < Math.min(currIndex_+2, cartDataAdapter_.getCount()); i++) {
 					CartPageFragment f = cartDataAdapter_.getFragmentByPosition(i);
 					if (f != null) {
-						Log.i("KindredSDK","calling refresh on index " + i);
-
 						f.refreshProductList();
 					}
 				}
@@ -265,14 +265,10 @@ public class CartViewPagerFragment extends KindredFragment {
 		@Override
 		public void orderHasBeenUpdatedWithSize(PartnerImage obj) {
 			if (cartDataAdapter_ != null) {
-				if (obj == null)
-					return;
 				for (int i = 0; i < cartManager_.countOfOrders(); i++) {
 					CartObject cObj = cartManager_.getOrderForIndex(i);
 					if (cObj.getImage().getId().equalsIgnoreCase(obj.getId())) {
 						if (i < currIndex_+2 && i > currIndex_-2) {
-							Log.i("KindredSDK","calling refresh on index " + i);
-
 							CartPageFragment f = cartDataAdapter_.getFragmentByPosition(i);
 							if (f != null) {
 								f.refreshProductList();
@@ -281,7 +277,8 @@ public class CartViewPagerFragment extends KindredFragment {
 						break;
 					}
 				}
-			}
+				resetOrderTotal();
+			} 
 		}
 
 		@Override

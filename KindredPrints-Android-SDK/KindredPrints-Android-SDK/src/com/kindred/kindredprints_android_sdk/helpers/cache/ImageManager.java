@@ -163,6 +163,7 @@ public class ImageManager {
 			try {
 		        this.processingSema_.acquire();
 		        ident = this.waitingToDownloadQueue_.remove(this.waitingToDownloadQueue_.size()-1);
+		        Log.i("KindredSDK", "Starting download on " + ident);
 		        this.downloadingQueue_.add(ident);
 		        this.processingSema_.release();
 			} catch (InterruptedException e) {
