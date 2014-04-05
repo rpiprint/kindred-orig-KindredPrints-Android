@@ -28,8 +28,8 @@ public class CartManager {
 		this.context_ = context;
 		this.userPrefHelper_ = new UserPrefHelper(context);
 		this.devPrefHelper_ = new DevPrefHelper(context);
-		this.orders = manager_.userPrefHelper_.getCartOrders();
-		this.selectedOrders = manager_.userPrefHelper_.getSelectedOrders();
+		this.orders = this.userPrefHelper_.getCartOrders();
+		this.selectedOrders = this.userPrefHelper_.getSelectedOrders();
 		this.ordersSema_ = new Semaphore(1);
 		this.selOrdersSema_ = new Semaphore(1);
 	}
