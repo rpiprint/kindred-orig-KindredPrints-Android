@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kindred.kindred_sdk_testbed"
+    package="com.kindredprints.sdk.testbed"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.kindred.kindred_sdk_testbed.MainActivity"
+            android:name="com.kindredprints.sdk.testbed.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="com.kindred.kindredprints_android_sdk.KindredOrderFlowActivity" />
+        <activity android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity" />
     </application>
 
 </manifest>

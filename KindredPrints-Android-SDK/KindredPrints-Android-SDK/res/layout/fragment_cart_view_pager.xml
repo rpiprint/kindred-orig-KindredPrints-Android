@@ -19,7 +19,7 @@
         android:text="@string/cart_empty"
     />
 	
-	<com.kindred.kindredprints_android_sdk.customviews.OrderTotalView
+	<com.kindredprints.android.sdk.customviews.OrderTotalView
 	    android:id="@+id/orderTotal"
 	    android:layout_height="@dimen/order_total_height"
 	    android:layout_width="match_parent" 

@@ -16,7 +16,7 @@
         android:textSize="@dimen/login_page_note_text_size" 
     />
     
-    <com.kindred.kindredprints_android_sdk.customviews.EditTextView 
+    <com.kindredprints.android.sdk.customviews.EditTextView 
         android:id="@+id/editTextEmail"
        	android:layout_width="match_parent"
        	android:layout_height="@dimen/login_page_edit_text_height"
@@ -27,7 +27,7 @@
         android:background="@drawable/edit_text_background" 
         />
     
-	<com.kindred.kindredprints_android_sdk.customviews.EditTextView 
+	<com.kindredprints.android.sdk.customviews.EditTextView 
         android:id="@+id/editTextPassword"
        	android:layout_width="match_parent"
        	android:layout_height="@dimen/login_page_edit_text_height"

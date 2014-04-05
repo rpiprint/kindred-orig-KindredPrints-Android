@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-	<com.kindred.kindredprints_android_sdk.customviews.NavBarView
+	<com.kindredprints.android.sdk.customviews.NavBarView
 	    android:id="@+id/navBar"
 	    android:layout_height="@dimen/nav_bar_height"
 	    android:layout_width="match_parent" 

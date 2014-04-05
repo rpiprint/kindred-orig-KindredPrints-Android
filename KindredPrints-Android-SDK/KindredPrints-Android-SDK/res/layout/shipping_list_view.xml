@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
     
-    <com.kindred.kindredprints_android_sdk.customviews.CheckBoxView 
+    <com.kindredprints.android.sdk.customviews.CheckBoxView 
         android:id="@+id/chkBoxChecked"
         android:layout_width="@dimen/shipping_list_check_size"
         android:layout_height="@dimen/shipping_list_check_size"

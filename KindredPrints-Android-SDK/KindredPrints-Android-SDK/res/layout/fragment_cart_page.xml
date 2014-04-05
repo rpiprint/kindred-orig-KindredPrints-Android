@@ -23,7 +23,7 @@
 		android:src="@drawable/ico_warning_yellow"
 		android:visibility="invisible"
     />
-	<com.kindred.kindredprints_android_sdk.customviews.DeleteButtonView 
+	<com.kindredprints.android.sdk.customviews.DeleteButtonView 
 	    android:id="@+id/cmdDelete"
        	android:layout_width="@dimen/cart_page_delete_size"
        	android:layout_height="@dimen/cart_page_delete_size"
@@ -52,14 +52,14 @@
         android:layout_above="@+id/lvAvailableProducts"
         android:layout_alignParentTop="true" >
         
-        <com.kindred.kindredprints_android_sdk.customviews.SideArrow 
+        <com.kindredprints.android.sdk.customviews.SideArrow 
             android:id="@+id/cmdLeft"
             android:layout_width="@dimen/cart_page_image_side_padding"
             android:layout_height="@dimen/cart_page_image_side_padding"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"/>
             
-        <com.kindred.kindredprints_android_sdk.customviews.SideArrow 
+        <com.kindredprints.android.sdk.customviews.SideArrow 
             android:id="@+id/cmdRight"
             android:layout_width="@dimen/cart_page_image_side_padding"
             android:layout_height="@dimen/cart_page_image_side_padding"

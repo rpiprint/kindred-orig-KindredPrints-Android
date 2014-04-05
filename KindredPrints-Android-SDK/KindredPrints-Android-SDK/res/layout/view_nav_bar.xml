@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent" >
     
-    <com.kindred.kindredprints_android_sdk.customviews.SideArrow 
+    <com.kindredprints.android.sdk.customviews.SideArrow 
         android:id="@+id/cmdBack"
         android:layout_width="@dimen/nav_back_button_width"
         android:layout_height="@dimen/nav_back_button_width"

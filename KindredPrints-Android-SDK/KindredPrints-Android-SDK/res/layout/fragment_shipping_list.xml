@@ -12,7 +12,7 @@
         android:layout_marginLeft="@dimen/shipping_list_side_margin"
         android:layout_marginRight="@dimen/shipping_list_side_margin">
 	    
-	    <com.kindred.kindredprints_android_sdk.customviews.PlusButtonView 
+	    <com.kindredprints.android.sdk.customviews.PlusButtonView 
 	        android:id="@+id/cmdAdd"
 	        android:layout_height="@dimen/shipping_list_check_size"
 	        android:layout_width="@dimen/shipping_list_check_size"
