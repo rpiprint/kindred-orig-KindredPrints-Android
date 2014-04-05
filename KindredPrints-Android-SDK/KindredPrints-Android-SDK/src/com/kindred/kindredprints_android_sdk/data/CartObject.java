@@ -27,6 +27,10 @@ public class CartObject {
 	}
 
 	public void updateOrderSizes(ArrayList<PrintProduct> allSizes) {
+		if (this.printProducts == null) {
+			this.printProducts = new ArrayList<PrintProduct>();
+		}
+		
 		ArrayList<PrintProduct> reducedList = ImageEditor.getAllowablePrintableSizesForImageSize(new Size(this.image.getWidth(), this.image.getHeight()), allSizes);
 		ArrayList<PrintProduct> finalList = new ArrayList<PrintProduct>();
 		for (PrintProduct product : reducedList) {
