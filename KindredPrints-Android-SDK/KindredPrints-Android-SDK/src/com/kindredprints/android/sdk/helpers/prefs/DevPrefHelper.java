@@ -14,9 +14,9 @@ import android.content.Context;
 
 public class DevPrefHelper extends PrefHelper {
 	
-	public static final Boolean IS_TEST = true;
+	public static final Boolean IS_TEST = false;
 	
-	private static final String SERVER_API_LIVE_URL = "http://api.kindredprints.com/";
+	private static final String SERVER_API_LIVE_URL = "https://api.kindredprints.com/";
 	private static final String SERVER_API_DEV_URL = "http://apidev.kindredprints.com/";
 	
 	private static final String STRIPE_LIVE_KEY = "pk_test_9pMXnrGjrTrJ0mBwflF7lCMK";
