@@ -131,7 +131,8 @@ public class MainActivity extends Activity {
     		Log.i("TestActivity", "Grabbed a gallery image");
     		Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
- 
+    		//Log.i("TestActivity", "grabbed url " + selectedImage.);
+
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
@@ -143,6 +144,9 @@ public class MainActivity extends Activity {
 			showToast("image added");
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();
+    		
+    		Log.i("TestActivity", "grabbed url " + selectedImage.getPath());
+
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
  
             Cursor cursor = getContentResolver().query(selectedImage,

@@ -13,6 +13,7 @@ import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonP
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
@@ -31,6 +32,8 @@ import android.widget.TextView;
 public class CartViewPagerFragment extends KindredFragment {
 	public static final String NO_IMAGES_SELECTED = "Please select select at least 1 image to continue";
 	
+	private Context context_;
+	
 	private ViewPager cartFlipper_;
 	private CartPageAdapter cartDataAdapter_;
 	private int currIndex_;
@@ -46,6 +49,8 @@ public class CartViewPagerFragment extends KindredFragment {
 	private boolean isInit = false;
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
+		context_ = activity.getApplicationContext();
+		
 		this.cartManager_ = CartManager.getInstance(activity);
 		this.cartManager_.setCartUpdatedCallback(new CartObjectsUpdatedListener());
 		
@@ -185,6 +190,8 @@ public class CartViewPagerFragment extends KindredFragment {
 
 		private Fragment createFragmentAt(int position) {
 			CartPageFragment pageFrag = new CartPageFragment();
+			pageFrag.init(context_);
+			
 			pageFrag.setCurrIndex(position);
 			pageFrag.setCartPageUpdateListener(new CartPageUpdateListener() {
 				@Override

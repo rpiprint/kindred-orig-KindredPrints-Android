@@ -12,6 +12,7 @@ import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,9 +43,11 @@ public class CartPageFragment extends KindredFragment {
 	private ListView lvProducts_;
 	private ProductListAdapter productListAdapter_;
 	
-	public CartPageFragment() {
-		this.cartManager_ = CartManager.getInstance(getActivity());
-		this.imageManager_ = ImageManager.getInstance(getActivity());
+	public CartPageFragment() { }
+	
+	public void init(Context context) {
+		this.cartManager_ = CartManager.getInstance(context);
+		this.imageManager_ = ImageManager.getInstance(context);
 	}
 	
 	@Override
