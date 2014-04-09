@@ -326,6 +326,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		final EditText editTextCoupon = (EditText) view.findViewById(R.id.editTextCoupon);
 		editTextCoupon.setTextColor(this.interfacePrefHelper_.getTextColor());
 		editTextCoupon.setBackgroundColor(Color.TRANSPARENT);
+		
 		if (!item.getLiCouponId().equals(LineItem.LINE_ITEM_NO_VALUE)) {
 			editTextCoupon.setText(item.getLiCouponId());
 		}
@@ -358,6 +359,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 				}
 			}
 		});
+	
 		
 		if (!item.getLiCouponId().equals(LineItem.LINE_ITEM_NO_VALUE)) {
 			editTextCoupon.setText(item.getLiCouponId());
@@ -541,6 +543,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 									} 
 									
 								} else {
+									fragmentHelper_.hideProgressBar();
 									couponMessage = serverResponse.getString("message");
 									updateCouponRow();
 								}

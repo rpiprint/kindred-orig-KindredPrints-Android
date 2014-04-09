@@ -29,6 +29,8 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -161,10 +163,10 @@ public class ShippingEditFragment extends KindredFragment {
 		this.editTextState_ = (EditText) view.findViewById(R.id.editTextState);
 		this.editTextState_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		this.editTextState_.setBackgroundColor(Color.TRANSPARENT);
+		this.editTextState_.addTextChangedListener(new StateInputListener());
 		this.editTextState_.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
-				Log.i("KindredSDK", "state pressed enter");
 				if( keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN ) {
 					Log.i("KindredSDK", "focusing on zi");
 					editTextZip_.requestFocus();
@@ -186,22 +188,23 @@ public class ShippingEditFragment extends KindredFragment {
 			}			
 		});
 		
+		this.editSpinnerCountry_ = (Spinner) view.findViewById(R.id.spinCountry);
+		this.editSpinnerCountry_.setBackgroundColor(Color.TRANSPARENT);
+		
 		String addressStr = getArguments().getString("address");
 		if (addressStr != null) {
 			this.currAddress_ = new Address(addressStr);
 			this.editTextName_.setText(this.currAddress_.getName());
 			this.editTextStreet_.setText(this.currAddress_.getStreet());
 			this.editTextCity_.setText(this.currAddress_.getCity());
+			initCountrySpinner();
 			this.editTextState_.setText(this.currAddress_.getState());
 			this.editTextZip_.setText(this.currAddress_.getZip());
 		} else {
 			this.currAddress_ = new Address();
+			initCountrySpinner();
 		}
-		
-		this.editSpinnerCountry_ = (Spinner) view.findViewById(R.id.spinCountry);
-		this.editSpinnerCountry_.setBackgroundColor(Color.TRANSPARENT);
-		initCountrySpinner();
-		
+				
 		this.txtError_ = (TextView) view.findViewById(R.id.txtError);
 		this.txtError_.setTextColor(getActivity().getResources().getColor(R.color.color_red));
 
@@ -305,6 +308,7 @@ public class ShippingEditFragment extends KindredFragment {
 	public class BackButtonHandler implements BackButtonPressInterrupter {
 		@Override
 		public boolean interruptBackButton() {
+			closeKeyboard();
 			if (!continueBackCheck_) {
 				Bundle bun = new Bundle();
 				bun.putBoolean("editback", true);
@@ -362,6 +366,23 @@ public class ShippingEditFragment extends KindredFragment {
 			}
 			return false;
 		}
+	}
+	
+	public class StateInputListener implements TextWatcher {
+		@Override
+		public void afterTextChanged(Editable s) {
+			if (editSpinnerCountry_.getSelectedItem().toString().equals("United States")) {
+				if (s.length() > 2) {
+					s = s.delete(s.length()-1, s.length());
+		        }
+			}
+		}
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) { }
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) { }
 	}
 	
 	public class AddressCreateUpdateCallback implements NetworkCallback {
@@ -518,6 +539,8 @@ public class ShippingEditFragment extends KindredFragment {
 			this.editTextZip_.setText(this.zip_);
 			this.editTextState_.setText(this.state_);
 			
+			if (this.country_ == null)
+				return;
 			int index = this.countries_.indexOf(this.country_);
 			if (index < 0 && !this.country_.equals("")) {
 				this.countries_.add(this.country_);

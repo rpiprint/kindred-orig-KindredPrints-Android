@@ -159,18 +159,24 @@ public class ImageManager {
 	    this.currOrigDownloads_ = this.currOrigDownloads_ - 1;
 	    if (this.waitingToDownloadQueue_.size() > 0) {
 	        this.currOrigDownloads_ = this.currOrigDownloads_ + 1 ;
-	        String ident = "";
 			try {
 		        this.processingSema_.acquire();
-		        ident = this.waitingToDownloadQueue_.remove(this.waitingToDownloadQueue_.size()-1);
+		        final String ident = this.waitingToDownloadQueue_.remove(this.waitingToDownloadQueue_.size()-1);
 		        Log.i("KindredSDK", "Starting download on " + ident);
 		        this.downloadingQueue_.add(ident);
 		        this.processingSema_.release();
+		        
+		        Handler mainHandler = new Handler(context_.getMainLooper());
+				mainHandler.post(new Runnable() {
+					@Override
+					public void run() {
+				        AsyncPictureGetter picGetter = new AsyncPictureGetter();
+				        picGetter.execute(ident);
+					}
+				});
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-	        AsyncPictureGetter picGetter = new AsyncPictureGetter();
-	        picGetter.execute(ident);
 	    }
 	}
 

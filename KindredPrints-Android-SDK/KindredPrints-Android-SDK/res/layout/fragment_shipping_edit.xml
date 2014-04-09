@@ -119,6 +119,7 @@
         android:hint="@string/shipping_hint_zip"
         android:textSize="@dimen/shipping_edit_text_size"
         android:gravity="center_vertical"
+        android:imeOptions="actionDone"
 	    />
     <View
         android:id="@+id/viewDiv3"

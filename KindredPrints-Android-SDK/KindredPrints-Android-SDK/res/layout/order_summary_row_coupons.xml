@@ -14,6 +14,7 @@
        	android:layout_toLeftOf="@+id/cmdEditApplyCoupon"
         android:textSize="@dimen/order_summary_text_size" 
         android:hint="@string/order_summary_no_coupon"
+        android:imeOptions="actionDone"
     />
     <Button 
         android:id="@+id/cmdEditApplyCoupon"

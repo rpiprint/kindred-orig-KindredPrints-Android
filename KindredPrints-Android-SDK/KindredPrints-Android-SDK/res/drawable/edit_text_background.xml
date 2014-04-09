@@ -6,6 +6,8 @@
                 android:width="@dimen/login_page_edit_text_stroke"
                 android:color="@color/color_white" />
             <corners android:radius="@dimen/login_page_edit_text_corners" />
+            <solid 
+                android:color="@color/color_transparent" />
         </shape>
     </item>
 </layer-list>

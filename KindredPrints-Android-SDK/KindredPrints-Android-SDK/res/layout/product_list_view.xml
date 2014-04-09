@@ -7,6 +7,7 @@
         android:id="@+id/imgContainer"
         android:layout_height="@dimen/cart_page_product_height"
 	    android:layout_width="@dimen/cart_page_thumb_width"
+	    android:layout_marginLeft="@dimen/cart_page_left_padding"
 	    android:layout_centerVertical="true">
         <ImageView
 	        android:id="@+id/imgProdPrev"
@@ -23,6 +24,7 @@
         android:layout_height="@dimen/cart_page_product_warning_side"
         android:layout_width="@dimen/cart_page_product_warning_side"
         android:padding="@dimen/cart_page_product_warning_padding"
+	    android:layout_marginLeft="@dimen/cart_page_left_padding"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentBottom="true"
 		android:src="@drawable/ico_warning_yellow"
@@ -33,6 +35,7 @@
         android:id="@+id/viewQuantity"
         android:layout_height="@dimen/cart_page_product_item_width"
         android:layout_width="@dimen/cart_page_product_quant_width"
+	    android:layout_marginRight="@dimen/cart_page_right_padding"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="@dimen/cart_page_product_row_padding"
@@ -48,6 +51,7 @@
 	        android:id="@+id/txtTitle"
 	        android:layout_height="wrap_content"
 	        android:layout_width="wrap_content"
+	        android:layout_marginLeft="@dimen/cart_page_product_row_padding"
 	        android:textSize="@dimen/cart_page_row_title_text_size" />
 	    
 	    <TextView

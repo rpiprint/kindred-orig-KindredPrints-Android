@@ -6,6 +6,8 @@
                 android:width="@dimen/rounded_button_stroke"
                 android:color="@color/color_white" />
             <corners android:radius="@dimen/rounded_button_corners" />
+            <solid 
+                android:color="@color/color_transparent"/>
         </shape>
     </item>
 </layer-list>

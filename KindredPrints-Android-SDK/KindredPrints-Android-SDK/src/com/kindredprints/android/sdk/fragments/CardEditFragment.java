@@ -10,6 +10,7 @@ import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.data.LineItem;
 import com.kindredprints.android.sdk.data.UserObject;
+import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.OrderProcessingHelper;
 import com.kindredprints.android.sdk.helpers.OrderProcessingHelper.OrderProcessingUpdateListener;
@@ -29,6 +30,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +87,15 @@ public class CardEditFragment extends KindredFragment {
 		
 		this.fragmentHelper_ = fragmentHelper;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
-		this.fragmentHelper_.setBackButtonDreamCatcher_(null);
+		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonPressInterrupter() {
+			@Override
+			public boolean interruptBackButton() {
+				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+					    Activity.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				return false;
+			}
+		});
 		this.fragmentHelper_.configNavBar();
 	}
 	
@@ -138,25 +148,56 @@ public class CardEditFragment extends KindredFragment {
 		this.editTextCard_ = (EditText) view.findViewById(R.id.editTextCard);
 		this.editTextCard_.setBackgroundColor(Color.TRANSPARENT);
 		this.editTextCard_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.editTextCard_.setOnEditorActionListener(new CardActionListener());
 		this.editTextCard_.addTextChangedListener(new CardInputListener());
+		this.editTextCard_.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+				if( keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN ) {
+					editTextMonthYear_.requestFocus();
+				}
+				return false;
+			}			
+		});
 		
 		this.editTextName_ = (EditText) view.findViewById(R.id.editTextName);
 		this.editTextName_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		this.editTextName_.setBackgroundColor(Color.TRANSPARENT);
-		this.editTextName_.setOnEditorActionListener(new CardActionListener());
-		
+		this.editTextName_.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+				if( keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN ) {
+					editTextCard_.requestFocus();
+				}
+				return false;
+			}			
+		});
 		this.editTextMonthYear_ = (EditText) view.findViewById(R.id.editTextMonthYear);
 		this.editTextMonthYear_.setBackgroundColor(Color.TRANSPARENT);
 		this.editTextMonthYear_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.editTextMonthYear_.setOnEditorActionListener(new CardActionListener());
 		this.editTextMonthYear_.addTextChangedListener(new DateInputListener());
+		this.editTextMonthYear_.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+				if( keyCode == KeyEvent.KEYCODE_ENTER ) {
+					editTextCode_.requestFocus();
+				}
+				return false;
+			}			
+		});
 		
 		this.editTextCode_ = (EditText) view.findViewById(R.id.editTextCode);
 		this.editTextCode_.setBackgroundColor(Color.TRANSPARENT);
 		this.editTextCode_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.editTextCode_.setOnEditorActionListener(new CardActionListener());
 		this.editTextCode_.addTextChangedListener(new CodeInputListener());
+		this.editTextCode_.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+				if(keyCode == KeyEvent.FLAG_EDITOR_ACTION) {
+					fragmentHelper_.triggerNextButton();
+				}
+				return false;
+			}			
+		});
 		
 		this.viewDiv0_ = (View) view.findViewById(R.id.viewDiv0);
 		this.viewDiv0_.setBackgroundColor(this.interfacePrefHelper_.getTextColor());
@@ -193,7 +234,7 @@ public class CardEditFragment extends KindredFragment {
 	
 	private void getStripeToken() {
 		Card card = null;
-		if (DevPrefHelper.IS_TEST) {
+		if (!this.devPrefHelper_.getIsStripeLive()) {
 			card = new Card(
 					"4242424242424242",
 					11,
@@ -228,6 +269,8 @@ public class CardEditFragment extends KindredFragment {
 				new TokenCallback() {
 					@Override
 					public void onError(Exception error) {
+						fragmentHelper_.hideProgressBar();
+						Log.i("KindredSDK", "Stripe error: " + error.getLocalizedMessage());
 						txtError_.setVisibility(View.VISIBLE);
 						txtError_.setText(activity_.getResources().getString(R.string.card_edit_err_card_declined));
 					}
@@ -393,22 +436,7 @@ public class CardEditFragment extends KindredFragment {
 	    return year;
 	}
 	
-	public class CardActionListener implements EditText.OnEditorActionListener {
-		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			if (editTextCard_.equals(v)) {
-				
-			} else if (editTextName_.equals(v)) {
-				
-			} else if (editTextMonthYear_.equals(v)) {
-				
-			} else if (editTextCode_.equals(v)) {
-				
-			}
-			return false;
-		}
-	}
-	
+
 	public class CardInputListener implements TextWatcher {
 		private boolean isDelete;
 		@Override
@@ -481,9 +509,22 @@ public class CardEditFragment extends KindredFragment {
 	public class CodeInputListener implements TextWatcher {
 		@Override
 		public void afterTextChanged(Editable s) {
-			if (s.length() > 4) {
-		           s = s.delete(s.length()-1, s.length());
-		        }
+			int maxCode = 4;
+			if (editTextCard_.getText().toString().length() > 2) {
+				char firstChar = editTextCard_.getText().toString().charAt(0);
+				char secondChar = editTextCard_.getText().toString().charAt(1);
+				int firstNum = Character.getNumericValue(firstChar);
+				int secondNum = Character.getNumericValue(secondChar);
+				
+				if (firstNum == 3 && (secondNum == 4 || secondNum == 7)) {
+					maxCode = 4;
+				} else {
+					maxCode = 3;
+				}
+			}
+			if (s.length() > maxCode) {
+	           s = s.delete(s.length()-1, s.length());
+	        }
 		}
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,

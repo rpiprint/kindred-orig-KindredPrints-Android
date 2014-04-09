@@ -98,6 +98,7 @@ public class KindredFragmentHelper {
 	}
 	
 	public void initRootFragment() {
+		this.backStack_.clear();
 		this.currFragHash_ = FRAG_CART;
 		KindredFragment f = fragForHash(FRAG_CART);
 		f.initFragment(this, this.activity_);

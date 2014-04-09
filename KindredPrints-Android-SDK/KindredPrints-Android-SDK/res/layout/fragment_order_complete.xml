@@ -58,6 +58,7 @@
 		android:layout_marginTop="@dimen/order_complete_vertical_margin"
         android:paddingLeft="@dimen/order_complete_side_margin"
         android:paddingRight="@dimen/order_complete_side_margin"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
         android:textSize="@dimen/order_complete_text_size" 
         android:text="@string/order_complete_title"

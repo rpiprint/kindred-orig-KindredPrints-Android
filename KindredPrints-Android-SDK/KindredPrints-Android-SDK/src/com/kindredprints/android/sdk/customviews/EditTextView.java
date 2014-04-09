@@ -36,7 +36,6 @@ public class EditTextView extends RelativeLayout {
 		this.resources_ = context.getResources();
 		
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
-		
 		this.imgIcon_ = (ImageView) v.findViewById(R.id.imgIcon);
 		this.editText_ = (EditText) v.findViewById(R.id.editTextInput);
 		this.editText_.setTextColor(this.interfacePrefHelper_.getTextColor());

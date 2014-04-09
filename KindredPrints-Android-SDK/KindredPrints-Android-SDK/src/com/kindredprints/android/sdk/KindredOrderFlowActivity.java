@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.Window;
+import android.view.WindowManager;
 
 public class KindredOrderFlowActivity extends FragmentActivity {
 	public static final int KP_RESULT_CANCELLED = 101;
@@ -34,6 +35,8 @@ public class KindredOrderFlowActivity extends FragmentActivity {
 		this.fHelper_ = KindredFragmentHelper.getInstance(this.fManager_, this.navBar_, this);
 		this.fHelper_.initRootFragment();
 		fHelper_.configNavBar();
+		
+		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 	}	
 	
 	@Override

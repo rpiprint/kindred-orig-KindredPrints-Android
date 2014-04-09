@@ -127,6 +127,7 @@
         android:hint="@string/card_edit_code_hint"
         android:textSize="@dimen/card_edit_text_size"
         android:gravity="left|center_vertical"
+        android:imeOptions="actionDone"
 	    />
    	
    	<View

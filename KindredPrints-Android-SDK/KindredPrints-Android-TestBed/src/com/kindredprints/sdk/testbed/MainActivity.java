@@ -131,7 +131,6 @@ public class MainActivity extends Activity {
     		Log.i("TestActivity", "Grabbed a gallery image");
     		Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
-    		//Log.i("TestActivity", "grabbed url " + selectedImage.);
 
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
@@ -139,8 +138,13 @@ public class MainActivity extends Activity {
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
+
             cursor.close();
-			orderFlow.addImageToCart(new KLOCPhoto(null, picturePath));
+            
+            if (picturePath.contains("http"))
+            	orderFlow.addImageToCart(new KURLPhoto(null, picturePath));
+            else
+            	orderFlow.addImageToCart(new KLOCPhoto(null, picturePath));
 			showToast("image added");
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();

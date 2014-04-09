@@ -16,7 +16,8 @@ public class InterfacePrefHelper extends PrefHelper {
 	private static final String KEY_ORDER_TOTAL_HIGHLIGHT = "kp_order_total_highlight";
 	private static final String KEY_ORDER_TOTAL_MEDLIGHT = "kp_order_total_medlight";
 	
-	private static final float PREVIEW_PERC = 0.80f;
+	private static final float PREVIEW_PERC_WIDTH = 0.80f;
+	private static final float PREVIEW_PERC_HEIGHT = 0.4f;
 	private static final float THUMB_PERC = 0.25f;
 	private static final String KEY_BORDER_COLOR = "kp_border_color";
 	private static final String KEY_BORDER_ENABLED = "kp_border_enabled";
@@ -32,7 +33,7 @@ public class InterfacePrefHelper extends PrefHelper {
 		return THUMB_PERC*this.prefHelper_.getScreenSize().getWidth();
 	}
 	public float getPreviewMaxSize() {
-		return PREVIEW_PERC*this.prefHelper_.getScreenSize().getWidth();
+		return Math.min(PREVIEW_PERC_WIDTH*this.prefHelper_.getScreenSize().getWidth(), PREVIEW_PERC_HEIGHT*this.prefHelper_.getScreenSize().getHeight());
 	}
 	
 	public float getBorderSize(float borderPerc) {

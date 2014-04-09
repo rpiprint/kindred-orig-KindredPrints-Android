@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/shipping_list_padding"
-        android:layout_toRightOf="@+id/chkBoxChecked" >
+        android:layout_toRightOf="@+id/chkBoxChecked"
+        android:layout_toLeftOf="@+id/cmdEdit" >
 	    <TextView
 	        android:id="@+id/txtTitle"
 	        android:layout_height="wrap_content"

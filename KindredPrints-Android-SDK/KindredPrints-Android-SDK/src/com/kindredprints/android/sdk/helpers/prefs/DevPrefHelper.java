@@ -19,9 +19,10 @@ public class DevPrefHelper extends PrefHelper {
 	private static final String SERVER_API_LIVE_URL = "https://api.kindredprints.com/";
 	private static final String SERVER_API_DEV_URL = "http://apidev.kindredprints.com/";
 	
-	private static final String STRIPE_LIVE_KEY = "pk_test_9pMXnrGjrTrJ0mBwflF7lCMK";
-	private static final String STRIPE_TEST_KEY = "pk_live_InAYJo4PSgFdffdHorYqNLl9";
+	private static final String STRIPE_TEST_KEY = "pk_test_9pMXnrGjrTrJ0mBwflF7lCMK";
+	private static final String STRIPE_LIVE_KEY = "pk_live_InAYJo4PSgFdffdHorYqNLl9";
 	
+	private static final String KEY_IS_TEST = "kp_is_test_for_stripe";
 	
 	private static final int PARTNER_DOWNLOAD_INTERVAL = 60*60*24;
 	private static final int DOWNLOAD_INTERVAL = 60*60*24*7;
@@ -62,11 +63,19 @@ public class DevPrefHelper extends PrefHelper {
 	}
 	
 	public String getStripeKey() {
-	    if (!IS_TEST) {
+	    if (!getIsStripeLive()) {
 	        return STRIPE_TEST_KEY;
 	    } else {
 	        return STRIPE_LIVE_KEY;
 	    }
+	}
+	
+	public boolean getIsStripeLive() {
+		return this.prefHelper_.getBool(KEY_IS_TEST);
+	}
+	
+	public void setIsStripeLive(boolean live) {
+		this.prefHelper_.setBool(KEY_IS_TEST, live);
 	}
 	
 	public String getPartnerName() {
@@ -98,6 +107,11 @@ public class DevPrefHelper extends PrefHelper {
 	}
 	
 	public void setAppKey(String key) {
+		if (key.contains("test")) {
+			setIsStripeLive(false);
+		} else {
+			setIsStripeLive(true);
+		}
 		String fixedUp = key + ":";
 		byte[] encodedArray = Base64.encode(fixedUp.getBytes(), Base64.NO_WRAP);
 		this.prefHelper_.setString(KEY_APP_KEY, new String(encodedArray));
