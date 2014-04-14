@@ -268,14 +268,22 @@ public class ImageUploadHelper {
 						if (obj instanceof PartnerImage) {
 							PartnerImage image = (PartnerImage) obj;
 							if (!image.isServerInit()) {
-								initImageOnServer(image);
+								if (!image.isTwosided()) {
+									initImageOnServer(image);
+								} else {
+									initImageOnFauxServer(image);
+								}
 							} else {
 								uploadImageFromMemory(image);
 							}
 						} else if (obj instanceof PrintableImage) {
 							PrintableImage image = (PrintableImage) obj;
 							if (image.isServerInit()) {
-								initOrUpdateLineItemObjectOnServer(image);
+								if (!image.getImage().isTwosided()) {
+									initOrUpdateLineItemObjectOnServer(image);
+								} else {
+									initCustomPrintableImageOnServer(image);
+								}
 							} else {
 								initPrintableImageOnServer(image);
 							}
@@ -286,6 +294,19 @@ public class ImageUploadHelper {
 				this.processingSema_.release();
 			}
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void initImageOnFauxServer(PartnerImage image) {
+		JSONObject postObj = new JSONObject();
+		try {
+			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_STATUS_CODE, 200);
+			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_IDENT, KindredRemoteInterface.REQ_TAG_CREATE_URL_IMAGE);
+			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_TAG, image.getId());
+			postObj.put("id", image.getId());
+			(new ImageSyncCallback()).finished(postObj);
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -325,6 +346,23 @@ public class ImageUploadHelper {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}			
+	}
+	
+	private void initCustomPrintableImageOnServer(PrintableImage image) {
+		JSONObject postObj = new JSONObject();
+		JSONObject postOpsObj = new JSONObject();
+		
+		try {
+			postOpsObj.put("type", image.getImage().getType());
+			postOpsObj.put("data", image.getImage().getPartnerData());
+			postObj.put("user_id", currUser_.getId());
+			postObj.put("operations", postOpsObj);
+			postObj.put("type", image.getPrintType().getType());
+			
+			this.kRemoteInt_.createPrintableImage(postObj, getPrintableTag(image));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	private void initPrintableImageOnServer(PrintableImage image) {

@@ -13,19 +13,31 @@ import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
 
 public class ImageEditor {
+	private static final String NO_FILTER = "kp_none";
 	private static final float SQUARE_TOLERANCE = 0.05f;
 	
 	public static ArrayList<PrintProduct> getAllowablePrintableSizesForImageSize(Size size, ArrayList<PrintProduct> allSizes) {
-	    ArrayList<PrintProduct> outputArray = new ArrayList<PrintProduct>();
+	   return getAllowablePrintableSizesForImageSize(size, allSizes, NO_FILTER);
+	}
+	
+	public static ArrayList<PrintProduct> getAllowablePrintableSizesForImageSize(Size size, ArrayList<PrintProduct> allSizes, String filter) {
+		ArrayList<PrintProduct> outputArray = new ArrayList<PrintProduct>();
 	    for (PrintProduct savedProd : allSizes) {
 	    	savedProd.setDpi(Math.min(size.getWidth()/savedProd.getTrimmed().getWidth(), size.getHeight()/savedProd.getTrimmed().getHeight()));
-	        if (isSquare(size) && isSquare(savedProd.getTrimmed())) {
+	        if (isSquare(size) && isSquare(savedProd.getTrimmed()) && matchesFilter(savedProd, filter)) {
 	        	outputArray.add(savedProd);
-	        } else if (!isSquare(size) && !isSquare(savedProd.getTrimmed())) {
+	        } else if (!isSquare(size) && !isSquare(savedProd.getTrimmed()) && matchesFilter(savedProd, filter)) {
 	        	outputArray.add(savedProd);
 	        }
 	    }
 	    return outputArray;
+	}
+	
+	private static boolean matchesFilter(PrintProduct product, String filter) {
+		if (!filter.equals(NO_FILTER)) {
+			return product.getId().contains(filter);
+		}
+		return true;
 	}
 	
 	public static boolean passMinDpiThreshold(Size imgSize, PrintProduct product) {

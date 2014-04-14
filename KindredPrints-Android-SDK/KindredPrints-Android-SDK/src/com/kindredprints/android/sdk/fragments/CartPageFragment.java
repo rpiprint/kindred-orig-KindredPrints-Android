@@ -7,6 +7,7 @@ import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.customviews.SideArrow;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.CartObject;
+import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,10 +36,13 @@ public class CartPageFragment extends KindredFragment {
 	private int currIndex_;
 	private CartPageUpdateListener callback_;
 	
+	private boolean frontSideUp_;
+	
 	private ImageView imgWarning_;
 	private SideArrow cmdLeft_;
 	private SideArrow cmdRight_;
 	private DeleteButtonView cmdDelete_;
+	private Button cmdFlip_;
 	private ImageView imgPreview_;
 	private TextView txtImageCount_;
 	private ListView lvProducts_;
@@ -79,6 +84,7 @@ public class CartPageFragment extends KindredFragment {
 		if (currIndex_ == this.cartManager_.countOfOrders()-1) {
 			this.cmdRight_.setVisibility(View.INVISIBLE);
 		}
+		this.cmdFlip_ = (Button) view.findViewById(R.id.cmdFlip);
 		this.imgWarning_ = (ImageView) view.findViewById(R.id.imgWarning);
 		this.cmdDelete_ = (DeleteButtonView) view.findViewById(R.id.cmdDelete);
 		this.imgPreview_ = (ImageView) view.findViewById(R.id.imgPreview);
@@ -86,6 +92,15 @@ public class CartPageFragment extends KindredFragment {
 		this.lvProducts_ = (ListView) view.findViewById(R.id.lvAvailableProducts);
 		this.lvProducts_.setBackgroundColor(Color.TRANSPARENT);
 		this.lvProducts_.setAdapter(this.productListAdapter_);
+		
+		this.frontSideUp_ = true;
+		this.cmdFlip_.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				frontSideUp_ = !frontSideUp_;
+				loadAppropriateImage();
+			}
+		});
 		
 		this.txtImageCount_.setTextColor(this.interfacePrefHelper_.getTextColor());
 				
@@ -139,10 +154,33 @@ public class CartPageFragment extends KindredFragment {
 		this.currObject_ = this.cartManager_.getOrderForIndex(this.currIndex_);
 		this.txtImageCount_.setText("Picture " + String.valueOf(currIndex_+1) + " of " + String.valueOf(this.cartManager_.countOfOrders()));
 		this.productListAdapter_.notifyDataSetChanged();
+		adjustDisplay();
+	}
+	
+	private void adjustDisplay() {
+		if (this.currObject_.getImage().isTwosided()) {
+			this.cmdFlip_.setVisibility(View.VISIBLE);
+		} else {
+			this.cmdFlip_.setVisibility(View.INVISIBLE);
+		}
 		if (this.productListAdapter_.needShowWarning()) {
 			this.imgWarning_.setVisibility(View.VISIBLE);
 		} else {
 			this.imgWarning_.setVisibility(View.INVISIBLE);
+		}
+	}
+	
+	private void loadAppropriateImage() {
+		PartnerImage image = this.currObject_.getImage();
+		if (!this.frontSideUp_ && image.isTwosided()) {
+			image = image.getBackSideImage();
+		}
+		
+		float imgWidth = this.getView().getWidth()-2*getActivity().getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
+		if (this.currObject_.getPrintProducts().size() > 0) {
+			this.imageManager_.setImageAsync(this.imgPreview_, image, this.currObject_.getPrintProducts().get(0), new Size(imgWidth, imgWidth));
+		} else {
+			this.imageManager_.setImageAsync(this.imgPreview_, image, null, new Size(imgWidth, imgWidth));
 		}
 	}
 	
@@ -153,12 +191,8 @@ public class CartPageFragment extends KindredFragment {
 		this.currObject_ = this.cartManager_.getOrderForIndex(this.currIndex_);
 		this.txtImageCount_.setText("Picture " + String.valueOf(currIndex_+1) + " of " + String.valueOf(this.cartManager_.countOfOrders()));
 		
-		float imgWidth = this.getView().getWidth()-2*getActivity().getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
-		if (this.currObject_.getPrintProducts().size() > 0) {
-			this.imageManager_.setImageAsync(this.imgPreview_, this.currObject_.getImage(), this.currObject_.getPrintProducts().get(0), new Size(imgWidth, imgWidth));
-		} else {
-			this.imageManager_.setImageAsync(this.imgPreview_, this.currObject_.getImage(), null, new Size(imgWidth, imgWidth));
-		}
+		loadAppropriateImage();
+		
 		this.productListAdapter_ = new ProductListAdapter(getActivity(), this.currObject_);
 		this.productListAdapter_.setCartPageUpdateListener(new CartPageUpdateListener() {
 			@Override
@@ -173,11 +207,7 @@ public class CartPageFragment extends KindredFragment {
 			public void userClickedGoNextPage() { }
 		});
 		this.lvProducts_.setAdapter(this.productListAdapter_);
-		if (this.productListAdapter_.needShowWarning()) {
-			this.imgWarning_.setVisibility(View.VISIBLE);
-		} else {
-			this.imgWarning_.setVisibility(View.INVISIBLE);
-		}
+		adjustDisplay();
 	}
 	
 	public void cleanUp() {

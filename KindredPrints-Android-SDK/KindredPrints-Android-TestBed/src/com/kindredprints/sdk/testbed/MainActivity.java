@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
 	private static int RESULT_GALLERY_LOAD_IMAGE = 1;
 	private static int RESULT_IMAGE_CAPTURE = 2;
 	
-	private final static String KINDRED_APP_KEY = "YOUR KEY HERE";
+	private final static String KINDRED_APP_KEY = "YOUR TEST KEY";
 	private KindredOrderFlow orderFlow;
 	
 	EditText editTxtUrl;

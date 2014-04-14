@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kindredprints.android.sdk.KCustomPhoto;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.helpers.Base64;
 
@@ -60,6 +61,14 @@ public class DevPrefHelper extends PrefHelper {
 		} else {
 			return SERVER_API_DEV_URL;
 		}
+	}
+	
+	public String getCustomPreviewImageUrl(KCustomPhoto image, boolean front) {
+		String prevUrl = getServerAPIUrl() + "v1/printableimages/preview?type=" + image.getCustomType() + "&data=" + image.getAssociatedData();
+		if (front)
+			return prevUrl + "&side=front";
+		else 
+			return prevUrl + "&side=back";
 	}
 	
 	public String getStripeKey() {

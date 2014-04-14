@@ -33,6 +33,15 @@
        	android:layout_marginRight="@dimen/cart_page_delete_padding_left"
 	    />
     
+	<Button
+	    android:id="@+id/cmdFlip"
+       	android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+       	android:layout_alignBottom="@+id/imgPreview"
+        android:layout_toRightOf="@+id/imgPreview"
+        android:layout_marginBottom="@dimen/cart_page_image_vertical_padding"
+	    />
+	
     <TextView
         android:id="@+id/txtCount"
        	android:layout_width="wrap_content"

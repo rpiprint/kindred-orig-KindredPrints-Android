@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import com.kindredprints.android.sdk.helpers.ImageUploadHelper;
+import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
@@ -93,14 +94,21 @@ public class CartManager {
 		try {
 			this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
-				if (cartObj.getImage().getId().equalsIgnoreCase(image.getId())) {
-					cartObj.getImage().setHeight(image.getHeight());
-					cartObj.getImage().setWidth(image.getWidth());
-					cartObj.getImage().setLocalCached(image.isLocalCached());
-					cartObj.getImage().setThumbLocalCached(image.isThumbLocalCached());
+				boolean update = false;
+				pImage = cartObj.getImage();
+				if (pImage.getId().equalsIgnoreCase(image.getId())) {
+					update = true;
+				} else if (pImage.isTwosided() && pImage.getBackSideImage().getId().equalsIgnoreCase(image.getId())) {
+					update = true;
+					pImage = pImage.getBackSideImage();
+				}
+				if (update) {
+					pImage.setHeight(image.getHeight());
+					pImage.setWidth(image.getWidth());
+					pImage.setLocalCached(image.isLocalCached());
+					pImage.setThumbLocalCached(image.isThumbLocalCached());
 					cartObj.setPrintProducts(fittedProducts);
 					cartObj.setPrintProductsInit(true);
-					pImage = cartObj.getImage();
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -136,10 +144,17 @@ public class CartManager {
 		try {
 			this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
-				if (cartObj.getImage().getId().equalsIgnoreCase(localId)) {
-					cartObj.getImage().setServerId(pid);
-					cartObj.getImage().setServerInit(true);
-					pImage = cartObj.getImage();
+				boolean update = false;
+				pImage = cartObj.getImage();
+				if (pImage.getId().equalsIgnoreCase(localId)) {
+					update = true;
+				} else if (pImage.isTwosided() && pImage.getBackSideImage().getId().equalsIgnoreCase(localId)) {
+					update = true;
+					pImage = pImage.getBackSideImage();
+				}
+				if (update) {
+					pImage.setServerId(pid);
+					pImage.setServerInit(true);
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -147,7 +162,15 @@ public class CartManager {
 			
 			this.selOrdersSema_.acquire();
 			for (PrintableImage sImage : this.selectedOrders) {
-				if (sImage.getImage().getId().equalsIgnoreCase(localId)) {
+				boolean update = false;
+				pImage = sImage.getImage();
+				if (pImage.getId().equalsIgnoreCase(localId)) {
+					update = true;
+				} else if (pImage.isTwosided() && pImage.getBackSideImage().getId().equalsIgnoreCase(localId)) {
+					update = true;
+					pImage = pImage.getBackSideImage();
+				}
+				if (update) {
 					sImage.getImage().setServerId(pid);
 					sImage.getImage().setServerInit(true);
 				}
@@ -173,9 +196,16 @@ public class CartManager {
 		try {
 			this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
+				boolean update = false;
+				pImage = cartObj.getImage();
 				if (cartObj.getImage().getId().equalsIgnoreCase(localId)) {
-					cartObj.getImage().setUploadComplete(true);
-					pImage = cartObj.getImage();
+					update = true;
+				} else if (pImage.isTwosided() && pImage.getBackSideImage().getId().equalsIgnoreCase(localId)) {
+					update = true;
+					pImage = pImage.getBackSideImage();
+				}
+				if (update) {
+					pImage.setUploadComplete(true);
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -183,8 +213,16 @@ public class CartManager {
 			
 			this.selOrdersSema_.acquire();
 			for (PrintableImage sImage : this.selectedOrders) {
-				if (sImage.getImage().getId().equalsIgnoreCase(localId)) {
-					sImage.getImage().setUploadComplete(true);
+				boolean update = false;
+				pImage = sImage.getImage();
+				if (pImage.getId().equalsIgnoreCase(localId)) {
+					update = true;
+				} else if (pImage.isTwosided() && pImage.getBackSideImage().getId().equalsIgnoreCase(localId)) {
+					update = true;
+					pImage = pImage.getBackSideImage();
+				}
+				if (update) {
+					pImage.setUploadComplete(true);
 				}
 			}
 			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
@@ -203,14 +241,15 @@ public class CartManager {
 			}
 		});
 	}
+	
 	public void selectedPrintableImageWasServerInit(String localId, String pid) {
 		try {
 			this.selOrdersSema_.acquire();
 			for (int i = 0; i < this.selectedOrders.size(); i++) {
 		        PrintableImage pImage = this.selectedOrders.get(i);
 		        if ((pImage.getImage().getId() + "-" + pImage.getPrintType().getId()).equalsIgnoreCase(localId)) {
-		        	this.selectedOrders.get(i).setServerId(pid);
-		        	this.selectedOrders.get(i).setServerInit(true);
+		        	pImage.setServerId(pid);
+		        	pImage.setServerInit(true);
 		        }
 		    }
 			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
@@ -244,6 +283,48 @@ public class CartManager {
 		return this.selectedOrders.size();
 	}
 
+	public void deleteOrderImageForId(String localid) {
+		try {
+			this.ordersSema_.acquire();
+			this.selOrdersSema_.acquire();
+			for (int i = 0; i < this.orders.size(); i++) {
+				CartObject cartObj = this.orders.get(i);
+				
+				if (cartObj.getImage().getId().equals(localid)) {
+					for (int j=0; j<this.selectedOrders.size(); j++) {
+						PrintableImage image = this.selectedOrders.get(j);
+						if (image.getImage().getId().equalsIgnoreCase(cartObj.getImage().getId())) {
+							this.selectedOrders.remove(j);
+							j = j - 1;
+						}
+					}
+					this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
+					
+					this.orders.remove(i);
+					this.userPrefHelper_.setCartOrders(this.orders);
+					
+					ImageManager.getInstance(context_).deleteAllImagesFromCache(cartObj);
+					break;
+				}
+			}
+			this.ordersSema_.release();
+			this.selOrdersSema_.release();
+			
+			Handler mainHandler = new Handler(context_.getMainLooper());
+			mainHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (callback_ != null) {
+						callback_.orderCountHasBeenUpdated();
+						callback_.ordersHaveAllBeenUpdated();
+					}
+				}
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void deleteOrderImageAtIndex(int index) {
 		try {
 			this.ordersSema_.acquire();

@@ -258,7 +258,7 @@ public class FileCache {
 					e.printStackTrace();
 				} 
 			    status = true;
-			}
+			} 
 		}
 		return status;
 	}
@@ -370,6 +370,7 @@ public class FileCache {
 			urlIn = new URL(sourceUrl);
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
+			success = false;
 			return success;
 		}
 		

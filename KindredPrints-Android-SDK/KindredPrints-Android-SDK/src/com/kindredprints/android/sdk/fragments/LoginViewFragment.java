@@ -176,6 +176,8 @@ public class LoginViewFragment extends KindredFragment {
 				postObj.put("os", "android");
 				postObj.put("email", savedEmail_);
 				postObj.put("password", String.valueOf(Calendar.getInstance().getTimeInMillis()/1000));
+				postObj.put("sdk", true);
+				postObj.put("send_welcome", true);
 				kindredRemoteInterface_.createUser(postObj);
 			}
 		} catch (JSONException e) {
@@ -190,6 +192,8 @@ public class LoginViewFragment extends KindredFragment {
 				savedEmail_ = editTextEmail_.getText();
 				postObj.put("email", savedEmail_);
 				postObj.put("password", editTextPassword_.getText());
+				postObj.put("sdk", true);
+				postObj.put("send_welcome", true);
 				kindredRemoteInterface_.loginUser(postObj);
 			}
 		} catch (JSONException e) {

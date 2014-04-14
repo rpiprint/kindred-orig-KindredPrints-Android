@@ -270,6 +270,13 @@ public class CartViewPagerFragment extends KindredFragment {
 		}
 
 		@Override
+		public void orderCountHasBeenUpdated() {
+			if (cartDataAdapter_ != null) {
+				cartDataAdapter_.notifyDataSetChanged();
+			}
+		}
+		
+		@Override
 		public void orderHasBeenUpdatedWithSize(PartnerImage obj) {
 			if (cartDataAdapter_ != null) {
 				for (int i = 0; i < cartManager_.countOfOrders(); i++) {

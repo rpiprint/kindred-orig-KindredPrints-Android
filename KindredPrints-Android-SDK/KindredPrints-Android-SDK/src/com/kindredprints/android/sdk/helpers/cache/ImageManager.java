@@ -138,21 +138,37 @@ public class ImageManager {
 		String origId = getOrigName(cartObj.getImage().getId());
 		String prevId = getPreviewName(cartObj.getImage().getId());
 		
-		this.imCache_.removeImage(origId);
-		this.imCache_.removeImage(prevId);
-		this.fCache_.deleteImageForKey(origId);
-		this.fCache_.deleteImageForKey(prevId);
+		deleteFromCache(origId);
+		deleteFromCache(prevId);
 		
+		if (cartObj.getImage().isTwosided()) {
+			origId = getOrigName(cartObj.getImage().getBackSideImage().getId());
+			prevId = getPreviewName(cartObj.getImage().getBackSideImage().getId());
+			
+			deleteFromCache(origId);
+			deleteFromCache(prevId);
+		}
 		
 		for (PrintProduct product : cartObj.getPrintProducts()) {
 			String thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getId());
 			String printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getId());
 			
-			this.imCache_.removeImage(thumbId);
-			this.imCache_.removeImage(printPrevId);
-			this.fCache_.deleteImageForKey(thumbId);
-			this.fCache_.deleteImageForKey(printPrevId);
+			deleteFromCache(thumbId);
+			deleteFromCache(printPrevId);
+			
+			if (cartObj.getImage().isTwosided()) {
+				thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getBackSideImage().getId());
+				printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getBackSideImage().getId());
+				
+				deleteFromCache(thumbId);
+				deleteFromCache(printPrevId);
+			}
 		}
+	}
+	
+	private void deleteFromCache(String id) {
+		this.imCache_.removeImage(id);
+		this.fCache_.deleteImageForKey(id);
 	}
 	
 	private void startNextOrigDownload() {
@@ -267,7 +283,6 @@ public class ImageManager {
 		}
 		
 		String prevId = getPreviewName(image.getId());
-		Log.i("KindredSDK", "cutting image to " + size.getPreviewSize().getWidth() + ", " + size.getPreviewSize().getHeight());
 
 		Bitmap preview = this.fCache_.getImageForKey(origId, size.getPreviewSize());
 		this.fCache_.addImage(preview, prevId);
@@ -368,9 +383,7 @@ public class ImageManager {
 		} else {
 			uid = getPreviewName(image.getId());
 		}
-		
-		Log.i("KindredSDK", "trying to fit image to " + displaySize.getWidth() + ", " + displaySize.getHeight());
-		
+				
 		final String fUid = uid;
 		if (this.imCache_.hasImage(uid)) {
 			Bitmap bm = this.imCache_.getImageForKey(uid, view);
@@ -410,21 +423,25 @@ public class ImageManager {
 	}
 	
 	private class AsyncPictureGetter extends AsyncTask<String, Void, String> {
+		private boolean success;
 		@Override
 		protected String doInBackground(String... params) {
 			String ident = params[0];
 			
+			this.success = false;
 			PartnerImage image = imageDetails_.get(ident);
 			if (image.getType().equalsIgnoreCase(PartnerImage.LOCAL_IMAGE_URL)) {
-				fCache_.addImageFromFile(image.getUrl(), ident);
-			} else if (image.getType().equalsIgnoreCase(PartnerImage.REMOTE_IMAGE_URL)) {
+				this.success = fCache_.addImageFromFile(image.getUrl(), ident);
+			} else {
+				String url = "";
 				if (!image.isThumbLocalCached() && !image.getPrevUrl().equals(image.getUrl())) {
-					fCache_.addImageFromUrl(image.getPrevUrl(), ident);
+					url = image.getPrevUrl();
 				} else {
 					image.setThumbLocalCached(true);
-					fCache_.addImageFromUrl(image.getUrl(), ident);
+					url = image.getUrl();
 				}
-				
+				this.success = fCache_.addImageFromUrl(url, ident);
+					
 			}
 			
 			return ident;
@@ -432,17 +449,28 @@ public class ImageManager {
 		
 		@Override
 		protected void onPostExecute(final String ident) {
-			if (fCache_.hasImageForKey(ident)) {
+			if (fCache_.hasImageForKey(ident) && success) {
 				// succeeded
 				new Thread(new Runnable() {
 					@Override
-					public void run() {
+					public void run() {	
 						processImageInStorage(imageDetails_.get(ident), null);
 						imageDetails_.remove(ident);
 					}
 				}).start();
-				startNextOrigDownload();
-			} 
+			} else {
+				cartManager_.deleteOrderImageForId(imageDetails_.get(ident).getId());
+				try {
+					processingSema_.acquire();
+					downloadingQueue_.remove(ident);
+					processingSema_.release();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				imageDetails_.remove(ident);
+			}
+			startNextOrigDownload();
+			
 		}
 	}
 }

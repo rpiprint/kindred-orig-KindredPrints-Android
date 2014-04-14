@@ -7,6 +7,8 @@ public class KPhoto implements Parcelable {
 	protected static final String TYPE_URL = "kphoto_url";
 	protected static final String TYPE_LOCAL_FILE = "kphoto_file";
 	protected static final String TYPE_LOCAL_MEM = "kphoto_mem";
+	protected static final String TYPE_CUSTOM = "kphoto_custom";
+	
 	protected String id;
 	protected String type;
 	
