@@ -165,24 +165,25 @@ public class KindredOrderFlow {
 		PartnerImage pImage = new PartnerImage(photo);
 		CartObject cartObj = new CartObject();		
 		cartObj.setImage(pImage);
-		this.cartManager_.addOrderImage(cartObj);
-		if (photo instanceof KMEMPhoto) {
-			this.imManager_.cacheOrigImageFromMemory(pImage, ((KMEMPhoto)photo).getBm());
-		} else if (photo instanceof KLOCPhoto) {
-			this.imManager_.cacheOrigImageFromFile(pImage, ((KLOCPhoto)photo).getFilename());
-		} else if (photo instanceof KURLPhoto){
-			this.imManager_.startPrefetchingOrigImageToCache(pImage);
-		} else {
-			String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
-			String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
-			pImage.setPrevUrl(frontPreviewUrl);
-			pImage.setUrl(frontPreviewUrl);
-			PartnerImage backsideImage = new PartnerImage(photo);
-			backsideImage.setPrevUrl(backPreviewUrl);
-			backsideImage.setUrl(backPreviewUrl);
-			pImage.setBackSideImage(backsideImage);
-			this.imManager_.startPrefetchingOrigImageToCache(pImage);
-			this.imManager_.startPrefetchingOrigImageToCache(pImage.getBackSideImage());
+		if (this.cartManager_.addOrderImage(cartObj)) {
+			if (photo instanceof KMEMPhoto) {
+				this.imManager_.cacheOrigImageFromMemory(pImage, ((KMEMPhoto)photo).getBm());
+			} else if (photo instanceof KLOCPhoto) {
+				this.imManager_.cacheOrigImageFromFile(pImage, ((KLOCPhoto)photo).getFilename());
+			} else if (photo instanceof KURLPhoto){
+				this.imManager_.startPrefetchingOrigImageToCache(pImage);
+			} else {
+				String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
+				String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
+				pImage.setPrevUrl(frontPreviewUrl);
+				pImage.setUrl(frontPreviewUrl);
+				PartnerImage backsideImage = new PartnerImage(photo);
+				backsideImage.setPrevUrl(backPreviewUrl);
+				backsideImage.setUrl(backPreviewUrl);
+				pImage.setBackSideImage(backsideImage);
+				this.imManager_.startPrefetchingOrigImageToCache(pImage);
+				this.imManager_.startPrefetchingOrigImageToCache(pImage.getBackSideImage());
+			}
 		}
 	}
 	

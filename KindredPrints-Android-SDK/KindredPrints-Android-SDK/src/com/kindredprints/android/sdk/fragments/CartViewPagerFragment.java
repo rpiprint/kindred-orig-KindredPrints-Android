@@ -71,7 +71,7 @@ public class CartViewPagerFragment extends KindredFragment {
 		this.txtEmptyCart_ = (TextView) view.findViewById(R.id.txtEmptyCart);
 		this.txtEmptyCart_.setTextColor(interfacePrefHelper.getTextColor());
 		this.cartFlipper_ = (ViewPager) view.findViewById(R.id.viewPager);
-				
+
 		return view;
 	}
 	

@@ -8,17 +8,15 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
+import android.util.Log;
 
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
 
 public class ImageEditor {
-	private static final String NO_FILTER = "kp_none";
+	public static final String NO_FILTER = "kp_none";
+	public static final String FILTER_DOUBLE = "doublesided";
 	private static final float SQUARE_TOLERANCE = 0.05f;
-	
-	public static ArrayList<PrintProduct> getAllowablePrintableSizesForImageSize(Size size, ArrayList<PrintProduct> allSizes) {
-	   return getAllowablePrintableSizesForImageSize(size, allSizes, NO_FILTER);
-	}
 	
 	public static ArrayList<PrintProduct> getAllowablePrintableSizesForImageSize(Size size, ArrayList<PrintProduct> allSizes, String filter) {
 		ArrayList<PrintProduct> outputArray = new ArrayList<PrintProduct>();
@@ -34,10 +32,16 @@ public class ImageEditor {
 	}
 	
 	private static boolean matchesFilter(PrintProduct product, String filter) {
+		Log.i("KindredSDK", "filter = " + filter + " title = " + product.getType());
 		if (!filter.equals(NO_FILTER)) {
-			return product.getId().contains(filter);
+			return product.getType().contains(filter);
+		} else {
+			if (product.getType().contains(FILTER_DOUBLE)) {
+				return false;
+		 	} else {
+				return true;
+			}
 		}
-		return true;
 	}
 	
 	public static boolean passMinDpiThreshold(Size imgSize, PrintProduct product) {

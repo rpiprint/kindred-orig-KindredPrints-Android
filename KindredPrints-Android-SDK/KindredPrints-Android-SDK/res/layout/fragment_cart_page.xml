@@ -35,11 +35,13 @@
     
 	<Button
 	    android:id="@+id/cmdFlip"
-       	android:layout_width="wrap_content"
-       	android:layout_height="wrap_content"
-       	android:layout_alignBottom="@+id/imgPreview"
-        android:layout_toRightOf="@+id/imgPreview"
-        android:layout_marginBottom="@dimen/cart_page_image_vertical_padding"
+       	android:layout_width="@dimen/cart_page_flip_size"
+       	android:layout_height="@dimen/cart_page_flip_size"
+       	android:layout_alignTop="@+id/imgPreview"
+       	android:layout_marginRight="@dimen/cart_page_image_vertical_padding"
+       	android:layout_marginTop="@dimen/cart_page_image_vertical_padding"
+        android:layout_toLeftOf="@+id/imgPreview"
+        android:background="@drawable/ico_flip_white"
 	    />
 	
     <TextView

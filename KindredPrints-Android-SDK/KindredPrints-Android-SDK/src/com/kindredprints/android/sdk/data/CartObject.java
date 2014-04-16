@@ -34,9 +34,9 @@ public class CartObject {
 		ArrayList<PrintProduct> reducedList = new ArrayList<PrintProduct>();
 		ArrayList<PrintProduct> finalList = new ArrayList<PrintProduct>();
 		if (this.getImage().isTwosided()) {
-			reducedList.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(new Size(this.image.getWidth(), this.image.getHeight()), allSizes, "doublesided"));
+			reducedList.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(new Size(this.image.getWidth(), this.image.getHeight()), allSizes, ImageEditor.FILTER_DOUBLE));
 		} else {
-			reducedList.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(new Size(this.image.getWidth(), this.image.getHeight()), allSizes));
+			reducedList.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(new Size(this.image.getWidth(), this.image.getHeight()), allSizes, ImageEditor.NO_FILTER));
 		}
 		
 		for (PrintProduct product : reducedList) {

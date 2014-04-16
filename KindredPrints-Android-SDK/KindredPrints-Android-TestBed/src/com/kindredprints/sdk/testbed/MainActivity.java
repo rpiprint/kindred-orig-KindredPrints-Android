@@ -1,6 +1,7 @@
 package com.kindredprints.sdk.testbed;
 
 import com.kindredprints.sdk.testbed.R;
+import com.kindredprints.android.sdk.KCustomPhoto;
 import com.kindredprints.android.sdk.KLOCPhoto;
 import com.kindredprints.android.sdk.KindredOrderFlowActivity;
 import com.kindredprints.android.sdk.KURLPhoto;
@@ -24,12 +25,15 @@ public class MainActivity extends Activity {
 	private static int RESULT_GALLERY_LOAD_IMAGE = 1;
 	private static int RESULT_IMAGE_CAPTURE = 2;
 	
-	private final static String KINDRED_APP_KEY = "YOUR TEST KEY";
+	private final static String KINDRED_APP_KEY = "test_SDHdPzfxotJ8xAQ674ABbXap";
 	private KindredOrderFlow orderFlow;
 	
 	EditText editTxtUrl;
 	Button cmdAddUrl;
 	Button cmdAddThree;
+	
+	Button cmdAddCustom;
+	
 	
 	Button cmdTakePhoto;
 	Button cmdPickFromGallery;
@@ -48,6 +52,15 @@ public class MainActivity extends Activity {
         orderFlow.setImageBorderColor(Color.WHITE);
         orderFlow.setImageBorderDisabled(false);
 		orderFlow.setAppKey(KINDRED_APP_KEY);
+		
+		this.cmdAddCustom = (Button) findViewById(R.id.cmdAddSpecial);
+		this.cmdAddCustom.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				orderFlow.addImageToCart(new KCustomPhoto("0", "allthecooks", "http://www.allthecooks.com/amies-achara.html"));
+				showToast("image added");
+			}
+		});
 
         this.cmdShowCart = (Button) findViewById(R.id.cmdShowCart);
         this.cmdShowCart.setOnClickListener(new OnClickListener() {

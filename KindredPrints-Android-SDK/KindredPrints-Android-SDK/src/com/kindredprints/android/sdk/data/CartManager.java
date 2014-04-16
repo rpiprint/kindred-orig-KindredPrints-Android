@@ -10,6 +10,7 @@ import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 public class CartManager {
 	private ArrayList<CartObject> orders;
@@ -349,12 +350,19 @@ public class CartManager {
 			e.printStackTrace();
 		}
 	}
-	public void addOrderImage(CartObject order) {
+	public boolean addOrderImage(CartObject order) {
 		try {
 			this.ordersSema_.acquire();
 			for (CartObject prevOrder : this.orders) {
-				if (prevOrder.getImage().getId().equalsIgnoreCase(order.getImage().getId()))
-					return;
+				if (prevOrder.getImage().getId().equalsIgnoreCase(order.getImage().getId())) {
+					Log.i("KindredSDK", "Warning: duplicate id detected - no image added");
+					this.ordersSema_.release();
+					return false;
+				} else if (prevOrder.getImage().getPartnerId().equalsIgnoreCase(order.getImage().getPartnerId())) {
+					Log.i("KindredSDK", "Warning: duplicate id detected - no image added");
+					this.ordersSema_.release();
+					return false;
+				}
 			}
 			this.orders.add(order);
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -362,6 +370,7 @@ public class CartManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	public CartObject getOrderForIndex(int index) {

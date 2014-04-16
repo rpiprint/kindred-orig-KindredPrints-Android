@@ -33,6 +33,7 @@
     <dimen name="cart_page_text_padding">2dp</dimen>
     <dimen name="cart_page_image_side_padding">40dp</dimen>
     <dimen name="cart_page_delete_size">35dp</dimen>
+    <dimen name="cart_page_flip_size">30dp</dimen>
     <dimen name="cart_page_delete_stroke">1dp</dimen>
     <dimen name="cart_page_text_size">12sp</dimen>
     

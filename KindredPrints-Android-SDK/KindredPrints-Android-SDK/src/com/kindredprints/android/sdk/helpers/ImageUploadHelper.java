@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.PartnerImage;
@@ -279,13 +280,13 @@ public class ImageUploadHelper {
 						} else if (obj instanceof PrintableImage) {
 							PrintableImage image = (PrintableImage) obj;
 							if (image.isServerInit()) {
+								initOrUpdateLineItemObjectOnServer(image);
+							} else {
 								if (!image.getImage().isTwosided()) {
-									initOrUpdateLineItemObjectOnServer(image);
+									initPrintableImageOnServer(image);
 								} else {
 									initCustomPrintableImageOnServer(image);
 								}
-							} else {
-								initPrintableImageOnServer(image);
 							}
 						}
 					}
@@ -299,16 +300,13 @@ public class ImageUploadHelper {
 	}
 	
 	private void initImageOnFauxServer(PartnerImage image) {
-		JSONObject postObj = new JSONObject();
-		try {
-			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_STATUS_CODE, 200);
-			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_IDENT, KindredRemoteInterface.REQ_TAG_CREATE_URL_IMAGE);
-			postObj.put(KindredRemoteInterface.KEY_SERVER_CALL_TAG, image.getId());
-			postObj.put("id", image.getId());
-			(new ImageSyncCallback()).finished(postObj);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		addPrintableImageToUploadQueueIfExists(image.getId(), image.getId());
+		cartManager_.imageWasServerInit(image.getId(), image.getId());
+		cartManager_.imageFinishedUploading(image.getId());
+		finishedPile_.add(image.getId());
+		processingBin_.remove(image.getId());
+		removeStringFromProcessing(image.getId());
+		processNextImage();
 	}
 	
 	private void initImageOnServer(PartnerImage image) {
@@ -351,14 +349,16 @@ public class ImageUploadHelper {
 	private void initCustomPrintableImageOnServer(PrintableImage image) {
 		JSONObject postObj = new JSONObject();
 		JSONObject postOpsObj = new JSONObject();
-		
+		JSONObject postCustomImgObj = new JSONObject();
+
 		try {
-			postOpsObj.put("type", image.getImage().getType());
-			postOpsObj.put("data", image.getImage().getPartnerData());
+			postCustomImgObj.put("type", image.getImage().getType());
+			postCustomImgObj.put("data", image.getImage().getPartnerData());
+			postOpsObj.put("custom", postCustomImgObj);
 			postObj.put("user_id", currUser_.getId());
 			postObj.put("operations", postOpsObj);
-			postObj.put("type", image.getPrintType().getType());
-			
+			postObj.put("type", "custom");
+			Log.i("KindredSDK", "creating custom pi = " + postObj.toString());
 			this.kRemoteInt_.createPrintableImage(postObj, getPrintableTag(image));
 		} catch (JSONException e) {
 			e.printStackTrace();

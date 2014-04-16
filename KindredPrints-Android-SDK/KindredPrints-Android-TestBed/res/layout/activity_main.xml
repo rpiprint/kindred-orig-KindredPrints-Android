@@ -73,6 +73,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Show Cart" />
+    
 
     <TextView
         android:id="@+id/TextView01"
@@ -134,4 +135,13 @@
         android:text="Reg"
         android:textSize="@dimen/subtitle_text_size" />
 
+    
+    <Button
+        android:id="@+id/cmdAddSpecial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cmdShowCart"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Add Custom" />
 </RelativeLayout>

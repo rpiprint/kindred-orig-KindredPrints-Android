@@ -58,17 +58,20 @@ public class PartnerImage {
 		this.setPrevUrl(photo.getPrevUrl());
 		this.setUrl(photo.getOrigUrl());
 		this.setType(REMOTE_IMAGE_URL);
+		this.setTwosided(false);
 	}
 	public void init(KMEMPhoto photo) {
 		this.setPartnerId(photo.getId());
 		this.setPartnerData(photo.getId());
 		this.setType(LOCAL_IMAGE_URL);
+		this.setTwosided(false);
 	}
 	public void init(KLOCPhoto photo) {
 		this.setPartnerId(photo.getId());
 		this.setPartnerData(photo.getId());
 		this.setUrl(photo.getFilename());
 		this.setType(LOCAL_IMAGE_URL);
+		this.setTwosided(false);
 	}
 	public void init(KCustomPhoto photo) {
 		this.setPartnerId(photo.getId());
@@ -93,6 +96,7 @@ public class PartnerImage {
 		this.thumbLocalCached = false;
 		this.serverInit = false;
 		this.uploadComplete = false;
+		this.twosided = false;
 	}
 	
 	public PartnerImage copy() {
@@ -112,6 +116,7 @@ public class PartnerImage {
 		partImage.setServerInit(this.isServerInit());
 		partImage.setUploadComplete(this.isUploadComplete());
 		partImage.setBackSideImage(this.getBackSideImage());
+		partImage.setTwosided(this.isTwosided());
 		return partImage;
 	}
 	

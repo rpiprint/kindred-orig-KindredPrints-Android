@@ -204,7 +204,11 @@ public class ImageManager {
 		float imageAspectRatio = origSize.getWidth()/origSize.getHeight();
 		ArrayList<PrintProduct> sizesToCrop = new ArrayList<PrintProduct>();
 		if (size == null) {
-			sizesToCrop.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(origSize, this.devPrefHelper_.getCurrentSizes()));
+			if (image.isTwosided()) {
+				sizesToCrop.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(origSize, this.devPrefHelper_.getCurrentSizes(), ImageEditor.FILTER_DOUBLE));
+			} else {
+				sizesToCrop.addAll(ImageEditor.getAllowablePrintableSizesForImageSize(origSize, this.devPrefHelper_.getCurrentSizes(), ImageEditor.NO_FILTER));
+			}
 			float scaleFactor = 1.0f;
 			if (origSize.getWidth() > origSize.getHeight()) {
 				scaleFactor = this.interfacePrefHelper_.getPreviewMaxSize()/origSize.getWidth();
