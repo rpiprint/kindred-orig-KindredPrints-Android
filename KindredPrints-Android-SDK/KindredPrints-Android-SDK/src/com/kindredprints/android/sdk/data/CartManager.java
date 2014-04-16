@@ -359,7 +359,7 @@ public class CartManager {
 					this.ordersSema_.release();
 					return false;
 				} else if (prevOrder.getImage().getPartnerId().equalsIgnoreCase(order.getImage().getPartnerId())) {
-					Log.i("KindredSDK", "Warning: duplicate id detected - no image added");
+					Log.i("KindredSDK", "Warning: duplicate id detected - no image added. ID = " + order.getImage().getPartnerId());
 					this.ordersSema_.release();
 					return false;
 				}

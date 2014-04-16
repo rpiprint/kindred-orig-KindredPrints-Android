@@ -16,7 +16,7 @@ import com.kindredprints.android.sdk.data.Size;
 public class ImageEditor {
 	public static final String NO_FILTER = "kp_none";
 	public static final String FILTER_DOUBLE = "doublesided";
-	private static final float SQUARE_TOLERANCE = 0.05f;
+	private static final float SQUARE_TOLERANCE = 0.15f;
 	
 	public static ArrayList<PrintProduct> getAllowablePrintableSizesForImageSize(Size size, ArrayList<PrintProduct> allSizes, String filter) {
 		ArrayList<PrintProduct> outputArray = new ArrayList<PrintProduct>();

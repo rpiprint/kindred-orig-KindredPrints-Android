@@ -6,6 +6,12 @@ import android.os.Parcelable;
 public class KLOCPhoto extends KPhoto {
 	private String filename;
 	
+	public KLOCPhoto(String filename) {
+		this.id = filename;
+		this.type = TYPE_LOCAL_FILE;
+		this.filename = filename;
+	}
+	
 	public KLOCPhoto(String id, String filename) {
 		this.id = id;
 		this.type = TYPE_LOCAL_FILE;

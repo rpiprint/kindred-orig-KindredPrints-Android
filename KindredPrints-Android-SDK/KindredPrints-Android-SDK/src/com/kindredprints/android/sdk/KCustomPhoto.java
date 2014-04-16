@@ -7,6 +7,13 @@ public class KCustomPhoto extends KPhoto {
 	private String customType;
 	private String associatedData;
 	
+	public KCustomPhoto(String customType, String data) {
+		this.id = data;
+		this.type = TYPE_CUSTOM;
+		this.customType = customType;
+		this.associatedData = data;
+	}
+	
 	public KCustomPhoto(String id, String customType, String data) {
 		this.id = id;
 		this.type = TYPE_CUSTOM;

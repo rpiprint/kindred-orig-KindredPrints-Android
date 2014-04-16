@@ -7,6 +7,10 @@ public class KURLPhoto extends KPhoto {
 	private String origUrl;
 	private String prevUrl;
 	
+	public KURLPhoto(String origUrl) {
+		init(origUrl, origUrl, origUrl);
+	}
+	
 	public KURLPhoto(String id, String origUrl) {
 		init(id, origUrl, origUrl);
 	}
