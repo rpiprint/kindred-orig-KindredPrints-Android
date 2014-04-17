@@ -40,6 +40,22 @@ Here are the details of what is included in the Kindred Printing platform
 
 ![4x6 Prints](https://raw.githubusercontent.com/KindredPrints/KindredPrints-iOS/master/Documentation/4by6.jpg)
 
+## How our cart works
+
+### Adding one image at a time
+
+When a user chooses to order a print, that images gets added to the Kindred cart. The user is prompted to choose quantities and can finalize the order with one print. However, if the user chooses to go back, he or she can keep choosing other images to order prints from. Every time he adds images to print, those images are added to the Kindred cart. The images remain in the cart until the user completes the purchase or removes them. (Quitting the app does not remove the images from the user's cart.) The default quantity when single prints are added is 1.
+
+![How it works](https://raw.githubusercontent.com/KindredPrints/KindredPrints-iOS/master/Documentation/OneImage_HowitWorks.png)
+
+### Adding multiple images at once
+
+Kinderd does not currenty have an image picker, but a partner can send us a collection of images at the same time. All the images get added to the user's cart at once and she can swipe through the images to pick print quantities for each one. When a collection of images is added, the defauly print quantity is 0. 
+
+We are currently in the process of creating a photo picker that will allow the user to choose which images they want printed from a collection of images sent by a partner.
+
+
+
 ## Android Specific Installation
 
 The entire SDK is open sourced and a release schedule will be publicized soon. You can download the raw SDK files or clone the entire project with accompanying test app.
