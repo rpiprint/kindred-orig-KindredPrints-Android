@@ -60,9 +60,13 @@ We are currently in the process of creating a photo picker that will allow the u
 
 ### Image types
 
-You can send us user images to be added to the cart from the phone or your server by sending us image URLs or by passing actual images in memory.
+You can send us user images to be added to the cart from the phone or your server by sending us image URLs or by passing actual images in memory. We allow devs to import photos from a URL (KPURLImage), a image in memory (KPMEMImage), or saved to the file system (KPLOCImage).
 
-Aditionally, we can work with you on creating images from actual content your user is creating. For exaple, we are working with a cooking app where we create recipe cards that users can print when they like a particular recipe.
+- KPURLImage can be created with a URL to a preview size AND full size, or just a full size.
+- KPMEMImage is created with a UIImage object in iOS or Bitmap object in android
+- KPLOCImage is only available in Android, and is created with a file path string
+
+Aditionally, we can work with you on creating custom images from content your user is creating. For exaple, we are working with a cooking app where we create recipe cards that users can print when they like a particular recipe.
 
 
 ## Android Specific Installation
