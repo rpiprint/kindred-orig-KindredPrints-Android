@@ -161,7 +161,6 @@ For this example, we assume that the photo is stored in local memory and you hav
     
     orderFlow.addImageToCart(new KLOCPhoto(null, (String)absoluteFilePathToPicture));
 
-
     Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
     startActivityForResult(i, 0);
     ```
@@ -203,8 +202,6 @@ Alternatively, if you also store a remote url for a pre rendered preview size im
    ```
 
 1. You're done! The user can now check out all of the images they've added before.
-
-
 
 
 ### Advanced Functionality
