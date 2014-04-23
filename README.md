@@ -148,11 +148,12 @@ For this example, we assume that the photo is stored in local memory and you hav
 1. Add a button next to the photo that says Print or whatever you feel is appropriate.
 
 1. Add the appropriate imports to your class:
-   ```java
-import com.kindredprints.android.sdk.KindredOrderFlow;
-import com.kindredprints.android.sdk.KLOCPhoto;
-import com.kindredprints.android.sdk.KindredOrderFlowActivity;
-   ```
+
+    ```java
+    import com.kindredprints.android.sdk.KindredOrderFlow;
+    import com.kindredprints.android.sdk.KLOCPhoto;
+    import com.kindredprints.android.sdk.KindredOrderFlowActivity;
+    ```
 1. Create a method to handle the button click and insert this code into it. Make sure update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
 
     ```java
