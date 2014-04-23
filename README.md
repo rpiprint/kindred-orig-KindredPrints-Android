@@ -154,7 +154,8 @@ import com.kindredprints.android.sdk.KLOCPhoto;
 import com.kindredprints.android.sdk.KindredOrderFlowActivity;
    ```
 1. Create a method to handle the button click and insert this code into it. Make sure update this line with your test Kindred App ID (you can grab one by signing up [here](http://sdk.kindredprints.com/signup/).)
-   ```java
+
+    ```java
     KindredOrderFlow orderFlow  = new KindredOrderFlow(this, "YOUR_TEST_KEY_HERE");
     
     orderFlow.addImageToCart(new KLOCPhoto(null, (String)absoluteFilePathToPicture));
@@ -162,7 +163,7 @@ import com.kindredprints.android.sdk.KindredOrderFlowActivity;
 
     Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
     startActivityForResult(i, 0);
-   ```
+    ```
 
 1. You're done! Yea - it can really be that simple. We'll take care of the rest.
 
