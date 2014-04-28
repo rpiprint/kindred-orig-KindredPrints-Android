@@ -20,6 +20,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class KindredOrderFlow {
 
@@ -29,6 +30,8 @@ public class KindredOrderFlow {
 	private KindredRemoteInterface kindredRemoteInterface_;
 	private CartManager cartManager_;
 	private ImageManager imManager_;
+	
+	private MixpanelAPI mixpanel_;
 	
 	private int asyncConfigRoutineCount_;
 	private int returnedAsyncConfigRoutines_;
@@ -45,6 +48,13 @@ public class KindredOrderFlow {
 	
 	public void setAppKey(String key) {
 		devPrefHelper_.setAppKey(key);
+		JSONObject keyObject = new JSONObject();
+		try {
+			keyObject.put("key", key);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		this.mixpanel_.track("partner_key", keyObject);
 	}
 	
 	// CART MANAGEMENT
@@ -73,6 +83,8 @@ public class KindredOrderFlow {
 		UserObject currUser = this.userPrefHelper_.getUserObject();
 		
 		if (currUser.getId().equals(UserObject.USER_VALUE_NONE)) {
+			this.mixpanel_.track("preregister_email", null);
+			
 			currUser = new UserObject();
 			currUser.setEmail(email);
 			currUser.setName(name);
@@ -119,6 +131,7 @@ public class KindredOrderFlow {
 	// INTERNAL CONFIG
 	
 	private void initHelpers(Context context) {
+		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		this.devPrefHelper_ = new DevPrefHelper(context);
 		this.userPrefHelper_ = new UserPrefHelper(context);
@@ -173,8 +186,10 @@ public class KindredOrderFlow {
 			} else if (photo instanceof KURLPhoto){
 				this.imManager_.startPrefetchingOrigImageToCache(pImage);
 			} else {
+
 				String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
 				String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
+						
 				pImage.setPrevUrl(frontPreviewUrl);
 				pImage.setUrl(frontPreviewUrl);
 				PartnerImage backsideImage = new PartnerImage(photo);

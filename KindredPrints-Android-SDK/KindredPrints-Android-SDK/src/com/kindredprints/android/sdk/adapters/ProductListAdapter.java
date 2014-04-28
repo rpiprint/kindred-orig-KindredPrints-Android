@@ -12,6 +12,7 @@ import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.fragments.CartPageFragment.CartPageUpdateListener;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -30,11 +31,15 @@ public class ProductListAdapter extends BaseAdapter {
 	private CartManager cartManager_;
 	private InterfacePrefHelper interfacePrefHelper_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private CartPageUpdateListener callback_;
 	private PrintSelectedListener printClickCallback_;
 	
 	public ProductListAdapter(Activity context, CartObject currentObject) {
 		this.context_ = context;
+		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
+
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		this.currObject_ = currentObject;
 		this.cartManager_ = CartManager.getInstance(context);
@@ -120,11 +125,12 @@ public class ProductListAdapter extends BaseAdapter {
 		
 		imgPreview.getLayoutParams().width = (int) product.getThumbSize().getWidth();
 		imgPreview.getLayoutParams().height = (int) product.getThumbSize().getHeight();
-		this.imageManager_.setImageAsync(imgPreview, this.currObject_.getImage(), product, product.getThumbSize());
+		this.imageManager_.setImageAsync(imgPreview, this.currObject_.getImage(), product, product.getThumbSize(), null);
 		
 		quantView.setQuantityChangedListener(new QuantityChangedListener() {
 			@Override
 			public void userChangedQuantity(int quantity) {
+				mixpanel_.track("cart_changed_quantities", null);
 				int pastPrice = currObject_.getPrintProducts().get(position).getQuantity()*currObject_.getPrintProducts().get(position).getPrice();
 				int newPrice = quantity*currObject_.getPrintProducts().get(position).getPrice();
 				currObject_.getPrintProducts().get(position).setQuantity(quantity);

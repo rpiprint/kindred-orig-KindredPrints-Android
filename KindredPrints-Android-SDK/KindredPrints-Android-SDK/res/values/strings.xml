@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <string name="mixpanel_token">39010526a8a7b33b797a01958fb8f7fe</string>
 
     <string name="img_content">ico</string>
 	<!-- WARNING DIALOG -->	

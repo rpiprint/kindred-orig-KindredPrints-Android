@@ -15,6 +15,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.content.Context;
@@ -56,6 +57,8 @@ public class ShippingEditFragment extends KindredFragment {
 	private DevPrefHelper devPrefHelper_;
 	private UserObject currUser_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private Address currAddress_;
 	
 	private Button cmdImport_;
@@ -90,6 +93,9 @@ public class ShippingEditFragment extends KindredFragment {
 	public ShippingEditFragment() { }
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
+		this.mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		this.mixpanel_.track("shipping_edit_page_view", null);
+		
 		this.fragmentHelper_ = fragmentHelper;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
 		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonHandler());
@@ -271,38 +277,47 @@ public class ShippingEditFragment extends KindredFragment {
 	}
 	
 	private boolean checkInputs() {
+		boolean checkInputStatus = true;
 		if (editTextName_.getText().toString().length() == 0) {
 			setInterfaceState(STATE_ERROR);
 			this.txtError_.setText("Please enter a name.");
-			return false;
+			checkInputStatus = false;
 		}
 	
 		if (editTextStreet_.getText().toString().length() == 0) {
 			setInterfaceState(STATE_ERROR);
 			this.txtError_.setText("Please enter a street.");
 			
-			return false;
+			checkInputStatus = false;
 		}
 		if (editTextCity_.getText().toString().length() == 0) {
 			setInterfaceState(STATE_ERROR);
 			this.txtError_.setText("Please enter a city.");
 			
-			return false;
+			checkInputStatus = false;
 		}
 			
 		if (editTextState_.getText().toString().length() == 0) {
 			setInterfaceState(STATE_ERROR);
 			this.txtError_.setText("Please enter a state.");
 			
-			return false;
+			checkInputStatus = false;
 		}
 		if (editTextZip_.getText().toString().length() == 0) {
 			setInterfaceState(STATE_ERROR);
 			this.txtError_.setText("Please enter a zip.");
 			
-			return false;
+			checkInputStatus = false;
 		}
-		return true;
+		JSONObject statusObject = new JSONObject();
+		try {
+			statusObject.put("input_status", checkInputStatus);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		this.mixpanel_.track("shipping_edit_check_inputs", statusObject);
+
+		return checkInputStatus;
 	}
 	
 	public class BackButtonHandler implements BackButtonPressInterrupter {
@@ -398,9 +413,10 @@ public class ShippingEditFragment extends KindredFragment {
 							String requestTag = serverResponse.getString(KindredRemoteInterface.KEY_SERVER_CALL_TAG);
 							
 							fragmentHelper_.hideProgressBar();
-							
+							boolean serverStatus = false;
 							if (requestTag.equals(KindredRemoteInterface.REQ_TAG_UPDATE_ADDRESS) || requestTag.equals(KindredRemoteInterface.REQ_TAG_CREATE_NEW_ADDRESS)) {
 								if (status == 200) {
+
 									currAddress_.setAddressId(serverResponse.getString("address_id"));
 									currAddress_.setName(serverResponse.getString("name"));
 									currAddress_.setStreet(serverResponse.getString("street1"));
@@ -446,14 +462,19 @@ public class ShippingEditFragment extends KindredFragment {
 									}
 									
 									userPrefHelper_.setSelectedShippingAddresses(currSelectedAddresses);
-									
+									serverStatus = true;
 									continueCheck_ = true;
 									fragmentHelper_.moveNextFragment();
 								} else {
+									serverStatus = false;
 									setInterfaceState(STATE_ERROR);
 									txtError_.setText("Unknown server error. Please check the address!");
 								}
 							}
+							JSONObject statusObject = new JSONObject();
+							statusObject.put("status", serverStatus);
+							mixpanel_.track("shipping_edit_callback_status", statusObject);
+
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

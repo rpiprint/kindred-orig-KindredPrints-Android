@@ -19,6 +19,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -48,6 +49,8 @@ public class OrderSummaryFragment extends KindredFragment {
 	private UserPrefHelper userPrefHelper_;
 	private UserObject currUser_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private TextView txtTitle_;
 	private Button cmdEditOrder_;
 	private ListView lvOrderLineItems_;
@@ -60,6 +63,9 @@ public class OrderSummaryFragment extends KindredFragment {
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
 		this.activity_ = activity;
+		
+		this.mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		this.mixpanel_.track("order_summary_page_view", null);
 		
 		this.kindredRemoteInt_ = new KindredRemoteInterface(activity);
 		this.kindredRemoteInt_.setNetworkCallbackListener(new OrderSummaryNetworkCallback());
@@ -210,6 +216,15 @@ public class OrderSummaryFragment extends KindredFragment {
 				
 				fragmentHelper_.showProgressBarWithMessage("validating payment..");
 				orderProcessingHelper_.initiateCheckoutSequence();
+				
+				JSONObject cardStored = new JSONObject();
+				try {
+					cardStored.put("card_stored", currUser_.getCreditType());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				mixpanel_.track("order_summary_click_next", cardStored);
+
 				
 				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
 					    Activity.INPUT_METHOD_SERVICE);

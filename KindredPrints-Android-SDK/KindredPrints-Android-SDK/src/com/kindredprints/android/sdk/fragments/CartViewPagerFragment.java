@@ -1,5 +1,8 @@
 package com.kindredprints.android.sdk.fragments;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.customviews.OrderTotalView;
@@ -11,6 +14,7 @@ import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.fragments.CartPageFragment.CartPageUpdateListener;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.content.Context;
@@ -45,11 +49,15 @@ public class CartViewPagerFragment extends KindredFragment {
 	
 	private CartManager cartManager_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private boolean continueCheck_;
 	private boolean isInit = false;
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
 		context_ = activity.getApplicationContext();
+		mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		mixpanel_.track("cart_page_view", null);
 		
 		this.cartManager_ = CartManager.getInstance(activity);
 		this.cartManager_.setCartUpdatedCallback(new CartObjectsUpdatedListener());
@@ -95,6 +103,14 @@ public class CartViewPagerFragment extends KindredFragment {
 			addToOrderTotal(this.cartManager_.getOrderTotal());
 						
 			this.txtEmptyCart_.setVisibility(TextView.INVISIBLE);
+			
+			JSONObject orderCountObj = new JSONObject();
+			try {
+				orderCountObj.put("photo_count", this.cartManager_.countOfOrders());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			mixpanel_.track("cart_photo_count", orderCountObj);
 
 			this.cartDataAdapter_ = new CartPageAdapter(getActivity().getSupportFragmentManager());
 			
@@ -190,7 +206,7 @@ public class CartViewPagerFragment extends KindredFragment {
 
 		private Fragment createFragmentAt(int position) {
 			CartPageFragment pageFrag = new CartPageFragment();
-			pageFrag.init(context_);
+			pageFrag.init(context_, fragmentHelper_);
 			
 			pageFrag.setCurrIndex(position);
 			pageFrag.setCartPageUpdateListener(new CartPageUpdateListener() {

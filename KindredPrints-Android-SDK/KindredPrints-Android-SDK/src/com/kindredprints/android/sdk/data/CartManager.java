@@ -3,10 +3,15 @@ package com.kindredprints.android.sdk.data;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.helpers.ImageUploadHelper;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.content.Context;
 import android.os.Handler;
@@ -468,6 +473,14 @@ public class CartManager {
 		if (countOfNewOrders != countOfUnchanged) {
 			this.devPrefHelper_.setNeedUpdateOrderId(true);
 		}
+		
+		JSONObject printCount = new JSONObject();
+		try {
+			printCount.put("print_count", this.selectedOrders.size());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("cart_click_next", printCount);
 		
 		ImageUploadHelper.getInstance(this.context_).validateAllOrdersInit();
 		

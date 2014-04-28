@@ -1,6 +1,8 @@
 package com.kindredprints.android.sdk.helpers.prefs;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -64,7 +66,12 @@ public class DevPrefHelper extends PrefHelper {
 	}
 	
 	public String getCustomPreviewImageUrl(KCustomPhoto image, boolean front) {
-		String prevUrl = getServerAPIUrl() + "v1/printableimages/preview?type=" + image.getCustomType() + "&data=" + image.getAssociatedData();
+		String prevUrl = getServerAPIUrl() + "v1/printableimages/preview?type=" + image.getCustomType() + "&data=";
+		try {
+			prevUrl = prevUrl + URLEncoder.encode(image.getAssociatedData(), "ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		if (front)
 			return prevUrl + "&side=front";
 		else 

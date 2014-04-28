@@ -16,6 +16,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -47,11 +48,15 @@ public class ShippingListFragment extends KindredFragment {
 	
 	private boolean editAddress_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private ShippingAddressAdapter addressAdapter_;
 	
 	public ShippingListFragment() { }
 	
 	public void initFragment(KindredFragmentHelper fragHelper, Activity activity) {
+		this.mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		this.mixpanel_.track("shipping_list_page_view", null);
 		this.kindredRemoteInt_ = new KindredRemoteInterface(activity);
 		this.kindredRemoteInt_.setNetworkCallbackListener(new ShippingDownloadCallback());
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
@@ -167,12 +172,13 @@ public class ShippingListFragment extends KindredFragment {
 									
 									devPrefHelper_.resetAddressDownloadStatus();
 									
-									fragmentHelper_.hideProgressBar();
+									
 									
 									if (addresses.size() == 0 && editAddress_)
 										fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_SHIPPING_EDIT);
 								}
 							}
+							fragmentHelper_.hideProgressBar();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

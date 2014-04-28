@@ -19,6 +19,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -57,6 +58,8 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	private Activity context_;
 	private UserObject currUser_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private ArrayList<View> rowViews;
 	private ArrayList<LineItem> lineItems_;
 
@@ -74,6 +77,8 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	public OrderSummaryAdapter(Activity context, KindredFragmentHelper fragmentHelper, ListView listView) {
 		this.context_ = context;
 		this.currParentListView_ = listView;
+		
+		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
 		
 		this.kindredRemoteInterface_ = new KindredRemoteInterface(context);
 		this.kindredRemoteInterface_.setNetworkCallbackListener(new EditShippingNetworkCallback());
@@ -250,6 +255,8 @@ public class OrderSummaryAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View arg0) {
 				fragmentHelper_.showProgressBarWithMessage("quoting shipment prices..");
+				mixpanel_.track("order_summary_edit_shipping", null);
+
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -340,6 +347,8 @@ public class OrderSummaryAdapter extends BaseAdapter {
 				InputMethodManager imm = (InputMethodManager)context_.getSystemService(
 					      Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(context_.getWindow().getDecorView().findViewById(android.R.id.content).getWindowToken(), 0);
+				mixpanel_.track("order_summary_apply_coupon", null);
+
 				if (editTextCoupon.getText().length() > 0) {
 					fragmentHelper_.showProgressBarWithMessage("checking coupon code..");
 					new Thread(new Runnable() {
@@ -407,6 +416,8 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		cmdComplete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				mixpanel_.track("order_summary_complete_order", null);
+
 				fragmentHelper_.showProgressBarWithMessage("validating payment..");
 				orderProcessingHelper_.initiateCheckoutSequence();
 			}

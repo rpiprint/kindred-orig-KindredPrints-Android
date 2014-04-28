@@ -16,6 +16,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
 import com.kindredprints.android.sdk.remote.NetworkCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -46,6 +47,8 @@ public class LoginViewFragment extends KindredFragment {
 	private TextView txtError_;
 	private EditTextView editTextEmail_;
 	private EditTextView editTextPassword_;
+		
+	private MixpanelAPI mixpanel_;
 	
 	private String savedEmail_;
 	
@@ -55,6 +58,9 @@ public class LoginViewFragment extends KindredFragment {
 	public LoginViewFragment() { }
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
+		mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		mixpanel_.track("login_page_view", null);
+
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
 		this.userPrefHelper_ = new UserPrefHelper(activity);
 		this.currUser_ = this.userPrefHelper_.getUserObject();
@@ -155,6 +161,14 @@ public class LoginViewFragment extends KindredFragment {
 				this.txtError_.setText(errorMsg);
 				break;
 		}
+		JSONObject code = new JSONObject();
+		try {
+			code.put("state_code", state);
+			if (errorMsg != null) code.put("error_message", errorMsg);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		mixpanel_.track("login_interface_state_change", code);
 	}
 	
 	private void resetPassword() {
@@ -242,12 +256,15 @@ public class LoginViewFragment extends KindredFragment {
 					public void run() {
 						switch (currState_) {
 							case STATE_NO_PASSWORD:
+								mixpanel_.track("login_pressed_create", null);
 								createUser();
 								break;
 							case STATE_NEED_PASSWORD:
+								mixpanel_.track("login_pressed_login", null);
 								loginUser();
 								break;
 							case STATE_WRONG_PASSWORD:
+								mixpanel_.track("login_pressed_reset", null);
 								resetPassword();
 								break;
 							case STATE_OTHER_ERROR:
@@ -292,6 +309,8 @@ public class LoginViewFragment extends KindredFragment {
 									currUser_.setAuthKey(authKey);
 									currUser_.setPaymentSaved(false);
 					                
+									mixpanel_.alias(email, null);
+									
 									userPrefHelper_.setUserObject(currUser_);
 									
 									ImageUploadHelper.getInstance(getActivity()).validateAllOrdersInit();

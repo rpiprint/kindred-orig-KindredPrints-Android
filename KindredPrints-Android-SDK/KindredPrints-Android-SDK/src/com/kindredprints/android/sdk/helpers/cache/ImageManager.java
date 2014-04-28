@@ -42,6 +42,7 @@ public class ImageManager {
 	private ArrayList<String> downloadingQueue_;
 	private HashMap<String, PartnerImage> imageDetails_;
 	private HashMap<String, ImageView> waitingViews_;
+	private HashMap<String, ImageManagerCallback> waitingCallbacks_;
 	private DevPrefHelper devPrefHelper_;
 	private InterfacePrefHelper interfacePrefHelper_;
 		
@@ -57,6 +58,7 @@ public class ImageManager {
 		this.downloadingQueue_ = new ArrayList<String>();
 		this.imageDetails_ = new HashMap<String, PartnerImage>();
 		this.waitingViews_ = new HashMap<String, ImageView>();
+		this.waitingCallbacks_ = new HashMap<String, ImageManagerCallback>();
 		this.devPrefHelper_ = new DevPrefHelper(context);
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		
@@ -94,7 +96,7 @@ public class ImageManager {
 
 	public void startPrefetchingOrigImageToCache(PartnerImage image) {
 		String origId = getOrigName(image.getId());
-		
+		Log.i("KindredSDK", "starting to prefetch " + origId);
 		if (!isOrigImageInProcess(origId) && !isOrigWaitingForProcess(origId) && !this.fCache_.hasImageForKey(origId)) {
 			this.imageDetails_.put(origId, image);
 			this.waitingToDownloadQueue_.add(origId);
@@ -362,14 +364,17 @@ public class ImageManager {
 		try {
 			this.waitingviewSema_.acquire();
 		    final ImageView view = this.waitingViews_.get(uniqueId);
+		    final ImageManagerCallback callback = this.waitingCallbacks_.get(uniqueId);
 		    if (view != null) {
 		    	Handler mainHandler = new Handler(context_.getMainLooper());
 				mainHandler.post(new Runnable() {
 					@Override
 					public void run() {
 				        view.setImageBitmap(imCache_.getImageForKey(uniqueId, view));
+				        if (callback != null) callback.imageAssigned();
 					}
 				});
+				this.waitingCallbacks_.remove(uniqueId);
 		        this.waitingViews_.remove(uniqueId);
 		    }
 			this.waitingviewSema_.release();
@@ -378,7 +383,7 @@ public class ImageManager {
 		}
 	}
 
-	public void setImageAsync(final ImageView view, final PartnerImage image, PrintProduct product, final Size displaySize) {
+	public void setImageAsync(final ImageView view, final PartnerImage image, PrintProduct product, final Size displaySize, final ImageManagerCallback callback) {
 		String uid = null;
 		if (displaySize.getHeight() <= this.interfacePrefHelper_.getThumbMaxSize() && displaySize.getWidth() <= this.interfacePrefHelper_.getThumbMaxSize()) {
 			uid = product.getId() + "_" + getThumbName(image.getId());
@@ -392,6 +397,7 @@ public class ImageManager {
 		if (this.imCache_.hasImage(uid)) {
 			Bitmap bm = this.imCache_.getImageForKey(uid, view);
 			view.setImageBitmap(bm);
+			if (callback != null) callback.imageAssigned();
 		} else {
 			new Thread(new Runnable() {
 				@Override
@@ -411,6 +417,7 @@ public class ImageManager {
 					} else {
 						try {
 							waitingviewSema_.acquire();
+							if (callback != null) waitingCallbacks_.put(fUid, callback);
 							waitingViews_.put(fUid, view);
 							waitingviewSema_.release();
 						} catch (InterruptedException e) {
@@ -476,5 +483,9 @@ public class ImageManager {
 			startNextOrigDownload();
 			
 		}
+	}
+	
+	public interface ImageManagerCallback {
+		public void imageAssigned();
 	}
 }

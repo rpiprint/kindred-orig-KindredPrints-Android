@@ -3,6 +3,7 @@ package com.kindredprints.android.sdk;
 import com.kindredprints.android.sdk.customviews.NavBarClickCallback;
 import com.kindredprints.android.sdk.customviews.NavBarView;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -43,6 +44,12 @@ public class KindredOrderFlowActivity extends FragmentActivity {
 	protected void onStart() {
 		super.onStart();
 		this.fHelper_.updateActivity(this);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		MixpanelAPI.getInstance(this, this.getResources().getString(R.string.mixpanel_token)).flush();
+		super.onDestroy();
 	}
 	
 	public class MainNavBarClickCallback implements NavBarClickCallback {

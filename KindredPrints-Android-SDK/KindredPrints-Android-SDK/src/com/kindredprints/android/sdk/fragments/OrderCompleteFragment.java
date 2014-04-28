@@ -8,6 +8,7 @@ import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -33,6 +34,10 @@ public class OrderCompleteFragment extends KindredFragment {
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {	
 		this.activity_ = activity;
+		
+		MixpanelAPI mixpanel = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
+		mixpanel.track("order_complete_pageview", null);
+		
 		this.fragmentHelper_ = fragmentHelper;
 		this.fragmentHelper_.configNavBar();
 		
