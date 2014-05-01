@@ -43,10 +43,14 @@ public class MainActivity extends Activity {
 	
 	Button cmdShowCart;
 	
+	int counter;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        counter = 0;
         
         this.orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
         orderFlow.setImageBorderColor(Color.WHITE);
@@ -77,7 +81,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (editTxtUrl.getText().toString().length() > 0) {
-					orderFlow.addImageToCart(new KURLPhoto(null, editTxtUrl.getText().toString(), editTxtUrl.getText().toString()));
+					counter = counter + 1;
+					orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), editTxtUrl.getText().toString(), editTxtUrl.getText().toString()));
 					showToast("image added");
 				}
 			}
@@ -153,11 +158,12 @@ public class MainActivity extends Activity {
             String picturePath = cursor.getString(columnIndex);
 
             cursor.close();
-            
+			counter = counter + 1;
+
             if (picturePath.contains("http"))
-            	orderFlow.addImageToCart(new KURLPhoto(null, picturePath));
+            	orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), picturePath));
             else
-            	orderFlow.addImageToCart(new KLOCPhoto(null, picturePath));
+            	orderFlow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
 			showToast("image added");
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();
@@ -169,11 +175,12 @@ public class MainActivity extends Activity {
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
+			counter = counter + 1;
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
-			orderFlow.addImageToCart(new KLOCPhoto(null, picturePath));
+			orderFlow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
 			showToast("image added");
     	}
     }

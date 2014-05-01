@@ -1,5 +1,6 @@
 package com.mixpanel.android.mpmetrics;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
@@ -7,11 +8,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.util.Log;
 
-import com.mixpanel.android.util.ActivityImageUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,15 +19,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Core class for interacting with Mixpanel Analytics.
@@ -112,21 +105,10 @@ public class MixpanelAPI {
         mConfig = getConfig();
         mPersistentIdentity = getPersistentIdentity(context, referrerPreferences, token);
 
-        mUpdatesListener = new UpdatesListener();
-        mDecideUpdates = null;
-
         // TODO this immediately forces the lazy load of the preferences, and defeats the
         // purpose of PersistentIdentity's laziness.
-        final String peopleId = mPersistentIdentity.getPeopleDistinctId();
-        if (null != peopleId) {
-            mDecideUpdates = constructDecideUpdates(token, peopleId, mUpdatesListener);
-        }
-
+       
         registerMixpanelActivityLifecycleCallbacks();
-
-        if (null != mDecideUpdates) {
-            mMessages.installDecideCheck(mDecideUpdates);
-        }
     }
 
     /**
@@ -781,7 +763,6 @@ public class MixpanelAPI {
          *
          * @return a Survey object if one is available, null otherwise.
          */
-        public Survey getSurveyIfAvailable();
 
         /**
          * Returns an InAppNotification object if one is available and being held by the library, or null if
@@ -794,7 +775,6 @@ public class MixpanelAPI {
          *
          * @return an InAppNotification object if one is available, null otherwise.
          */
-        public InAppNotification getNotificationIfAvailable();
 
         /**
          * Return an instance of Mixpanel people with a temporary distinct id.
@@ -827,23 +807,7 @@ public class MixpanelAPI {
          */
         public void removeOnMixpanelUpdatesReceivedListener(OnMixpanelUpdatesReceivedListener listener);
 
-        /**
-         * @deprecated Use showSurveyIfAvailable() instead.
-         */
-        @Deprecated
-        public void showSurvey(Survey s, Activity parent);
-
-        /**
-         * @deprecated Use getSurveyIfAvailable() instead.
-         */
-        @Deprecated
-        public void checkForSurvey(SurveyCallbacks callbacks);
-
-        /**
-         * @deprecated Use getSurveyIfAvailable() instead.
-         */
-        @Deprecated
-        public void checkForSurvey(SurveyCallbacks callbacks, Activity parent);
+ 
     }
 
     /**
@@ -883,8 +847,6 @@ public class MixpanelAPI {
     void registerMixpanelActivityLifecycleCallbacks() {
         if (android.os.Build.VERSION.SDK_INT >= 14 && mConfig.getAutoShowMixpanelUpdates()) {
             if (mContext.getApplicationContext() instanceof Application) {
-                final Application app = (Application) mContext.getApplicationContext();
-                app.registerActivityLifecycleCallbacks((new MixpanelActivityLifecycleCallbacks(this)));
             } else {
                 if (MPConfig.DEBUG) Log.d(LOGTAG, "Context is NOT instanceof Application, AutoShowMixpanelUpdates will be disabled.");
             }
@@ -935,9 +897,7 @@ public class MixpanelAPI {
         return new PersistentIdentity(referrerPreferences, storedPreferences);
     }
 
-    /* package */ DecideUpdates constructDecideUpdates(final String token, final String peopleId, final DecideUpdates.OnNewResultsListener listener) {
-        return new DecideUpdates(token, peopleId, listener);
-    }
+  
 
     /* package */ void clearPreferences() {
         // Will clear distinct_ids, superProperties,
@@ -952,15 +912,7 @@ public class MixpanelAPI {
         @Override
         public void identify(String distinctId) {
             mPersistentIdentity.setPeopleDistinctId(distinctId);
-            if (null != mDecideUpdates && !mDecideUpdates.getDistinctId().equals(distinctId)) {
-                mDecideUpdates.destroy();
-                mDecideUpdates = null;
-            }
-
-            if (null == mDecideUpdates) {
-                mDecideUpdates = constructDecideUpdates(mToken, distinctId, mUpdatesListener);
-                mMessages.installDecideCheck(mDecideUpdates);
-            }
+         
             pushWaitingPeopleRecord();
          }
 
@@ -1056,139 +1008,10 @@ public class MixpanelAPI {
             }
         }
 
-        @Override
-        @Deprecated
-        public void checkForSurvey(final SurveyCallbacks callbacks) {
-            if (null == callbacks) {
-                Log.i(LOGTAG, "Skipping survey check because callback is null.");
-                return;
-            }
+       
 
-            final Survey found = getSurveyIfAvailable();
-            callbacks.foundSurvey(found);
-        }
-
-        @Override
-        @Deprecated
-        public void checkForSurvey(final SurveyCallbacks callbacks, final Activity parentActivity) {
-            // Originally this call pre-computed UI chrome while it was waiting for the check to run.
-            // Since modern checks run asynchronously, it's useless nowdays.
-            checkForSurvey(callbacks);
-        }
-
-        @Override
-        public InAppNotification getNotificationIfAvailable() {
-            if (null == getDistinctId()) {
-                return null;
-            }
-            return mDecideUpdates.getNotification(mConfig.getTestMode());
-        }
-
-        @Override
-        public Survey getSurveyIfAvailable() {
-            if (null == getDistinctId()) {
-                return null;
-            }
-            return mDecideUpdates.getSurvey(mConfig.getTestMode());
-        }
-
-        @Override
-        @Deprecated
-        public void showSurvey(final Survey survey, final Activity parent) {
-            showGivenOrAvailableSurvey(survey, parent);
-        }
-
-        @Override
-        public void showSurveyIfAvailable(final Activity parent) {
-            if (Build.VERSION.SDK_INT < 14) {
-                return;
-            }
-
-            showGivenOrAvailableSurvey(null, parent);
-        }
-
-        @Override
-        public void showNotificationIfAvailable(final Activity parent) {
-            if (Build.VERSION.SDK_INT < 14) {
-                return;
-            }
-
-            parent.runOnUiThread(new Runnable() {
-                @Override
-                @TargetApi(14)
-                public void run() {
-                    final ReentrantLock lock = UpdateDisplayState.getLockObject();
-                    lock.lock();
-                    try {
-                        if (UpdateDisplayState.hasCurrentProposal()) {
-                            return; // Already being used.
-                        }
-
-                        InAppNotification notif = getNotificationIfAvailable();
-                        if (null == notif) {
-                            return; // Nothing to show
-                        }
-
-                        final InAppNotification.Type inAppType = notif.getType();
-                        if (inAppType == InAppNotification.Type.TAKEOVER && ! ConfigurationChecker.checkSurveyActivityAvailable(parent.getApplicationContext())) {
-                            return; // Can't show due to config.
-                        }
-
-                        final int highlightColor = ActivityImageUtils.getHighlightColorFromBackground(parent);
-                        final UpdateDisplayState.DisplayState.InAppNotificationState proposal =
-                                new UpdateDisplayState.DisplayState.InAppNotificationState(notif, highlightColor);
-                        final int intentId = UpdateDisplayState.proposeDisplay(proposal, getDistinctId(), mToken);
-                        assert intentId > 0; // Since we're holding the lock and !hasCurrentProposal
-
-                        switch (inAppType) {
-                            case MINI: {
-                                final UpdateDisplayState claimed = UpdateDisplayState.claimDisplayState(intentId);
-                                /*InAppFragment inapp = new InAppFragment();
-                                inapp.setDisplayState(intentId, (UpdateDisplayState.DisplayState.InAppNotificationState) claimed.getDisplayState());
-                                inapp.setRetainInstance(true);
-                                FragmentTransaction transaction = parent.getFragmentManager().beginTransaction();
-                                transaction.setCustomAnimations(0, R.anim.com_mixpanel_android_slide_down);
-                                transaction.add(android.R.id.content, inapp);
-                                transaction.commit();*/
-                            }
-                            break;
-                            case TAKEOVER: {
-                                /*final Intent intent = new Intent(parent.getApplicationContext(), SurveyActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                intent.putExtra(SurveyActivity.INTENT_ID_KEY, intentId);
-                                parent.startActivity(intent);*/
-                            }
-                            break;
-                            default:
-                                Log.e(LOGTAG, "Unrecognized notification type " + inAppType + " can't be shown");
-                        }
-                        if (!mConfig.getTestMode()) {
-                            trackNotificationSeen(notif);
-                        }
-                    } finally {
-                        lock.unlock();
-                    }
-                } // run()
-
-                private void trackNotificationSeen(InAppNotification notif) {
-                    track("$campaign_delivery", notif.getCampaignProperties());
-
-                    final MixpanelAPI.People people = getPeople().withIdentity(getDistinctId());
-                    final DateFormat dateFormat = new SimpleDateFormat(ENGAGE_DATE_FORMAT_STRING);
-                    final JSONObject notifProperties = notif.getCampaignProperties();
-                    try {
-                        notifProperties.put("$time", dateFormat.format(new Date()));
-                    } catch (JSONException e) {
-                        Log.e(LOGTAG, "Exception trying to track an in app notification seen", e);
-                    }
-                    people.append("$campaigns", notif.getId());
-                    people.append("$notifications", notifProperties);
-                }
-            });
-        }
-
-        @Override
+        @SuppressLint("SimpleDateFormat")
+		@Override
         public void trackCharge(double amount, JSONObject properties) {
             final Date now = new Date();
             final DateFormat dateFormat = new SimpleDateFormat(ENGAGE_DATE_FORMAT_STRING);
@@ -1303,15 +1126,6 @@ public class MixpanelAPI {
             };
         }
 
-        @Override
-        public void addOnMixpanelUpdatesReceivedListener(final OnMixpanelUpdatesReceivedListener listener) {
-            mUpdatesListener.addOnMixpanelUpdatesReceivedListener(listener);
-        }
-
-        @Override
-        public void removeOnMixpanelUpdatesReceivedListener(final OnMixpanelUpdatesReceivedListener listener) {
-            mUpdatesListener.removeOnMixpanelUpdatesReceivedListener(listener);
-        }
 
         public JSONObject stdPeopleMessage(String actionType, Object properties)
                 throws JSONException {
@@ -1329,93 +1143,35 @@ public class MixpanelAPI {
                 return dataObj;
         }
 
-        private void showGivenOrAvailableSurvey(final Survey surveyOrNull, final Activity parent) {
-            // Showing surveys is not supported before Ice Cream Sandwich
-            if (Build.VERSION.SDK_INT < 14) {
-                return;
-            }
+       
+		@Override
+		public void showSurveyIfAvailable(Activity parent) {
+			// TODO Auto-generated method stub
+			
+		}
 
-            if (! ConfigurationChecker.checkSurveyActivityAvailable(parent.getApplicationContext())) {
-                return;
-            }
+		@Override
+		public void showNotificationIfAvailable(Activity parent) {
+			// TODO Auto-generated method stub
+			
+		}
 
-            BackgroundCapture.OnBackgroundCapturedListener listener = null;
-            final ReentrantLock lock = UpdateDisplayState.getLockObject();
-            lock.lock();
-            try {
-                if (UpdateDisplayState.hasCurrentProposal()) {
-                    return; // Already being used.
-                }
-                Survey toShow = surveyOrNull;
-                if (null == toShow) {
-                    toShow = getSurveyIfAvailable();
-                }
-                if (null == toShow) {
-                    return; // Nothing to show
-                }
+		@Override
+		public void addOnMixpanelUpdatesReceivedListener(
+				OnMixpanelUpdatesReceivedListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
 
-                final UpdateDisplayState.DisplayState.SurveyState surveyDisplay =
-                        new UpdateDisplayState.DisplayState.SurveyState(toShow);
-
-                final int intentId = UpdateDisplayState.proposeDisplay(surveyDisplay, getDistinctId(), mToken);
-                assert intentId > 0; // Since we hold the lock, and !hasCurrentProposal
-
-                listener = new BackgroundCapture.OnBackgroundCapturedListener() {
-                    @Override
-                    public void onBackgroundCaptured(Bitmap bitmapCaptured, int highlightColorCaptured) {
-                        surveyDisplay.setBackground(bitmapCaptured);
-                        surveyDisplay.setHighlightColor(highlightColorCaptured);
-
-                        /*final Intent surveyIntent = new Intent(parent.getApplicationContext(), SurveyActivity.class);
-                        surveyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        surveyIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        surveyIntent.putExtra(SurveyActivity.INTENT_ID_KEY, intentId);
-                        parent.startActivity(surveyIntent);*/
-                    }
-                };
-            } finally {
-                lock.unlock();
-            }
-
-            assert listener != null;
-            BackgroundCapture.captureBackground(parent, listener);
-        }
+		@Override
+		public void removeOnMixpanelUpdatesReceivedListener(
+				OnMixpanelUpdatesReceivedListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
     }// PeopleImpl
 
-    private class UpdatesListener implements DecideUpdates.OnNewResultsListener, Runnable {
-        @Override
-        public void onNewResults(final String distinctId) {
-            mExecutor.execute(this);
-        }
 
-        public synchronized void addOnMixpanelUpdatesReceivedListener(OnMixpanelUpdatesReceivedListener listener) {
-            // Workaround for a race between checking for updates using getSurveyIfAvailable() and getNotificationIfAvailable()
-            // and registering a listener.
-            synchronized (mDecideUpdates) {
-                if (mDecideUpdates.hasUpdatesAvailable()) {
-                    onNewResults(mDecideUpdates.getDistinctId());
-                }
-            }
-
-            mListeners.add(listener);
-        }
-
-        public synchronized void removeOnMixpanelUpdatesReceivedListener(OnMixpanelUpdatesReceivedListener listener) {
-            mListeners.remove(listener);
-        }
-
-        public synchronized void run() {
-            // It's possible that by the time this has run the updates we detected are no longer
-            // present, which is ok.
-            Log.e(LOGTAG, "UPDATE RECIEVED, INFORMING " + mListeners.size() + " LISTENERS");
-            for (OnMixpanelUpdatesReceivedListener listener: mListeners) {
-                listener.onMixpanelUpdatesReceived();
-            }
-        }
-
-        private final Set<OnMixpanelUpdatesReceivedListener> mListeners = new HashSet<OnMixpanelUpdatesReceivedListener>();
-        private final Executor mExecutor = Executors.newSingleThreadExecutor();
-    }
 
     ////////////////////////////////////////////////////
 
@@ -1456,9 +1212,7 @@ public class MixpanelAPI {
     private final String mToken;
     private final PeopleImpl mPeople;
     private final PersistentIdentity mPersistentIdentity;
-    private final UpdatesListener mUpdatesListener;
 
-    private DecideUpdates mDecideUpdates;
 
     // Maps each token to a singleton MixpanelAPI instance
     private static final Map<String, Map<Context, MixpanelAPI>> sInstanceMap = new HashMap<String, Map<Context, MixpanelAPI>>();

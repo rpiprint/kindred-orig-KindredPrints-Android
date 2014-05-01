@@ -358,6 +358,7 @@ public class CartManager {
 	public boolean addOrderImage(CartObject order) {
 		try {
 			this.ordersSema_.acquire();
+
 			for (CartObject prevOrder : this.orders) {
 				if (prevOrder.getImage().getId().equalsIgnoreCase(order.getImage().getId())) {
 					Log.i("KindredSDK", "Warning: duplicate id detected - no image added");
