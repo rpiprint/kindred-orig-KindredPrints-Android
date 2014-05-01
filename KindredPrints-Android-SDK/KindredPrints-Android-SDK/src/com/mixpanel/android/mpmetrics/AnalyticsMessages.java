@@ -101,13 +101,7 @@ import android.util.Log;
         mWorker.runMessage(m);
     }
 
-    public void installDecideCheck(final DecideUpdates check) {
-        final Message m = Message.obtain();
-        m.what = INSTALL_DECIDE_CHECK;
-        m.obj = check;
-
-        mWorker.runMessage(m);
-    }
+    
 
     public void hardKill() {
         final Message m = Message.obtain();
@@ -207,7 +201,6 @@ import android.util.Log;
             public AnalyticsMessageHandler(Looper looper) {
                 super(looper);
                 mDbAdapter = null;
-                mDecideChecker = new DecideChecker(mContext, mConfig);
                 mDisableFallback = mConfig.getDisableFallback();
                 mFlushInterval = mConfig.getFlushInterval();
                 mSystemInformation = new SystemInformation(mContext);
@@ -257,14 +250,7 @@ import android.util.Log;
                     else if (msg.what == FLUSH_QUEUE) {
                         logAboutMessageToMixpanel("Flushing queue due to scheduled or forced flush");
                         updateFlushFrequency();
-                        mDecideChecker.runDecideChecks(getPoster());
                         sendAllData(mDbAdapter);
-                    }
-                    else if (msg.what == INSTALL_DECIDE_CHECK) {
-                        logAboutMessageToMixpanel("Installing a check for surveys and in app notifications");
-                        final DecideUpdates check = (DecideUpdates) msg.obj;
-                        mDecideChecker.addDecideCheck(check);
-                        mDecideChecker.runDecideChecks(getPoster());
                     }
                     else if (msg.what == KILL_WORKER) {
                         Log.w(LOGTAG, "Worker received a hard kill. Dumping all events and force-killing. Thread id " + Thread.currentThread().getId());
@@ -423,7 +409,6 @@ import android.util.Log;
             private MPDbAdapter mDbAdapter;
             private long mFlushInterval; // XXX remove when associated deprecated APIs are removed
             private boolean mDisableFallback; // XXX remove when associated deprecated APIs are removed
-            private final DecideChecker mDecideChecker;
         }// AnalyticsMessageHandler
 
         private void updateFlushFrequency() {
@@ -463,7 +448,6 @@ import android.util.Log;
     private static int ENQUEUE_EVENTS = 1; // push given JSON message to people DB
     private static int FLUSH_QUEUE = 2; // push given JSON message to events DB
     private static int KILL_WORKER = 5; // Hard-kill the worker thread, discarding all events on the event queue. This is for testing, or disasters.
-    private static int INSTALL_DECIDE_CHECK = 12; // Run this DecideCheck at intervals until it isDestroyed()
 
     private static int SET_FLUSH_INTERVAL = 4; // XXX REMOVE when associated deprecated APIs are removed
     private static int SET_DISABLE_FALLBACK = 10; // XXX REMOVE when associated deprecated APIs are removed
