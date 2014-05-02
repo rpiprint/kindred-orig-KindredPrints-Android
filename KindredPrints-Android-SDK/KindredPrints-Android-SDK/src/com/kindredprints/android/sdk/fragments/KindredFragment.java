@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 public class KindredFragment extends Fragment {
 
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
+		
 	}
 
 }

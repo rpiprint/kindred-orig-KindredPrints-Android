@@ -15,6 +15,9 @@
     <string name="dialog_cancel">Cancel</string>
     
     <!-- NAV BAR TITLES -->
+    <string name="nav_title_select">CHOOSE PICTURES</string>
+    <string name="nav_next_title_select">NEXT</string>
+    
     <string name="nav_title_cart">CHOOSE QUANTITIES</string>
     <string name="nav_next_title_cart">NEXT</string>
     
