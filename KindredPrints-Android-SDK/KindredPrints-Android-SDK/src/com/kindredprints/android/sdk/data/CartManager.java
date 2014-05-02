@@ -115,6 +115,7 @@ public class CartManager {
 					pImage.setThumbLocalCached(image.isThumbLocalCached());
 					cartObj.setPrintProducts(fittedProducts);
 					cartObj.setPrintProductsInit(true);
+					break;
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -161,6 +162,7 @@ public class CartManager {
 				if (update) {
 					pImage.setServerId(pid);
 					pImage.setServerInit(true);
+					break;
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -179,6 +181,7 @@ public class CartManager {
 				if (update) {
 					sImage.getImage().setServerId(pid);
 					sImage.getImage().setServerInit(true);
+					break;
 				}
 			}
 			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
@@ -212,6 +215,7 @@ public class CartManager {
 				}
 				if (update) {
 					pImage.setUploadComplete(true);
+					break;
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
@@ -229,6 +233,7 @@ public class CartManager {
 				}
 				if (update) {
 					pImage.setUploadComplete(true);
+					break;
 				}
 			}
 			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
