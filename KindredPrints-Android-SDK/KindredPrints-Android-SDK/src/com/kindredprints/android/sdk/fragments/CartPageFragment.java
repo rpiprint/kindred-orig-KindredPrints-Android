@@ -194,7 +194,7 @@ public class CartPageFragment extends KindredFragment {
 		float imgWidth = this.getView().getWidth()-2*getActivity().getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
 		if (this.currObject_.getPrintProducts().size() > 0) {
 			this.imageManager_.setImageAsync(this.imgPreview_, image, this.currObject_.getPrintProducts().get(0), new Size(imgWidth, imgWidth), this.imageSetCallback_);
-		} 
+		}
 	}
 	
 	private void initInterface() {
