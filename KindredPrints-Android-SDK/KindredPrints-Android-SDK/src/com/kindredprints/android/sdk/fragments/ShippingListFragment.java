@@ -72,9 +72,7 @@ public class ShippingListFragment extends KindredFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = (ViewGroup) inflater.inflate(R.layout.fragment_shipping_list, container, false);
-		
-		// TODO launch image uploads
-		
+				
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
 		this.cmdAdd_ = (PlusButtonView) view.findViewById(R.id.cmdAdd);

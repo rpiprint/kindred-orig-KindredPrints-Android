@@ -9,12 +9,10 @@ import org.json.JSONObject;
 import android.content.Context;
 
 import com.kindredprints.android.sdk.data.CartManager;
-import com.kindredprints.android.sdk.data.CartObject;
-import com.kindredprints.android.sdk.data.PartnerImage;
+
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.data.UserObject;
-import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
@@ -29,7 +27,6 @@ public class KindredOrderFlow {
 	private DevPrefHelper devPrefHelper_;
 	private KindredRemoteInterface kindredRemoteInterface_;
 	private CartManager cartManager_;
-	private ImageManager imManager_;
 	
 	private MixpanelAPI mixpanel_;
 	
@@ -63,9 +60,7 @@ public class KindredOrderFlow {
 		flexAddToCart(photo);
 	}
 	public void addImagesToCart(ArrayList<KPhoto> photos) {
-		for (KPhoto photo : photos) {
-			addImageToCart(photo);
-		}
+		flexAddManyToCart(photos);
 	}
 	public ArrayList<KPhoto> getCurrentCartImages() {
 		return getPartnerImageList();
@@ -137,7 +132,6 @@ public class KindredOrderFlow {
 		this.userPrefHelper_ = new UserPrefHelper(context);
 		this.kindredRemoteInterface_ = new KindredRemoteInterface(context);
 		this.kindredRemoteInterface_.setNetworkCallbackListener(new ConfigServerCallback());
-		this.imManager_ = ImageManager.getInstance(context);
 		this.cartManager_ = CartManager.getInstance(context);
 	}
 	
@@ -175,31 +169,11 @@ public class KindredOrderFlow {
 	}
 	
 	private void flexAddToCart(KPhoto photo) {
-		PartnerImage pImage = new PartnerImage(photo);
-		CartObject cartObj = new CartObject();		
-		cartObj.setImage(pImage);
-		if (this.cartManager_.addOrderImage(cartObj)) {
-			if (photo instanceof KMEMPhoto) {
-				this.imManager_.cacheOrigImageFromMemory(pImage, ((KMEMPhoto)photo).getBm());
-			} else if (photo instanceof KLOCPhoto) {
-				this.imManager_.cacheOrigImageFromFile(pImage, ((KLOCPhoto)photo).getFilename());
-			} else if (photo instanceof KURLPhoto){
-				this.imManager_.startPrefetchingOrigImageToCache(pImage);
-			} else {
-
-				String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
-				String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
-						
-				pImage.setPrevUrl(frontPreviewUrl);
-				pImage.setUrl(frontPreviewUrl);
-				PartnerImage backsideImage = new PartnerImage(photo);
-				backsideImage.setPrevUrl(backPreviewUrl);
-				backsideImage.setUrl(backPreviewUrl);
-				pImage.setBackSideImage(backsideImage);
-				this.imManager_.startPrefetchingOrigImageToCache(pImage);
-				this.imManager_.startPrefetchingOrigImageToCache(pImage.getBackSideImage());
-			}
-		}
+		this.cartManager_.addPartnerImage(photo);
+	}
+	
+	private void flexAddManyToCart(ArrayList<KPhoto> photos) {
+		this.cartManager_.addManyPartnerImages(photos);
 	}
 	
 	private boolean flexDeleteFromCart(KPhoto photo) {

@@ -1,35 +1,43 @@
 package com.kindredprints.android.sdk;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class KURLPhoto extends KPhoto {
 	private String origUrl;
 	private String prevUrl;
+	private Bitmap prevThumb;
 	
 	public KURLPhoto(String origUrl) {
-		init(origUrl, origUrl, origUrl);
+		init(origUrl, origUrl, origUrl, null);
 	}
 	
 	public KURLPhoto(String id, String origUrl) {
-		init(id, origUrl, origUrl);
+		init(id, origUrl, origUrl, null);
 	}
 	public KURLPhoto(String id, String origUrl, String prevUrl) {
-		init(id, origUrl, prevUrl);
+		init(id, origUrl, prevUrl, null);
 	}
+	public KURLPhoto(String id, String origUrl, Bitmap prevThumb) {
+		init(id, origUrl, origUrl, prevThumb);
+	}
+	
 	
 	private KURLPhoto(Parcel in) {
 		this.id = in.readString();
 		this.type = in.readString();
 		this.origUrl = in.readString();
 		this.prevUrl = in.readString();
+		this.prevThumb = in.readParcelable(getClass().getClassLoader());
 	}
 	
-	private void init(String id, String orig,String preview) {
+	private void init(String id, String orig, String preview, Bitmap bm) {
 		this.id = id;
 		this.type = TYPE_URL;
 		this.origUrl = orig;
 		this.prevUrl = preview;
+		this.prevThumb = bm;
 	}
 	
 	public String getOrigUrl() {
@@ -46,6 +54,14 @@ public class KURLPhoto extends KPhoto {
 		this.prevUrl = prevUrl;
 	}
 	
+	public Bitmap getPrevThumb() {
+		return prevThumb;
+	}
+
+	public void setPrevThumb(Bitmap prevThumb) {
+		this.prevThumb = prevThumb;
+	}
+
 	@Override
 	public int describeContents() {
 		return 0;
@@ -57,6 +73,7 @@ public class KURLPhoto extends KPhoto {
 		out.writeString(this.type);
 		out.writeString(this.origUrl);
 		out.writeString(this.prevUrl);
+		out.writeParcelable(this.prevThumb, flags);
 	}
 	
 	public static final Parcelable.Creator<KURLPhoto> CREATOR = new Parcelable.Creator<KURLPhoto>() {

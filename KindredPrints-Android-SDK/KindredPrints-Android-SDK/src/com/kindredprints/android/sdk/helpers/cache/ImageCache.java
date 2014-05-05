@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 
 public class ImageCache {
-	private static final int MAX_CACHE_SIZE = 12;
+	private static final int MAX_CACHE_SIZE = 16;
 
 	private Context context_;
 	

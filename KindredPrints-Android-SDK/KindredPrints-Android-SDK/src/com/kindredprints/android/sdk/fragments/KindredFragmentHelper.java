@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.NavBarView;
 import com.kindredprints.android.sdk.customviews.NetworkProgressBar;
+import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.UserObject;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
@@ -16,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 public class KindredFragmentHelper {
+	public static final String FRAG_SELECT = "kp_fragment_select";
 	public static final String FRAG_CART = "kp_fragment_cart";
 	public static final String FRAG_LOGIN = "kp_fragment_login";
 	public static final String FRAG_SHIPPING = "kp_fragment_shipping";
@@ -33,6 +35,8 @@ public class KindredFragmentHelper {
 	private Resources resources_;
 	private Activity activity_;
 	
+	private CartManager cartManager_;
+	
 	private NetworkProgressBar progBar_;
 	
 	private NextButtonPressInterrupter nextInterrupted_;
@@ -43,6 +47,7 @@ public class KindredFragmentHelper {
 	public KindredFragmentHelper(Activity activity) {
 		this.backStack_ = new LinkedList<String>();
 		this.activity_ = activity;
+		this.cartManager_ = CartManager.getInstance(activity);
 	}
 	
 	public static KindredFragmentHelper getInstance() {
@@ -99,9 +104,17 @@ public class KindredFragmentHelper {
 	
 	public void initRootFragment() {
 		this.backStack_.clear();
-		this.currFragHash_ = FRAG_CART;
-		KindredFragment f = fragForHash(FRAG_CART);
-		f.initFragment(this, this.activity_);
+		KindredFragment f = null;
+		if (this.cartManager_.needFilterPendingPhotos()) {
+			this.currFragHash_ = FRAG_SELECT;
+			f = fragForHash(FRAG_SELECT);
+			f.initFragment(this, this.activity_);
+		} else {
+			this.currFragHash_ = FRAG_CART;
+			f = fragForHash(FRAG_CART);
+			f.initFragment(this, this.activity_);
+		}
+		
 		moveRightFragment(f);
 	}
 	
@@ -172,8 +185,10 @@ public class KindredFragmentHelper {
 			nextFrag = FRAG_ORDER_SUMMARY;
 		} else if (this.currFragHash_.equals(FRAG_ORDER_SUMMARY)) {
 			nextFrag = FRAG_ORDER_FINISHED;
-		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) {
+		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) { 
 			return moveLastFragmentWithBundle(bun);
+		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
+			nextFrag = FRAG_CART;
 		}
 		if (nextFrag != null) {
 			KindredFragment f = fragForHash(nextFrag);
@@ -282,6 +297,11 @@ public class KindredFragmentHelper {
 			if (f == null) {
 				return new OrderCompleteFragment();
 			}
+		} else if (hash.equals(FRAG_SELECT)) {
+			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_SELECT);
+			if (f == null) {
+				return new PhotoSelectFragment();
+			}
 		}
 		return f;
 	}
@@ -311,6 +331,9 @@ public class KindredFragmentHelper {
 		} else if (hash.equals(FRAG_ORDER_FINISHED)) {
 			this.navBarView_.setNextTitle("");
 			this.navBarView_.setNavTitle("");
+		} else if (hash.equals(FRAG_SELECT)) {
+			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
+			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_select));
 		}
 	}
 	

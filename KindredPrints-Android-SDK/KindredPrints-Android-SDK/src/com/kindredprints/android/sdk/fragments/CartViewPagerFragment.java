@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -295,6 +296,7 @@ public class CartViewPagerFragment extends KindredFragment {
 		@Override
 		public void orderHasBeenUpdatedWithSize(PartnerImage obj) {
 			if (cartDataAdapter_ != null) {
+				Log.i("KindredSDK", "order was updatedw with size " + obj.getId());
 				for (int i = 0; i < cartManager_.countOfOrders(); i++) {
 					CartObject cObj = cartManager_.getOrderForIndex(i);
 					if (cObj.getImage().getId().equalsIgnoreCase(obj.getId())) {

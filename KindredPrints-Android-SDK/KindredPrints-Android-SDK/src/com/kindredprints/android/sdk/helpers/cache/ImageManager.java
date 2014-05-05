@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
+import com.kindredprints.android.sdk.KLOCPhoto;
+import com.kindredprints.android.sdk.KMEMPhoto;
+import com.kindredprints.android.sdk.KPhoto;
+import com.kindredprints.android.sdk.KURLPhoto;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.CartObject;
 import com.kindredprints.android.sdk.data.PartnerImage;
@@ -18,6 +22,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -96,7 +101,6 @@ public class ImageManager {
 
 	public void startPrefetchingOrigImageToCache(PartnerImage image) {
 		String origId = getOrigName(image.getId());
-		Log.i("KindredSDK", "starting to prefetch " + origId);
 		if (!isOrigImageInProcess(origId) && !isOrigWaitingForProcess(origId) && !this.fCache_.hasImageForKey(origId)) {
 			this.imageDetails_.put(origId, image);
 			this.waitingToDownloadQueue_.add(origId);
@@ -309,7 +313,6 @@ public class ImageManager {
 			image.setThumbLocalCached(true);
 		}
 		
-		
 		this.cartManager_.imageWasUpdatedWithSizes(image, sizesToCrop);
 		ImageUploadHelper.getInstance(this.context_).imageReadyForUpload(image);
 		
@@ -383,6 +386,60 @@ public class ImageManager {
 		}
 	}
 
+	public void setImageAsync(final ImageView view, final KPhoto image, final String pid, final Size size) {
+		if (this.imCache_.hasImage(pid)) {
+			view.setImageBitmap(this.imCache_.getImageForKey(pid, view));
+		} else {
+			try {
+				this.processingSema_.acquire();				
+				if (!this.downloadingQueue_.contains(pid)) {
+					this.downloadingQueue_.add(pid);
+					this.processingSema_.release();
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							if (image instanceof KMEMPhoto) {
+								KMEMPhoto memPhoto = (KMEMPhoto)image;
+								fCache_.addImage(memPhoto.getBm(), pid);
+							} else if (image instanceof KLOCPhoto) {
+								KLOCPhoto locPhoto = (KLOCPhoto)image;
+								fCache_.addImageFromFile(locPhoto.getFilename(), pid);
+							} else if (image instanceof KURLPhoto) {
+								KURLPhoto urlPhoto = (KURLPhoto)image;
+								if (urlPhoto.getPrevThumb() != null) {
+									fCache_.addImage(urlPhoto.getPrevThumb(), pid);
+								} else {
+									fCache_.addImageFromUrl(urlPhoto.getPrevUrl(), pid);
+								}
+							}
+							final Bitmap bm = ImageEditor.crop_square(fCache_.getImageForKey(pid, size), -1);
+							imCache_.addImage(bm, view, pid);
+							try {
+								processingSema_.acquire();				
+								downloadingQueue_.remove(pid);
+								processingSema_.release();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							Handler mainHandler = new Handler(context_.getMainLooper());
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									view.setImageBitmap(bm);
+								}
+							});
+						}
+					}).start();
+				} else {
+					this.processingSema_.release();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void setImageAsync(final ImageView view, final PartnerImage image, PrintProduct product, final Size displaySize, final ImageManagerCallback callback) {
 		String uid = null;
 		if (displaySize.getHeight() <= this.interfacePrefHelper_.getThumbMaxSize() && displaySize.getWidth() <= this.interfacePrefHelper_.getThumbMaxSize()) {
@@ -403,17 +460,17 @@ public class ImageManager {
 				@Override
 				public void run() {
 					if (fCache_.hasImageForKey(fUid)) {
-						Handler mainHandler = new Handler(context_.getMainLooper());
+						Handler mainHandler = new Handler(Looper.getMainLooper());
 						final Bitmap bm = fCache_.getImageForKey(fUid, displaySize);
 						imCache_.addImage(bm, view, fUid);
 						mainHandler.post(new Runnable() {
 							@Override
 							public void run() {
 								view.setImageBitmap(bm);
+								if (callback != null) callback.imageAssigned();
 							}
 						});
 						assignAnyWaitingViewsForId(fUid);
-						
 					} else {
 						try {
 							waitingviewSema_.acquire();
@@ -423,7 +480,9 @@ public class ImageManager {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						if (!isOrigImageInProcess(getOrigName(image.getId())) && !isOrigWaitingForProcess(getOrigName(image.getId()))) {
+						if (fCache_.hasImageForKey(getOrigName(image.getId()))) {
+							processImageInStorage(image, null);
+						} else if (!isOrigImageInProcess(getOrigName(image.getId())) && !isOrigWaitingForProcess(getOrigName(image.getId()))) {
 							startPrefetchingOrigImageToCache(image);
 						}
 					}

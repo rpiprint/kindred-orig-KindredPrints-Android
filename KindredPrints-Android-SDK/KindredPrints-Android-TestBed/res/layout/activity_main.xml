@@ -55,11 +55,21 @@
         android:text="Add 3 test URL images"
         android:textSize="@dimen/subtitle_text_size" />
 
+    <Button
+        android:id="@+id/cmdAddMany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editTxtUrl"
+        android:layout_below="@+id/cmdAddThree"
+        android:layout_marginTop="10dp"
+        android:text="Add 11 test URL images"
+        android:textSize="@dimen/subtitle_text_size" />
+    
     <TextView
         android:id="@+id/TextView02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/cmdAddThree"
+        android:layout_alignLeft="@+id/cmdAddMany"
         android:layout_below="@+id/cmdFromGallery"
         android:layout_marginTop="14dp"
         android:text="User Related"
@@ -80,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/cmdAddThree"
-        android:layout_below="@+id/cmdAddThree"
+        android:layout_below="@+id/cmdAddMany"
         android:layout_marginTop="5dp"
         android:text="Memory/File images"
         android:textSize="@dimen/subtitle_text_size"

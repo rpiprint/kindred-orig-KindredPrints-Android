@@ -1,8 +1,11 @@
 package com.kindredprints.sdk.testbed;
 
+import java.util.ArrayList;
+
 import com.kindredprints.sdk.testbed.R;
 import com.kindredprints.android.sdk.KCustomPhoto;
 import com.kindredprints.android.sdk.KLOCPhoto;
+import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.KindredOrderFlowActivity;
 import com.kindredprints.android.sdk.KURLPhoto;
 import com.kindredprints.android.sdk.KindredOrderFlow;
@@ -25,13 +28,13 @@ public class MainActivity extends Activity {
 	private static int RESULT_GALLERY_LOAD_IMAGE = 1;
 	private static int RESULT_IMAGE_CAPTURE = 2;
 	
-	private final static String KINDRED_APP_KEY = "YOUR TEST KEY";
+	private final static String KINDRED_APP_KEY = "test_SDHdPzfxotJ8xAQ674ABbXap";
 	private KindredOrderFlow orderFlow;
 	
 	EditText editTxtUrl;
 	Button cmdAddUrl;
 	Button cmdAddThree;
-	
+	Button cmdAddMany;
 	Button cmdAddCustom;
 	
 	
@@ -66,6 +69,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
+
         this.cmdShowCart = (Button) findViewById(R.id.cmdShowCart);
         this.cmdShowCart.setOnClickListener(new OnClickListener() {
 			@Override
@@ -91,13 +95,28 @@ public class MainActivity extends Activity {
         this.cmdAddThree.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				orderFlow.addImageToCart(new KURLPhoto("1", "http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
-				orderFlow.addImageToCart(new KURLPhoto("2", "http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
-				orderFlow.addImageToCart(new KURLPhoto("3", "http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
+				counter = counter + 1;
+				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
+				counter = counter + 1;
+				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
+				counter = counter + 1;
+				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
 				showToast("images added");
 			}
         });
         
+        this.cmdAddMany = (Button) findViewById(R.id.cmdAddMany);
+        this.cmdAddMany.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				ArrayList<KPhoto> photosToAdd = new ArrayList<KPhoto>();
+				for (int i = 0; i < 11; i++) {
+					counter = counter + 1;
+					photosToAdd.add(new KURLPhoto(String.valueOf(counter), "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg", "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg"));
+				}
+				orderFlow.addImagesToCart(photosToAdd);
+			}
+        });
         
         this.cmdTakePhoto = (Button) findViewById(R.id.cmdTakePhoto);
         this.cmdTakePhoto.setOnClickListener(new OnClickListener() {
