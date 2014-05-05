@@ -22,6 +22,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 public class CartManager {
@@ -58,7 +59,7 @@ public class CartManager {
 	
 	public static CartManager getInstance(Context context) {
 		if (manager_ == null) {
-			manager_ = new CartManager(context);
+			manager_ = new CartManager(context.getApplicationContext());
 		} 
 		return manager_;
 	}
@@ -84,7 +85,7 @@ public class CartManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Handler mainHandler = new Handler(context_.getMainLooper());
+		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -154,7 +155,7 @@ public class CartManager {
 		}
 
 		final PartnerImage fpImage = image;
-		Handler mainHandler = new Handler(context_.getMainLooper());
+		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -207,7 +208,7 @@ public class CartManager {
 			e.printStackTrace();
 		}
 		final PartnerImage fpImage = pImage;
-		Handler mainHandler = new Handler(context_.getMainLooper());
+		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -258,7 +259,7 @@ public class CartManager {
 			e.printStackTrace();
 		}
 		final PartnerImage fpImage = pImage;
-		Handler mainHandler = new Handler(context_.getMainLooper());
+		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -337,7 +338,7 @@ public class CartManager {
 			this.ordersSema_.release();
 			this.selOrdersSema_.release();
 			
-			Handler mainHandler = new Handler(context_.getMainLooper());
+			Handler mainHandler = new Handler(Looper.getMainLooper());
 			mainHandler.post(new Runnable() {
 				@Override
 				public void run() {
