@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -100,7 +101,6 @@ public class ImageManager {
 
 	public void startPrefetchingOrigImageToCache(PartnerImage image) {
 		String origId = getOrigName(image.getId());
-		Log.i("KindredSDK", "starting to prefetch " + origId);
 		if (!isOrigImageInProcess(origId) && !isOrigWaitingForProcess(origId) && !this.fCache_.hasImageForKey(origId)) {
 			this.imageDetails_.put(origId, image);
 			this.waitingToDownloadQueue_.add(origId);
@@ -460,17 +460,17 @@ public class ImageManager {
 				@Override
 				public void run() {
 					if (fCache_.hasImageForKey(fUid)) {
-						Handler mainHandler = new Handler(context_.getMainLooper());
+						Handler mainHandler = new Handler(Looper.getMainLooper());
 						final Bitmap bm = fCache_.getImageForKey(fUid, displaySize);
 						imCache_.addImage(bm, view, fUid);
 						mainHandler.post(new Runnable() {
 							@Override
 							public void run() {
 								view.setImageBitmap(bm);
+								if (callback != null) callback.imageAssigned();
 							}
 						});
 						assignAnyWaitingViewsForId(fUid);
-						
 					} else {
 						try {
 							waitingviewSema_.acquire();
@@ -480,7 +480,9 @@ public class ImageManager {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						if (!isOrigImageInProcess(getOrigName(image.getId())) && !isOrigWaitingForProcess(getOrigName(image.getId()))) {
+						if (fCache_.hasImageForKey(getOrigName(image.getId()))) {
+							processImageInStorage(image, null);
+						} else if (!isOrigImageInProcess(getOrigName(image.getId())) && !isOrigWaitingForProcess(getOrigName(image.getId()))) {
 							startPrefetchingOrigImageToCache(image);
 						}
 					}

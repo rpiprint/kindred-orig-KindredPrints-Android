@@ -25,6 +25,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class CartPageFragment extends KindredFragment {
@@ -40,6 +41,7 @@ public class CartPageFragment extends KindredFragment {
 	
 	private boolean frontSideUp_;
 	
+	private ProgressBar progBar_;
 	private ImageView imgWarning_;
 	private SideArrow cmdLeft_;
 	private SideArrow cmdRight_;
@@ -67,6 +69,7 @@ public class CartPageFragment extends KindredFragment {
 		this.interfacePrefHelper_ = new InterfacePrefHelper(getActivity());
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
+		this.progBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
 		this.cmdLeft_ = (SideArrow) view.findViewById(R.id.cmdLeft);
 		this.cmdRight_ = (SideArrow) view.findViewById(R.id.cmdRight);
 		this.cmdLeft_.setDirection(SideArrow.LEFT_ARROW);
@@ -97,7 +100,8 @@ public class CartPageFragment extends KindredFragment {
 		this.lvProducts_ = (ListView) view.findViewById(R.id.lvAvailableProducts);
 		this.lvProducts_.setBackgroundColor(Color.TRANSPARENT);
 		this.lvProducts_.setAdapter(this.productListAdapter_);
-		
+		setImageVisible(false);
+
 		this.frontSideUp_ = true;
 		this.cmdFlip_.setOnClickListener(new OnClickListener() {
 			@Override
@@ -138,6 +142,8 @@ public class CartPageFragment extends KindredFragment {
 			}
 		});
 		
+		
+
 		return view;
 	}
 	
@@ -169,10 +175,31 @@ public class CartPageFragment extends KindredFragment {
 		} else {
 			this.cmdFlip_.setVisibility(View.INVISIBLE);
 		}
-		if (this.productListAdapter_.needShowWarning()) {
+		if (this.productListAdapter_ != null && this.productListAdapter_.needShowWarning()) {
 			this.imgWarning_.setVisibility(View.VISIBLE);
 		} else {
 			this.imgWarning_.setVisibility(View.INVISIBLE);
+		}
+	}
+	
+	private void setImageVisible(boolean visible) {
+		if (visible) {
+			this.txtImageCount_.setVisibility(View.VISIBLE);
+			this.cmdDelete_.setVisibility(View.VISIBLE);
+			this.cmdLeft_.setVisibility(View.VISIBLE);
+			this.cmdRight_.setVisibility(View.VISIBLE);
+			this.lvProducts_.setVisibility(View.VISIBLE);
+			this.progBar_.setVisibility(View.INVISIBLE);
+			adjustDisplay();
+		} else {
+			this.cmdFlip_.setVisibility(View.INVISIBLE);
+			this.imgWarning_.setVisibility(View.INVISIBLE);
+			this.txtImageCount_.setVisibility(View.INVISIBLE);
+			this.cmdDelete_.setVisibility(View.INVISIBLE);
+			this.cmdLeft_.setVisibility(View.INVISIBLE);
+			this.cmdRight_.setVisibility(View.INVISIBLE);
+			this.progBar_.setVisibility(View.VISIBLE);
+			this.lvProducts_.setVisibility(View.INVISIBLE);
 		}
 	}
 	
@@ -185,12 +212,10 @@ public class CartPageFragment extends KindredFragment {
 		this.imageSetCallback_ = new ImageManagerCallback() {
 			@Override
 			public void imageAssigned() {
-				//fragmentHelper_.hideProgressBar();
+				setImageVisible(true);
 			}
 		};
 
-		//fragmentHelper_.showProgressBarWithMessage("loading preview..");
-		
 		float imgWidth = this.getView().getWidth()-2*getActivity().getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
 		if (this.currObject_.getPrintProducts().size() > 0) {
 			this.imageManager_.setImageAsync(this.imgPreview_, image, this.currObject_.getPrintProducts().get(0), new Size(imgWidth, imgWidth), this.imageSetCallback_);
@@ -203,7 +228,7 @@ public class CartPageFragment extends KindredFragment {
 		
 		this.currObject_ = this.cartManager_.getOrderForIndex(this.currIndex_);
 		this.txtImageCount_.setText("Picture " + String.valueOf(currIndex_+1) + " of " + String.valueOf(this.cartManager_.countOfOrders()));
-		
+				
 		loadAppropriateImage();
 		
 		this.productListAdapter_ = new ProductListAdapter(getActivity(), this.currObject_);

@@ -80,6 +80,7 @@ public class PhotoSelectFragment extends KindredFragment {
 	public class SelectBackButtonHandler implements BackButtonPressInterrupter {
 		@Override
 		public boolean interruptBackButton() {
+			cartManager_.cleanUpPendingImages();
 			return false;
 		}
 	}
