@@ -7,26 +7,30 @@
         android:id="@+id/cmdBack"
         android:layout_width="@dimen/nav_back_button_width"
         android:layout_height="@dimen/nav_back_button_width"
-        android:layout_alignParentLeft="true"/>
-    
-    <TextView
-        android:id="@+id/txtTitle"
-       	android:layout_width="wrap_content"
-       	android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="@dimen/nav_padding_size"
-        android:paddingRight="@dimen/nav_padding_size"
-        android:textSize="@dimen/nav_bar_text_size" 
-    />
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"/>
 
-    <Button
-        android:id="@+id/cmdNext"
-        android:layout_width="@dimen/nav_next_button_width"
+    <RelativeLayout 
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:paddingLeft="@dimen/nav_padding_size"
-        android:paddingRight="@dimen/nav_padding_size"
-        android:background="@drawable/cmd_nav_bar"
-        android:textSize="@dimen/nav_bar_text_size"
-    />
+	    android:background="@drawable/cmd_nav_bar">
+	    <Button
+	        android:id="@+id/cmdNext"
+	        android:layout_width="@dimen/nav_next_button_width"
+	        android:layout_height="match_parent"
+	        android:textSize="@dimen/nav_bar_text_size">
+	   </Button>
+	   
+	    <ImageView
+	        android:id="@+id/icon"
+	 		android:contentDescription="@string/img_content"
+	        android:layout_width="@dimen/nav_next_button_width"
+	        android:padding="@dimen/nav_padding_size"
+	        android:layout_height="match_parent"
+	        android:layout_centerInParent="true"
+	   		/>
+    </RelativeLayout>
 </RelativeLayout>

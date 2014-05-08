@@ -14,8 +14,8 @@
     <dimen name="rounded_button_stroke">1sp</dimen>
     
     <dimen name="nav_back_button_width">40dp</dimen>
-    <dimen name="nav_bar_height">40dp</dimen>
-    <dimen name="nav_next_button_width">80dp</dimen>
+    <dimen name="nav_bar_height">50dp</dimen>
+    <dimen name="nav_next_button_width">60dp</dimen>
     <dimen name="nav_padding_size">10dp</dimen>
     <dimen name="nav_bar_text_size">18sp</dimen>
     
@@ -38,6 +38,15 @@
     <dimen name="cart_page_flip_size">30dp</dimen>
     <dimen name="cart_page_delete_stroke">1dp</dimen>
     <dimen name="cart_page_text_size">16sp</dimen>
+    
+    <dimen name="preview_page_padding">15dp</dimen>
+    <dimen name="preview_page_control_height">60dp</dimen>
+    <dimen name="preview_page_control_width">120dp</dimen>
+    <dimen name="preview_page_vertical_padding">40dp</dimen>
+    <dimen name="preview_page_button_width">150dp</dimen>
+    <dimen name="preview_page_quantity_text_size">30sp</dimen>
+    <dimen name="preview_page_text_size">20sp</dimen>
+    <dimen name="preview_page_subtitle_text_size">16sp</dimen>
     
     <dimen name="cart_page_plusminus_stroke">1dp</dimen>
     <dimen name="cart_page_product_height">75dp</dimen>

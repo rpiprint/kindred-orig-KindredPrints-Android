@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+        
+	<ImageView
+        android:id="@+id/imgPreview"
+     	android:contentDescription="@string/img_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/preview_page_vertical_padding"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+	/>
+	
+	<ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/cart_page_image_vertical_padding"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+	
+	<ImageView
+        android:id="@+id/imgWarning"
+     	android:contentDescription="@string/img_content"
+        android:layout_height="@dimen/cart_page_product_warning_side"
+        android:layout_width="@dimen/cart_page_product_warning_side"
+        android:layout_margin="@dimen/cart_page_delete_padding_left"
+        android:layout_alignTop="@+id/imgPreview"
+        android:layout_alignLeft="@+id/imgPreview"
+		android:src="@drawable/ico_warning_yellow"
+		android:visibility="invisible"
+    />
+	
+    
+	<Button
+	    android:id="@+id/cmdFlip"
+       	android:layout_width="@dimen/cart_page_flip_size"
+       	android:layout_height="@dimen/cart_page_flip_size"
+       	android:layout_alignTop="@+id/imgPreview"
+       	android:layout_marginRight="@dimen/cart_page_image_vertical_padding"
+       	android:layout_marginTop="@dimen/cart_page_image_vertical_padding"
+        android:layout_toLeftOf="@+id/imgPreview"
+        android:background="@drawable/ico_flip_white"
+	    />
+
+	<TextView
+        android:id="@+id/txtTitle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imgPreview"
+        android:layout_marginTop="@dimen/preview_page_vertical_padding"
+        android:textStyle="bold"
+        android:textSize="@dimen/preview_page_text_size" />
+	
+	<TextView
+        android:id="@+id/txtSubtitle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/txtTitle"
+        android:layout_marginTop="@dimen/preview_page_padding"
+        android:textSize="@dimen/preview_page_subtitle_text_size" />
+		
+	<RelativeLayout 
+	    android:id="@+id/container"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginBottom="@dimen/preview_page_vertical_padding" >
+	    
+	    <RelativeLayout 
+	        android:id="@+id/quantContainer"
+	        android:layout_width="match_parent"
+	        android:layout_height="@dimen/preview_page_control_height"
+	        android:layout_toLeftOf="@+id/cmdAddUpdateCart"
+	        android:layout_alignParentLeft="true" >
+	    	
+	    	<com.kindredprints.android.sdk.customviews.QuantityView
+		        android:id="@+id/viewQuantity"
+		        android:layout_height="@dimen/preview_page_control_height"
+		        android:layout_width="@dimen/preview_page_control_width"
+			    android:layout_centerHorizontal="true"
+		        android:layout_margin="@dimen/preview_page_padding"
+		        />    
+	    </RelativeLayout>
+	    
+		
+		<Button 
+	        android:id="@+id/cmdAddUpdateCart"
+	        android:layout_width="@dimen/preview_page_button_width"
+	        android:layout_height="@dimen/preview_page_control_height"
+			android:layout_marginRight="@dimen/preview_page_padding"
+			android:layout_alignParentRight="true"
+	       	android:textSize="@dimen/preview_page_text_size"
+	        android:text="@string/cart_add_to_cart"
+	        android:background="@drawable/cmd_rounded_blue_filled_button"/>
+	</RelativeLayout>
+	
+	
+        
+</RelativeLayout>

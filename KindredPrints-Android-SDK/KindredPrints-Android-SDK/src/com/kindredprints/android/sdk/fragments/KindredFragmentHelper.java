@@ -18,6 +18,7 @@ import android.util.Log;
 
 public class KindredFragmentHelper {
 	public static final String FRAG_SELECT = "kp_fragment_select";
+	public static final String FRAG_PREVIEW = "kp_fragment_preview";
 	public static final String FRAG_CART = "kp_fragment_cart";
 	public static final String FRAG_LOGIN = "kp_fragment_login";
 	public static final String FRAG_SHIPPING = "kp_fragment_shipping";
@@ -105,10 +106,17 @@ public class KindredFragmentHelper {
 	public void initRootFragment() {
 		this.backStack_.clear();
 		KindredFragment f = null;
-		if (this.cartManager_.needFilterPendingPhotos()) {
-			this.currFragHash_ = FRAG_SELECT;
-			f = fragForHash(FRAG_SELECT);
-			f.initFragment(this, this.activity_);
+		int numPending = this.cartManager_.getPendingImages().size();
+		if (numPending > 0) {
+			if (numPending > 1) {
+				this.currFragHash_ = FRAG_SELECT;
+				f = fragForHash(FRAG_SELECT);
+				f.initFragment(this, this.activity_);
+			} else {
+				this.currFragHash_ = FRAG_PREVIEW;
+				f = fragForHash(FRAG_PREVIEW);
+				f.initFragment(this, this.activity_);
+			}
 		} else {
 			this.currFragHash_ = FRAG_CART;
 			f = fragForHash(FRAG_CART);
@@ -302,6 +310,11 @@ public class KindredFragmentHelper {
 			if (f == null) {
 				return new PhotoSelectFragment();
 			}
+		} else if (hash.equals(FRAG_PREVIEW)) {
+			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_PREVIEW);
+			if (f == null) {
+				return new CartPreviewFragment();
+			}
 		}
 		return f;
 	}
@@ -309,31 +322,25 @@ public class KindredFragmentHelper {
 	public void configNavBarForHash(String hash) {
 		if (hash.equals(FRAG_CART)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_cart));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_cart));
 		} else if (hash.equals(FRAG_LOGIN)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
 		} else if (hash.equals(FRAG_LOGIN+String.valueOf(LoginViewFragment.STATE_NEED_PASSWORD))) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
 		} else if (hash.equals(FRAG_LOGIN+String.valueOf(LoginViewFragment.STATE_WRONG_PASSWORD))) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login_reset));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
 		} else if (hash.equals(FRAG_SHIPPING)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_shipping));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_shipping));
 		} else if (hash.equals(FRAG_SHIPPING_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_edit_shipping));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_edit_shipping));
 		} else if (hash.equals(FRAG_ORDER_SUMMARY) || hash.equals(FRAG_ORDER_CARD_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_purchase));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_purchase));
 		} else if (hash.equals(FRAG_ORDER_FINISHED)) {
 			this.navBarView_.setNextTitle("");
-			this.navBarView_.setNavTitle("");
 		} else if (hash.equals(FRAG_SELECT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_select));
+		} else if (hash.equals(FRAG_PREVIEW)) {
+			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
 		}
 	}
 	

@@ -25,9 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-public class CartManager {
-	private static final int FILTER_THRESHOLD = 10;
-	
+public class CartManager {	
 	private ArrayList<KPhoto> pendingPhotos;
 	private ArrayList<CartObject> orders;
 	private ArrayList<PrintableImage> selectedOrders;
@@ -62,15 +60,6 @@ public class CartManager {
 			manager_ = new CartManager(context.getApplicationContext());
 		} 
 		return manager_;
-	}
-	
-	
-	public boolean needFilterPendingPhotos() {
-		if (this.pendingPhotos.size() > 0) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	public void updateAllOrdersWithNewSizes() {
@@ -115,7 +104,7 @@ public class CartManager {
 		}
 	}
 	
-	public void imageWasUpdatedWithSizes(PartnerImage image, ArrayList<PrintProduct> fittedProducts) {
+	public void imageWasUpdatedWithSizes(PartnerImage image, final ArrayList<PrintProduct> fittedProducts) {
 		PartnerImage pImage = null;
 		try {
 			this.ordersSema_.acquire();
@@ -161,7 +150,7 @@ public class CartManager {
 			@Override
 			public void run() {
 				if (callback_ != null) {	
-					callback_.orderHasBeenUpdatedWithSize(fpImage);
+					callback_.orderHasBeenUpdatedWithSize(fpImage, fittedProducts);
 				}
 			}
 		});
@@ -314,6 +303,28 @@ public class CartManager {
 		return this.selectedOrders.size();
 	}
 
+	public boolean hasImageInCart(CartObject obj) {
+		boolean present = false;
+		try {
+			this.ordersSema_.acquire();
+			this.selOrdersSema_.acquire();
+			Log.i("KindredSDK", "looking in cart, size = " + this.orders.size());
+			for (int i = 0; i < this.orders.size(); i++) {
+				CartObject cartObj = this.orders.get(i);
+				if (cartObj.getImage().getId().equals(obj.getImage().getId())) {
+					Log.i("KindredSDK", "found object with id = " + obj.getImage().getId());
+					present = true;
+					break;
+				}
+			}
+			this.ordersSema_.release();
+			this.selOrdersSema_.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return present;
+	}
+	
 	public void deleteOrderImageForId(String localid) {
 		try {
 			this.ordersSema_.acquire();
@@ -382,21 +393,11 @@ public class CartManager {
 	}
 	
 	public void addManyPartnerImages(ArrayList<KPhoto> photos) {
-		if (photos.size() < FILTER_THRESHOLD) {
-			for (KPhoto photo : photos) {
-				addPartnerImage(photo);
-			}
-		} else {
-			this.pendingPhotos.addAll(photos);
-		}
+		this.pendingPhotos.addAll(photos);
 	}
 	
 	public void addPartnerImage(KPhoto photo) {
-		if (needFilterPendingPhotos()) {
-			this.pendingPhotos.add(photo);
-		} else {
-			processPartnerImage(photo);
-		}
+		this.pendingPhotos.add(photo);
 	}
 	
 	public void processPartnerImage(KPhoto photo) {
@@ -404,26 +405,30 @@ public class CartManager {
 		CartObject cartObj = new CartObject();		
 		cartObj.setImage(pImage);
 		if (addOrderImage(cartObj)) {
-			ImageManager imManager = ImageManager.getInstance(context_);
-			if (photo instanceof KMEMPhoto) {
-				imManager.cacheOrigImageFromMemory(pImage, ((KMEMPhoto)photo).getBm());
-			} else if (photo instanceof KLOCPhoto) {
-				imManager.cacheOrigImageFromFile(pImage, ((KLOCPhoto)photo).getFilename());
-			} else if (photo instanceof KURLPhoto){
-				imManager.startPrefetchingOrigImageToCache(pImage);
-			} else {
-				String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
-				String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
-						
-				pImage.setPrevUrl(frontPreviewUrl);
-				pImage.setUrl(frontPreviewUrl);
-				PartnerImage backsideImage = new PartnerImage(photo);
-				backsideImage.setPrevUrl(backPreviewUrl);
-				backsideImage.setUrl(backPreviewUrl);
-				pImage.setBackSideImage(backsideImage);
-				imManager.startPrefetchingOrigImageToCache(pImage);
-				imManager.startPrefetchingOrigImageToCache(pImage.getBackSideImage());
-			}
+			cacheIncomingImage(pImage, photo);
+		}
+	}
+	
+	public void cacheIncomingImage(PartnerImage pImage, KPhoto photo) {
+		ImageManager imManager = ImageManager.getInstance(context_);
+		if (photo instanceof KMEMPhoto) {
+			imManager.cacheOrigImageFromMemory(pImage, ((KMEMPhoto)photo).getBm());
+		} else if (photo instanceof KLOCPhoto) {
+			imManager.cacheOrigImageFromFile(pImage, ((KLOCPhoto)photo).getFilename());
+		} else if (photo instanceof KURLPhoto){
+			imManager.startPrefetchingOrigImageToCache(pImage);
+		} else {
+			String frontPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, true);
+			String backPreviewUrl = this.devPrefHelper_.getCustomPreviewImageUrl((KCustomPhoto)photo, false);
+					
+			pImage.setPrevUrl(frontPreviewUrl);
+			pImage.setUrl(frontPreviewUrl);
+			PartnerImage backsideImage = new PartnerImage(photo);
+			backsideImage.setPrevUrl(backPreviewUrl);
+			backsideImage.setUrl(backPreviewUrl);
+			pImage.setBackSideImage(backsideImage);
+			imManager.startPrefetchingOrigImageToCache(pImage);
+			imManager.startPrefetchingOrigImageToCache(pImage.getBackSideImage());
 		}
 	}
 	

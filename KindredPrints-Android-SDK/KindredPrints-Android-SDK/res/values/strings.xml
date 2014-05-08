@@ -34,10 +34,15 @@
     <string name="nav_title_purchase">ORDER SUMMARY</string>
     <string name="nav_next_title_purchase">DONE</string>
     
+    <string name="nav_title_preview">ADD TO CART</string>
+    <string name="nav_next_title_preview">CHECKOUT</string>
+    
     <!-- CART PAGE -->
     
     <string name="cart_empty">Your print cart is empty..\nPlease go back to add an image</string>
     <string name="cart_subtotal">Subtotal</string>
+    <string name="cart_add_to_cart">Add to cart</string>
+    <string name="cart_update_in_cart">Update in cart</string>
     
     <!-- SHIPPING LIST PAGE -->
     <string name="shipping_title">Choose where to ship your prints:</string>

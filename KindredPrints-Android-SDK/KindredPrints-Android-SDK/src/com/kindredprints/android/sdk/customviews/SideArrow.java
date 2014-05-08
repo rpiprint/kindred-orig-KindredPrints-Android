@@ -44,10 +44,10 @@ public class SideArrow extends Button {
 		float py = this.getHeight()/2.0f;
         float px = this.getWidth()/2.0f;
         
-        float stroke = LINE_THICKNESS*this.getWidth();
+        float stroke = LINE_THICKNESS*this.getHeight();
 		this.strokePaint_.setStrokeWidth(stroke);
         
-        float side = this.getWidth()*DIAMETER_PERCENT;
+        float side = this.getHeight()*DIAMETER_PERCENT;
         float halfSide = ((float)Math.sqrt(2))*side/2.0f;
         float strokePadding = ((float)Math.sqrt(2))*stroke/4.0f;
         

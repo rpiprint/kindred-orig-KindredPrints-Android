@@ -6,24 +6,26 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class NavBarView extends RelativeLayout {
+	public static final int TYPE_CART_BUTTON = 0;
+	public static final int TYPE_NEXT_BUTTON = 1;
+	
 	private static final int UP_TRANSITION_TIME = 200;
 	private static final int DOWN_TRANSITION_TIME = 200;
 	
 	private int viewHeight;
 	private boolean hidden;
-	
+		
 	private SideArrow cmdBack_;
 	private Button cmdNext_;
-	private TextView txtTitle_;
+	private ImageView cmdNextIcon_;
 	
 	private InterfacePrefHelper interfacePrefHelper_;
 	
@@ -31,23 +33,20 @@ public class NavBarView extends RelativeLayout {
 	
 	public NavBarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
 		LayoutInflater inflater = (LayoutInflater) context
 		        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.view_nav_bar, this, true);
 		
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		
-		this.txtTitle_ = (TextView) findViewById(R.id.txtTitle);
 		this.cmdBack_ = (SideArrow) findViewById(R.id.cmdBack);
 		this.cmdBack_.setDirection(SideArrow.LEFT_ARROW);
 		
+		this.cmdNextIcon_ = (ImageView) findViewById(R.id.icon);  
 		this.cmdNext_ = (Button) findViewById(R.id.cmdNext);
 		this.cmdNext_.setBackgroundColor(Color.TRANSPARENT);
 		this.cmdNext_.setTextColor(this.interfacePrefHelper_.getHighlightColor());
 		this.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
-		this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.txtTitle_.setGravity(Gravity.CENTER_VERTICAL);
 		
 		this.cmdBack_.setOnClickListener(new OnClickListener() {
 			@Override
@@ -109,13 +108,17 @@ public class NavBarView extends RelativeLayout {
 		}
 	}
 	
+	public void setNextButtonType(int buttonType) {
+		if (buttonType == TYPE_CART_BUTTON) {
+			this.cmdNext_.setText("");
+			this.cmdNextIcon_.setImageResource(R.drawable.ico_cart_blue);
+		} else if (buttonType == TYPE_NEXT_BUTTON) {
+			this.cmdNextIcon_.setImageBitmap(null);
+		}
+	}
+	
 	public void setNextTitle(String title) {
 		this.cmdNext_.setText(title);
 	}
-	public void setNavTitle(String title) {
-		this.txtTitle_.setText(title);
-	}
-	
-	
 	
 }

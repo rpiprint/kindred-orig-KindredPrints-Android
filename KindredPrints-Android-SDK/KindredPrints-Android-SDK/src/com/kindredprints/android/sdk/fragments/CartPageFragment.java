@@ -37,7 +37,6 @@ public class CartPageFragment extends KindredFragment {
 	
 	private int currIndex_;
 	private CartPageUpdateListener callback_;
-	//private KindredFragmentHelper fragmentHelper_;
 	
 	private boolean frontSideUp_;
 	
@@ -59,7 +58,6 @@ public class CartPageFragment extends KindredFragment {
 	public void init(Context context, KindredFragmentHelper fragmentHelper) {
 		this.cartManager_ = CartManager.getInstance(context);
 		this.imageManager_ = ImageManager.getInstance(context);
-		//this.fragmentHelper_ = fragmentHelper;
 	}
 	
 	@Override

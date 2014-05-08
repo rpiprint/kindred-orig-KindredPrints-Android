@@ -1,5 +1,7 @@
 package com.kindredprints.android.sdk.fragments;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -294,7 +296,7 @@ public class CartViewPagerFragment extends KindredFragment {
 		}
 		
 		@Override
-		public void orderHasBeenUpdatedWithSize(PartnerImage obj) {
+		public void orderHasBeenUpdatedWithSize(PartnerImage obj, ArrayList<PrintProduct> products) {
 			if (cartDataAdapter_ != null) {
 				Log.i("KindredSDK", "order was updatedw with size " + obj.getId());
 				for (int i = 0; i < cartManager_.countOfOrders(); i++) {
