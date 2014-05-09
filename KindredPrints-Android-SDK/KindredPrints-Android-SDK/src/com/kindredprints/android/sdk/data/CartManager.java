@@ -63,7 +63,7 @@ public class CartManager {
 	}
 	
 	public void updateAllOrdersWithNewSizes() {
-		try {
+		/*try {
 			this.ordersSema_.acquire();
 			ArrayList<PrintProduct> allSizes = this.devPrefHelper_.getCurrentSizes();
 			for (CartObject cartObj : this.orders) {
@@ -73,7 +73,7 @@ public class CartManager {
 			this.ordersSema_.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
@@ -105,9 +105,8 @@ public class CartManager {
 	}
 	
 	public void imageWasUpdatedWithSizes(PartnerImage image, final ArrayList<PrintProduct> fittedProducts) {
-		PartnerImage pImage = null;
 		try {
-			this.ordersSema_.acquire();
+			/*this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
 				boolean update = false;
 				pImage = cartObj.getImage();
@@ -128,7 +127,7 @@ public class CartManager {
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
-			this.ordersSema_.release();
+			this.ordersSema_.release();*/
 
 			this.selOrdersSema_.acquire();
 			for (int i = 0; i < this.selectedOrders.size(); i++) {
@@ -158,7 +157,7 @@ public class CartManager {
 	public void imageWasServerInit(String localId, String pid) {
 		PartnerImage pImage = null;
 		try {
-			this.ordersSema_.acquire();
+			/*this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
 				boolean update = false;
 				pImage = cartObj.getImage();
@@ -175,7 +174,7 @@ public class CartManager {
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
-			this.ordersSema_.release();
+			this.ordersSema_.release();*/
 			
 			this.selOrdersSema_.acquire();
 			for (PrintableImage sImage : this.selectedOrders) {
@@ -212,7 +211,7 @@ public class CartManager {
 	public void imageFinishedUploading(String localId) {
 		PartnerImage pImage = null;
 		try {
-			this.ordersSema_.acquire();
+			/*this.ordersSema_.acquire();
 			for (CartObject cartObj : this.orders) {
 				boolean update = false;
 				pImage = cartObj.getImage();
@@ -228,7 +227,7 @@ public class CartManager {
 				}
 			}
 			this.userPrefHelper_.setCartOrders(this.orders);
-			this.ordersSema_.release();
+			this.ordersSema_.release();*/
 			
 			this.selOrdersSema_.acquire();
 			for (PrintableImage sImage : this.selectedOrders) {
@@ -295,29 +294,26 @@ public class CartManager {
 			e.printStackTrace();
 		}
 	}
-	
+	/*
 	public int countOfOrders() {
 		return this.orders.size();
-	}
+	}*/
 	public int countOfSelectedOrders() {
 		return this.selectedOrders.size();
 	}
 
-	public boolean hasImageInCart(CartObject obj) {
-		boolean present = false;
+	public int hasImageInCart(CartObject obj) {
+		int present = -1;
 		try {
-			this.ordersSema_.acquire();
 			this.selOrdersSema_.acquire();
-			Log.i("KindredSDK", "looking in cart, size = " + this.orders.size());
-			for (int i = 0; i < this.orders.size(); i++) {
-				CartObject cartObj = this.orders.get(i);
-				if (cartObj.getImage().getId().equals(obj.getImage().getId())) {
+			for (int i = 0; i < this.selectedOrders.size(); i++) {
+				PrintableImage cartObj = this.selectedOrders.get(i);
+				if (cartObj.getImage().getId().equals(obj.getImage().getId()) || cartObj.getImage().getPartnerId().equals(obj.getImage().getPartnerId())) {
 					Log.i("KindredSDK", "found object with id = " + obj.getImage().getId());
-					present = true;
+					present = i;
 					break;
 				}
 			}
-			this.ordersSema_.release();
 			this.selOrdersSema_.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -325,6 +321,7 @@ public class CartManager {
 		return present;
 	}
 	
+	/*
 	public void deleteOrderImageForId(String localid) {
 		try {
 			this.ordersSema_.acquire();
@@ -365,27 +362,16 @@ public class CartManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	public void deleteOrderImageAtIndex(int index) {
 		try {
-			this.ordersSema_.acquire();
 			this.selOrdersSema_.acquire();
-			if (index >= 0 && index < this.orders.size()) {
-				CartObject cartObj = this.orders.get(index);
-				for (int i=0; i<this.selectedOrders.size(); i++) {
-					PrintableImage image = this.selectedOrders.get(i);
-					if (image.getImage().getId().equalsIgnoreCase(cartObj.getImage().getId())) {
-						this.selectedOrders.remove(i);
-						i = i - 1;
-					}
-				}
-				this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
 				
-				this.orders.remove(index);
-				this.userPrefHelper_.setCartOrders(this.orders);
-			}
-			this.ordersSema_.release();
+			this.selectedOrders.remove(i);
+			
+			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
+		
 			this.selOrdersSema_.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -400,14 +386,14 @@ public class CartManager {
 		this.pendingPhotos.add(photo);
 	}
 	
-	public void processPartnerImage(KPhoto photo) {
+	/*public void processPartnerImage(KPhoto photo) {
 		PartnerImage pImage = new PartnerImage(photo);
 		CartObject cartObj = new CartObject();		
 		cartObj.setImage(pImage);
 		if (addOrderImage(cartObj)) {
 			cacheIncomingImage(pImage, photo);
 		}
-	}
+	}*/
 	
 	public void cacheIncomingImage(PartnerImage pImage, KPhoto photo) {
 		ImageManager imManager = ImageManager.getInstance(context_);
@@ -432,6 +418,7 @@ public class CartManager {
 		}
 	}
 	
+	/*
 	public boolean addOrderImage(CartObject order) {
 		try {
 			this.ordersSema_.acquire();
@@ -468,7 +455,8 @@ public class CartManager {
 			e.printStackTrace();
 		}
 		return order; 
-	}
+	}*/
+	
 	public PrintableImage getSelectedOrderForIndex(int index) {
 		if (index < 0 || index >= this.selectedOrders.size())
 			return null;
@@ -498,71 +486,33 @@ public class CartManager {
 		return null;
 	}
 	
-	public boolean generateSelectedOrdersFromBaseOrders() {
-		int countOfNewOrders = 0;
-		int countOfUnchanged = 0;
-		boolean lowDPI = false;
-		ArrayList<PrintableImage> prevSelection = new ArrayList<PrintableImage>();
-		try {
-			this.ordersSema_.acquire();
-			this.selOrdersSema_.acquire();
-			for (PrintableImage im : this.selectedOrders) {
-				prevSelection.add(im.copy());
-			}
-			
-			this.selectedOrders.clear();
-			for (CartObject cartObj : this.orders) {
-				for (PrintProduct product : cartObj.getPrintProducts()) {
-					if (product.getQuantity() > 0) {
-						PrintableImage newPImage = new PrintableImage();
-						for (PrintableImage pImage : prevSelection) {
-							if (pImage.getImage().getId().equalsIgnoreCase(cartObj.getImage().getId()) 
-									&& pImage.getPrintType().getId().equals(product.getId())) {
-								newPImage = pImage.copy();
-								if (pImage.getPrintType().getQuantity() != product.getQuantity()) {
-									newPImage.setServerLineItemInit(false);
-								} else {
-									countOfUnchanged = countOfUnchanged + 1;
-								}
-								break;
-							}
-						}
-						
-						if (product.getDpi() < product.getWarnDPI()) {
-							lowDPI = true;
-						}
-						
-						newPImage.setImage(cartObj.getImage().copy());
-						newPImage.setPrintType(product.copy());
-	
-						countOfNewOrders = countOfNewOrders + 1;
-						this.selectedOrders.add(newPImage);
-					}
+	public int addOrderToSelected(CartObject cartObj, PrintProduct product) {
+		this.ordersSema_.acquire();
+		this.selOrdersSema_.acquire();
+		if (product.getQuantity() > 0) {
+			for (PrintableImage pImage : this.selectedOrders) {
+				if (pImage.getImage().getId().equalsIgnoreCase(cartObj.getImage().getId()) 
+						&& pImage.getPrintType().getId().equals(product.getId())) {
+					newPImage = pImage.copy();
+					if (pImage.getPrintType().getQuantity() != product.getQuantity()) {
+						newPImage.setServerLineItemInit(false);
+					} 
+					break;
 				}
 			}
 			
-			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
+			if (product.getDpi() < product.getWarnDPI()) {
+				lowDPI = true;
+			}
 			
-			this.selOrdersSema_.release();
-			this.ordersSema_.release();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}	
-		if (countOfNewOrders != countOfUnchanged) {
-			this.devPrefHelper_.setNeedUpdateOrderId(true);
+			newPImage.setImage(cartObj.getImage().copy());
+			newPImage.setPrintType(product.copy());
+
+			this.selectedOrders.add(newPImage);
 		}
-		
-		JSONObject printCount = new JSONObject();
-		try {
-			printCount.put("print_count", this.selectedOrders.size());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("cart_click_next", printCount);
-		
-		ImageUploadHelper.getInstance(this.context_).validateAllOrdersInit();
-		
-		return lowDPI;
+		this.selOrdersSema_.release();
+		this.ordersSema_.release();
+		this.devPrefHelper_.setNeedUpdateOrderId(true);
 	}
 
 	public ArrayList<CartObject> getOrderImages() {
@@ -600,23 +550,23 @@ public class CartManager {
 		int orderTotal = 0;
 		boolean needSave = false;
 		try {
-			this.ordersSema_.acquire();
-			for (int i = 0; i<this.orders.size(); i++) {
-				CartObject image = this.orders.get(i);
+			this.selOrdersSema_.acquire();
+			for (int i = 0; i<this.selectedOrders.size(); i++) {
+				PrintableImage image = this.selectedOrders.get(i);
 				if (image == null) {
-					this.orders.remove(i);
+					this.selectedOrders.remove(i);
 					i = i - 1;
 					needSave = true;
 					continue;
 				}
-				for (PrintProduct product : image.getPrintProducts()) {
-					orderTotal = orderTotal + product.getPrice()*product.getQuantity();
-				}
+				
+				orderTotal = orderTotal + image.getPrintType().getPrice()*image.getPrintType().getQuantity();
+				
 				if (needSave) {
-					this.userPrefHelper_.setCartOrders(this.orders);
+					this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
 				}
 			}
-			this.ordersSema_.release();
+			this.selOrdersSema_.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}	

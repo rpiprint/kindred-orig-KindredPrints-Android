@@ -43,6 +43,8 @@
     <string name="cart_subtotal">Subtotal</string>
     <string name="cart_add_to_cart">Add to cart</string>
     <string name="cart_update_in_cart">Update in cart</string>
+    <string name="cart_remove_from_cart">Remove from cart</string>
+    <string name="cart_checkout">CHECKOUT</string>
     
     <!-- SHIPPING LIST PAGE -->
     <string name="shipping_title">Choose where to ship your prints:</string>

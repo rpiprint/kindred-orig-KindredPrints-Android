@@ -76,7 +76,7 @@
 	    <RelativeLayout 
 	        android:id="@+id/quantContainer"
 	        android:layout_width="match_parent"
-	        android:layout_height="@dimen/preview_page_control_height"
+	        android:layout_height="wrap_content"
 	        android:layout_toLeftOf="@+id/cmdAddUpdateCart"
 	        android:layout_alignParentLeft="true" >
 	    	
@@ -85,7 +85,6 @@
 		        android:layout_height="@dimen/preview_page_control_height"
 		        android:layout_width="@dimen/preview_page_control_width"
 			    android:layout_centerHorizontal="true"
-		        android:layout_margin="@dimen/preview_page_padding"
 		        />    
 	    </RelativeLayout>
 	    

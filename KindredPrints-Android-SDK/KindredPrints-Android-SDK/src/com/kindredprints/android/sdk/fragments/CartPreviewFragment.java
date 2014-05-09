@@ -75,6 +75,13 @@ public class CartPreviewFragment extends KindredFragment {
 		PartnerImage pImage = new PartnerImage(incPhoto);
 		this.currObject_ = new CartObject();
 		this.currObject_.setImage(pImage);
+		int existIndex = this.cartManager_.hasImageInCart(this.currObject_);
+		if (existIndex >= 0) {
+			this.currObject_ = this.cartManager_.getOrderForIndex(existIndex);
+			if (this.currObject_.getPrintProducts().size() > 0) {
+				this.currProduct_ = this.currObject_.getPrintProducts().get(0);
+			}
+		}
 		this.cartManager_.setCartUpdatedCallback(new CartUpdatedCallback() {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
@@ -173,9 +180,12 @@ public class CartPreviewFragment extends KindredFragment {
 		this.cmdAddToCart_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				if (!cartManager_.hasImageInCart(currObject_)) {
+				if (cartManager_.hasImageInCart(currObject_) < 0) {
 					cartManager_.addOrderImage(currObject_);
-				}
+				} else if (currProduct_.getQuantity() == 0) {
+					cartManager_.deleteOrderImageForId(currObject_.getImage().getId());
+					return;
+				} 
 				cartManager_.imageWasUpdatedWithQuantities(currObject_.getImage(), currProduct_);
 				quantityChanged_ = false;
 				adjustButtonState();
@@ -214,6 +224,9 @@ public class CartPreviewFragment extends KindredFragment {
 			DecimalFormat moneyFormat = new DecimalFormat("$0.00 each");
 			float eachTotalF = (float)this.currProduct_.getPrice()/100.0f;
 			this.txtSubtitle_.setText(moneyFormat.format(eachTotalF));
+			if (this.cartManager_.hasImageInCart(this.currObject_) >= 0) {
+				this.quantityChanged_ = false;
+			}
 		}
 		loadAppropriateImage();
 		adjustDisplay();
@@ -224,10 +237,19 @@ public class CartPreviewFragment extends KindredFragment {
 		if (this.quantityChanged_) {
 			this.cmdAddToCart_.setEnabled(true);
 			this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
-			if (this.cartManager_.hasImageInCart(this.currObject_)) {
-				this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_update_in_cart));
+			if (this.cartManager_.hasImageInCart(this.currObject_) >= 0) {
+				if (this.currProduct_.getQuantity() == 0) {
+					this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_remove_from_cart));
+				} else {
+					this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_update_in_cart));
+				}
 			} else {
-				this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_add_to_cart));
+				if (this.currProduct_.getQuantity() == 0) {
+					this.cmdAddToCart_.setEnabled(false);
+					this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_button);
+				} else {
+					this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_add_to_cart));	
+				}
 			}
 		} else {
 			this.cmdAddToCart_.setEnabled(false);
@@ -295,15 +317,4 @@ public class CartPreviewFragment extends KindredFragment {
 		adjustDisplay();
 		refreshProductList();
 	}
-	
-	public void cleanUp() {
-		this.imgPreview_.setImageBitmap(null);
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-		cleanUp();
-	}
-
 }
