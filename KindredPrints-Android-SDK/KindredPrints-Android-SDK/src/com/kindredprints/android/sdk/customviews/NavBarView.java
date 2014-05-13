@@ -68,6 +68,16 @@ public class NavBarView extends RelativeLayout {
 		this.hidden = false;
 	}
 	
+	public void setNextButtonVisible(boolean visible) {
+		if (visible) {
+			this.cmdNext_.setVisibility(View.VISIBLE);
+			this.cmdNextIcon_.setVisibility(View.VISIBLE);
+		} else {
+			this.cmdNext_.setVisibility(View.INVISIBLE);
+			this.cmdNextIcon_.setVisibility(View.INVISIBLE);
+		}
+	}
+	
 	public void setNextButtonEnabled(boolean enabled) {
 		this.cmdNext_.setEnabled(enabled);
 		if (enabled) {
@@ -112,7 +122,9 @@ public class NavBarView extends RelativeLayout {
 		if (buttonType == TYPE_CART_BUTTON) {
 			this.cmdNext_.setText("");
 			this.cmdNextIcon_.setImageResource(R.drawable.ico_cart_blue);
+			this.cmdNextIcon_.setVisibility(View.VISIBLE);
 		} else if (buttonType == TYPE_NEXT_BUTTON) {
+			this.cmdNextIcon_.setVisibility(View.INVISIBLE);
 			this.cmdNextIcon_.setImageBitmap(null);
 		}
 	}

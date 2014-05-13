@@ -14,7 +14,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 public class KindredFragmentHelper {
 	public static final String FRAG_SELECT = "kp_fragment_select";
@@ -81,6 +80,18 @@ public class KindredFragmentHelper {
 	
 	public void setNextButtonEnabled(boolean enabled) {
 		this.navBarView_.setNextButtonEnabled(enabled);
+	}
+	
+	public void setNextButtonVisible(boolean visible) {
+		this.navBarView_.setNextButtonVisible(visible);
+	}
+	
+	public void setNextButtonCartType(boolean cart) {
+		if (cart) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
+		} else {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
+		}
 	}
 	
 	public void triggerNextButton() {
@@ -197,6 +208,8 @@ public class KindredFragmentHelper {
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
 			nextFrag = FRAG_CART;
+		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
 		}
 		if (nextFrag != null) {
 			KindredFragment f = fragForHash(nextFrag);
@@ -225,7 +238,6 @@ public class KindredFragmentHelper {
 		
 		if (!this.backStack_.isEmpty()) {
 			this.currFragHash_ = this.backStack_.removeLast();
-			Log.i("KindredNav", "moving back to fragment hash " + this.currFragHash_);
 			if (this.currFragHash_.equals(FRAG_LOGIN) && !this.userPrefHelper_.getUserObject().getId().equals(UserObject.USER_VALUE_NONE)) {
 				this.currFragHash_ = this.backStack_.remove();
 			}
@@ -237,10 +249,6 @@ public class KindredFragmentHelper {
 		} else {
 			KindredFragment f = fragForHash(this.currFragHash_);
 			FragmentTransaction ft = this.fManager_.beginTransaction();
-			if (f instanceof CartViewPagerFragment) {
-				CartViewPagerFragment frag = (CartViewPagerFragment)f;
-				frag.cleanUp();
-			}
 			ft.remove(f);
 			ft.commit();
 		}
@@ -272,8 +280,7 @@ public class KindredFragmentHelper {
 		if (hash.equals(FRAG_CART)) {
 			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_CART);
 			if (f == null) {
-				Log.i("KindredSDK", "initting a new cart view pager fragment!!");
-				return new CartViewPagerFragment();
+				return new CartItemListFragment();
 			}
 		} else if (hash.equals(FRAG_LOGIN)) {
 			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_LOGIN);
@@ -321,6 +328,7 @@ public class KindredFragmentHelper {
 	
 	public void configNavBarForHash(String hash) {
 		if (hash.equals(FRAG_CART)) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_cart));
 		} else if (hash.equals(FRAG_LOGIN)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
@@ -339,7 +347,6 @@ public class KindredFragmentHelper {
 		} else if (hash.equals(FRAG_SELECT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
 		} else if (hash.equals(FRAG_PREVIEW)) {
-			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
 			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
 		}
 	}

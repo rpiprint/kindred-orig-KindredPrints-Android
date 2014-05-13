@@ -12,6 +12,8 @@
         android:id="@+id/lvCartItems"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:listSelector="@color/color_light_blue_highlight"
         android:layout_above="@+id/container"
         android:layout_below="@+id/orderTotal">
     </ListView>
@@ -21,13 +23,14 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentBottom="true"
-	    android:layout_centerHorizontal="true" >
+	    android:layout_margin="@dimen/cart_page_product_row_padding" >
 	
         <Button 
 	        android:id="@+id/cmdCheckout"
 	        android:layout_width="match_parent"
 	        android:layout_height="@dimen/cart_page_product_height"
 	        android:layout_margin="@dimen/cart_page_product_row_padding"
+	        android:layout_centerVertical="true"
 	       	android:textSize="@dimen/preview_page_text_size"
 	        android:text="@string/cart_checkout"
 	        android:background="@drawable/cmd_rounded_blue_filled_button"/>
@@ -39,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="@dimen/cart_page_product_row_padding"
-	        android:layout_margin="@dimen/cart_page_product_subtotal_row_padding"
+	        android:layout_marginRight="@dimen/cart_page_product_subtotal_row_padding"
             android:background="@drawable/rounded_filled_button"
 	       	android:textSize="@dimen/preview_page_text_size"
 	       	android:textStyle="bold"/>

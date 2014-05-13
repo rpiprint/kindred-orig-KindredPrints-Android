@@ -12,8 +12,8 @@
 	
 	<color name="color_red">#FF671A11</color>
 	
-	<color name="color_order_total">#FF7A7E82</color>
-	<color name="color_order_total_label">#FFA0A9AB</color>
+	<color name="color_order_total">#FFA9AFAF</color>
+	<color name="color_order_total_label">#FFC0C9CB</color>
 	
 	<color name="color_yellow_warning">#FFFBCB62</color>
 	

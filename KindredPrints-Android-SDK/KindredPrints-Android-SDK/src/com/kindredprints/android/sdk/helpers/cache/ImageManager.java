@@ -9,7 +9,6 @@ import com.kindredprints.android.sdk.KMEMPhoto;
 import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.KURLPhoto;
 import com.kindredprints.android.sdk.data.CartManager;
-import com.kindredprints.android.sdk.data.CartObject;
 import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
@@ -140,36 +139,36 @@ public class ImageManager {
 		processImageInStorage(image, null);
 	}
 	
-	public void deleteAllImagesFromCache(CartObject cartObj) {
-		String origId = getOrigName(cartObj.getImage().getId());
-		String prevId = getPreviewName(cartObj.getImage().getId());
+	public void deleteAllImagesFromCache(PartnerImage pImage, PrintProduct product) {
+		String origId = getOrigName(pImage.getId());
+		String prevId = getPreviewName(pImage.getId());
 		
 		deleteFromCache(origId);
 		deleteFromCache(prevId);
 		
-		if (cartObj.getImage().isTwosided()) {
-			origId = getOrigName(cartObj.getImage().getBackSideImage().getId());
-			prevId = getPreviewName(cartObj.getImage().getBackSideImage().getId());
+		if (pImage.isTwosided()) {
+			origId = getOrigName(pImage.getBackSideImage().getId());
+			prevId = getPreviewName(pImage.getBackSideImage().getId());
 			
 			deleteFromCache(origId);
 			deleteFromCache(prevId);
 		}
 		
-		for (PrintProduct product : cartObj.getPrintProducts()) {
-			String thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getId());
-			String printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getId());
+		
+		String thumbId = product.getId() + "_" + getThumbName(pImage.getId());
+		String printPrevId = product.getId() + "_" + getPreviewName(pImage.getId());
+		
+		deleteFromCache(thumbId);
+		deleteFromCache(printPrevId);
+		
+		if (pImage.isTwosided()) {
+			thumbId = product.getId() + "_" + getThumbName(pImage.getBackSideImage().getId());
+			printPrevId = product.getId() + "_" + getPreviewName(pImage.getBackSideImage().getId());
 			
 			deleteFromCache(thumbId);
 			deleteFromCache(printPrevId);
-			
-			if (cartObj.getImage().isTwosided()) {
-				thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getBackSideImage().getId());
-				printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getBackSideImage().getId());
-				
-				deleteFromCache(thumbId);
-				deleteFromCache(printPrevId);
-			}
 		}
+	
 	}
 	
 	private void deleteFromCache(String id) {
@@ -520,6 +519,7 @@ public class ImageManager {
 		@Override
 		protected void onPostExecute(final String ident) {
 			if (fCache_.hasImageForKey(ident) && success) {
+				Log.i("KindredSDK", "post download fcache DOES have image " + ident);
 				// succeeded
 				new Thread(new Runnable() {
 					@Override
@@ -529,7 +529,8 @@ public class ImageManager {
 					}
 				}).start();
 			} else {
-				cartManager_.deleteOrderImageForId(imageDetails_.get(ident).getId());
+				Log.i("KindredSDK", "post download fcache does not have image " + ident);
+				cartManager_.deleteSelectedOrderImageForId(imageDetails_.get(ident).getId());
 				try {
 					processingSema_.acquire();
 					downloadingQueue_.remove(ident);

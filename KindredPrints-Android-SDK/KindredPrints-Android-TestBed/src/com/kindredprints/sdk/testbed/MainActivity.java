@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				if (editTxtUrl.getText().toString().length() > 0) {
 					counter = counter + 1;
-					orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), editTxtUrl.getText().toString(), editTxtUrl.getText().toString()));
+					orderFlow.addImageToCart(new KURLPhoto(editTxtUrl.getText().toString(), editTxtUrl.getText().toString()));
 					showToast("image added");
 				}
 			}
@@ -96,11 +96,11 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				counter = counter + 1;
-				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
+				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
 				counter = counter + 1;
-				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
+				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
 				counter = counter + 1;
-				orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), "http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
+				orderFlow.addImageToCart(new KURLPhoto("http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
 				showToast("images added");
 			}
         });
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
 				ArrayList<KPhoto> photosToAdd = new ArrayList<KPhoto>();
 				for (int i = 0; i < 11; i++) {
 					counter = counter + 1;
-					photosToAdd.add(new KURLPhoto(String.valueOf(counter), "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg", "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg"));
+					photosToAdd.add(new KURLPhoto("https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg", "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg"));
 				}
 				orderFlow.addImagesToCart(photosToAdd);
 			}
@@ -180,9 +180,9 @@ public class MainActivity extends Activity {
 			counter = counter + 1;
 
             if (picturePath.contains("http"))
-            	orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), picturePath));
+            	orderFlow.addImageToCart(new KURLPhoto(picturePath));
             else
-            	orderFlow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
+            	orderFlow.addImageToCart(new KLOCPhoto(picturePath));
 			showToast("image added");
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();
@@ -199,7 +199,7 @@ public class MainActivity extends Activity {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
-			orderFlow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
+			orderFlow.addImageToCart(new KLOCPhoto(picturePath));
 			showToast("image added");
     	}
     }

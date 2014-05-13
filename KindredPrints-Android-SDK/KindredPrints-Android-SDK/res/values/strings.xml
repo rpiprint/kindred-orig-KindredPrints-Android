@@ -19,7 +19,7 @@
     <string name="nav_next_title_select">NEXT</string>
     
     <string name="nav_title_cart">CHOOSE QUANTITIES</string>
-    <string name="nav_next_title_cart">NEXT</string>
+    <string name="nav_next_title_cart">CHECKOUT</string>
     
     <string name="nav_title_login">CONTACT INFO</string>
     <string name="nav_next_title_login">NEXT</string>

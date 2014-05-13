@@ -103,7 +103,7 @@ public class InterfacePrefHelper extends PrefHelper {
 	public int getNavColor() {
 		String storedHexColor = this.prefHelper_.getString(KEY_NAV_COLOR);
 		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#7c7e85";
+			storedHexColor = "#5c5e65";
 		}
 		return Color.parseColor(storedHexColor);
 	}
@@ -116,7 +116,7 @@ public class InterfacePrefHelper extends PrefHelper {
 	public int getBackgroundColor() {
 		String storedHexColor = this.prefHelper_.getString(KEY_BACKGROUND_COLOR);
 		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#666666";
+			storedHexColor = "#AAAAAA";
 		}
 		return Color.parseColor(storedHexColor);
 	}

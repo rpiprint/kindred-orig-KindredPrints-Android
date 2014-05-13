@@ -55,5 +55,6 @@
        android:layout_width="@dimen/cart_page_product_height"
        android:layout_alignParentRight="true"
        android:layout_marginRight="@dimen/cart_page_product_row_padding"
+       android:gravity="center"
        android:textSize="@dimen/cart_page_quantity_text_size" />
 </RelativeLayout>

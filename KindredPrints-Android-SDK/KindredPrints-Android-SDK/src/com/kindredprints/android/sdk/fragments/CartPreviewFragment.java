@@ -6,10 +6,10 @@ import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.customviews.QuantityView;
 import com.kindredprints.android.sdk.customviews.QuantityView.QuantityChangedListener;
 import com.kindredprints.android.sdk.data.CartManager;
-import com.kindredprints.android.sdk.data.CartObject;
 import com.kindredprints.android.sdk.data.CartUpdatedCallback;
 import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.PrintProduct;
+import com.kindredprints.android.sdk.data.PrintableImage;
 
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
@@ -42,7 +42,7 @@ public class CartPreviewFragment extends KindredFragment {
 	
 	private Context context_;
 	
-	private CartObject currObject_;
+	private PrintableImage currObject_;
 	private PrintProduct currProduct_;
 	private KindredFragmentHelper fragmentHelper_;
 	
@@ -71,17 +71,6 @@ public class CartPreviewFragment extends KindredFragment {
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
 		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonHandler());
 		
-		KPhoto incPhoto = this.cartManager_.getPendingImages().get(0);
-		PartnerImage pImage = new PartnerImage(incPhoto);
-		this.currObject_ = new CartObject();
-		this.currObject_.setImage(pImage);
-		int existIndex = this.cartManager_.hasImageInCart(this.currObject_);
-		if (existIndex >= 0) {
-			this.currObject_ = this.cartManager_.getOrderForIndex(existIndex);
-			if (this.currObject_.getPrintProducts().size() > 0) {
-				this.currProduct_ = this.currObject_.getPrintProducts().get(0);
-			}
-		}
 		this.cartManager_.setCartUpdatedCallback(new CartUpdatedCallback() {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
@@ -95,8 +84,9 @@ public class CartPreviewFragment extends KindredFragment {
 			public void orderHasBeenUpdatedWithSize(PartnerImage obj, ArrayList<PrintProduct> fittedProducts) { 
 				if (currObject_ != null) {
 					if (currObject_.getImage().getId().equals(obj.getId())) {
-						currObject_.setPrintProducts(fittedProducts);
-						currObject_.setPrintProductsInit(true);
+						if (fittedProducts.size() > 0) {
+							currObject_.setPrintType(fittedProducts.get(0));
+						}
 						refreshProductList();
 					}
 				}
@@ -108,7 +98,31 @@ public class CartPreviewFragment extends KindredFragment {
 			@Override
 			public void orderHasBeenUploaded(PartnerImage obj) { }
 		});
-		this.cartManager_.cacheIncomingImage(pImage, incPhoto);
+		this.fragmentHelper_.setNextButtonCartType(true);
+		Bundle bun = this.getArguments();
+		int index = 0;
+		if (bun != null && bun.containsKey("cart_index")) {
+			index = bun.getInt("cart_index");
+			this.currObject_ = this.cartManager_.getSelectedOrderForIndex(index);
+			this.fragmentHelper_.setNextButtonVisible(false);
+		} else {
+			if (bun != null && bun.containsKey("index")) {
+				index = bun.getInt("index");
+			}
+			KPhoto incPhoto = this.cartManager_.getPendingImages().get(index);
+			PartnerImage pImage = new PartnerImage(incPhoto);
+			this.currObject_ = new PrintableImage();
+			this.currObject_.setImage(pImage);
+			int existIndex = this.cartManager_.hasImageInCart(this.currObject_);
+			if (existIndex >= 0) {
+				this.currObject_ = this.cartManager_.getSelectedOrderForIndex(existIndex);
+			}
+			this.cartManager_.cacheIncomingImage(pImage, incPhoto);
+			this.fragmentHelper_.setNextButtonVisible(true);
+		}
+		if (this.currObject_.getPrintType() != null) {
+			this.currProduct_ = this.currObject_.getPrintType();
+		}
 	}
 	
 	public class BackButtonHandler implements BackButtonPressInterrupter {
@@ -122,7 +136,7 @@ public class CartPreviewFragment extends KindredFragment {
 	public class NextButtonHandler implements NextButtonPressInterrupter {
 		@Override
 		public boolean interruptNextButton() {
-		
+			cartManager_.cleanUpPendingImages();
 			return false;
 		}
 	}
@@ -140,7 +154,10 @@ public class CartPreviewFragment extends KindredFragment {
 		this.cmdAddToCart_ = (Button) view.findViewById(R.id.cmdAddUpdateCart);
 		this.cmdAddToCart_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		this.quantityView_ = (QuantityView) view.findViewById(R.id.viewQuantity);
-		this.quantityView_.setQuantity(0);
+		if (this.currProduct_ != null)
+			this.quantityView_.setQuantity(this.currProduct_.getQuantity());
+		else
+			this.quantityView_.setQuantity(0);
 		this.cmdFlip_ = (Button) view.findViewById(R.id.cmdFlip);
 		this.imgWarning_ = (ImageView) view.findViewById(R.id.imgWarning);
 		this.imgPreview_ = (ImageView) view.findViewById(R.id.imgPreview);
@@ -181,9 +198,9 @@ public class CartPreviewFragment extends KindredFragment {
 			@Override
 			public void onClick(View arg0) {
 				if (cartManager_.hasImageInCart(currObject_) < 0) {
-					cartManager_.addOrderImage(currObject_);
+					cartManager_.addOrderToSelected(currObject_, currProduct_);
 				} else if (currProduct_.getQuantity() == 0) {
-					cartManager_.deleteOrderImageForId(currObject_.getImage().getId());
+					cartManager_.deleteSelectedOrderImageForId(currObject_.getImage().getId());
 					return;
 				} 
 				cartManager_.imageWasUpdatedWithQuantities(currObject_.getImage(), currProduct_);
@@ -217,13 +234,13 @@ public class CartPreviewFragment extends KindredFragment {
 	}
 	
 	public void refreshProductList() {
-		if (this.currObject_ != null && this.currObject_.getPrintProducts().size() > 0) {
-			this.currProduct_ = this.currObject_.getPrintProducts().get(0);
-			this.quantityView_.setQuantity(this.currProduct_.getQuantity());
-			this.txtTitle_.setText(this.currProduct_.getTitle());
+		if (this.currObject_ != null && this.currObject_.getPrintType() != null) {
+			this.currProduct_ = this.currObject_.getPrintType();
+			if (this.quantityView_ != null) this.quantityView_.setQuantity(this.currProduct_.getQuantity());
+			if (this.txtTitle_ != null) this.txtTitle_.setText(this.currProduct_.getTitle());
 			DecimalFormat moneyFormat = new DecimalFormat("$0.00 each");
 			float eachTotalF = (float)this.currProduct_.getPrice()/100.0f;
-			this.txtSubtitle_.setText(moneyFormat.format(eachTotalF));
+			if (this.txtSubtitle_ != null) this.txtSubtitle_.setText(moneyFormat.format(eachTotalF));
 			if (this.cartManager_.hasImageInCart(this.currObject_) >= 0) {
 				this.quantityChanged_ = false;
 			}

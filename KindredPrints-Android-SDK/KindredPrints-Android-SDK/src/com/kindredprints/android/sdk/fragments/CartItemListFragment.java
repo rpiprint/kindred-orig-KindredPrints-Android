@@ -1,6 +1,5 @@
 package com.kindredprints.android.sdk.fragments;
 
-import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.adapters.CartItemListAdapter;
 import com.kindredprints.android.sdk.adapters.CartItemListAdapter.PrintSelectedListener;
@@ -17,6 +16,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,10 +54,7 @@ public class CartItemListFragment extends KindredFragment {
 		this.fragmentHelper_ = fragmentHelper;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
 		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonHandler());
-		
-		KPhoto incPhoto = this.cartManager_.getPendingImages().get(0);
-		PartnerImage pImage = new PartnerImage(incPhoto);
-		
+		this.fragmentHelper_.setNextButtonVisible(true);
 		this.cartManager_.setCartUpdatedCallback(new CartUpdatedCallback() {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
@@ -80,7 +77,6 @@ public class CartItemListFragment extends KindredFragment {
 			@Override
 			public void orderHasBeenUploaded(PartnerImage obj) { }
 		});
-		this.cartManager_.cacheIncomingImage(pImage, incPhoto);
 	}
 	
 	public class BackButtonHandler implements BackButtonPressInterrupter {
@@ -108,15 +104,17 @@ public class CartItemListFragment extends KindredFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View view = (ViewGroup) inflater.inflate(R.layout.fragment_cart_preview, container, false);
+		final View view = (ViewGroup) inflater.inflate(R.layout.fragment_cart_item_list, container, false);
 		
 		this.interfacePrefHelper_ = new InterfacePrefHelper(getActivity());
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
 		this.cmdCheckout_ = (Button) view.findViewById(R.id.cmdCheckout);
+		this.cmdCheckout_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		this.orderTotalView_ = (OrderTotalView) view.findViewById(R.id.orderTotal);
 		this.lvCart_ = (ListView) view.findViewById(R.id.lvCartItems);
 		this.txtSubtotal_ = (TextView) view.findViewById(R.id.txtSubtotal);
+		this.txtSubtotal_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		
 		int orderTotal = this.cartManager_.getOrderTotal();
 		this.orderTotalView_.setOrderTotal(orderTotal);
@@ -130,15 +128,18 @@ public class CartItemListFragment extends KindredFragment {
 		float orderTotalF = (float)orderTotal/100.0f;
 		this.txtSubtotal_.setText(moneyFormat.format(orderTotalF));
 
-		this.itemsAdapter_ = new CartItemListAdapter((Activity)this.context_);
+		this.itemsAdapter_ = new CartItemListAdapter(getActivity());
 		this.itemsAdapter_.setPrintClickListener(new PrintSelectedListener() {
 			@Override
 			public void printWasClicked(int index) {
-				
+				Bundle bun = new Bundle();
+				bun.putInt("cart_index", index);
+				fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
 			}
 		});
+		this.lvCart_.setDivider(new ColorDrawable(0x00000000));
+		this.lvCart_.setDividerHeight(20);
 		this.lvCart_.setAdapter(this.itemsAdapter_);
-		
 		this.cmdCheckout_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {

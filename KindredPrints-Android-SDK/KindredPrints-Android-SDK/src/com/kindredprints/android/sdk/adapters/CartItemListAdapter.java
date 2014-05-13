@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.kindredprints.android.sdk.R;
+import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.PrintableImage;
@@ -12,6 +13,7 @@ import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,15 +82,42 @@ public class CartItemListAdapter extends BaseAdapter {
 		View productView = null;		
 		if (convertView == null) {
 			LayoutInflater inflater = this.context_.getLayoutInflater();
-			productView = inflater.inflate(R.layout.product_list_view, null, true);		
+			productView = inflater.inflate(R.layout.cart_item_list_view, null, true);		
 		} else {
 			productView = convertView;
 		}		
+		
+		ImageView imgProdPrev = (ImageView) productView.findViewById(R.id.imgProdPrev);
+		ImageView imgWarning = (ImageView) productView.findViewById(R.id.imgWarning);
+		TextView txtTitle = (TextView) productView.findViewById(R.id.txtTitle);
+		TextView txtSubtitle = (TextView) productView.findViewById(R.id.txtSubtitle);
+		
+		PrintableImage printImage = this.cartObjects_.get(position);
+		if (printImage.getPrintType().getDpi() < printImage.getPrintType().getWarnDPI()) {
+			imgWarning.setVisibility(View.VISIBLE);
+			imgWarning.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					KindredAlertDialog dialog = new KindredAlertDialog(context_, false);
+					dialog.show();
+				}
+			});
+		} else {
+			imgWarning.setVisibility(View.INVISIBLE);
+		}
+		
+		txtTitle.setText(printImage.getPrintType().getTitle());
+		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+		txtSubtitle.setText(String.valueOf(printImage.getPrintType().getQuantity()));
+		txtSubtitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		this.imageManager_.setImageAsync(imgProdPrev, printImage.getImage(), printImage.getPrintType(), printImage.getPrintType().getThumbSize(), null);
 		
 		productView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				if (printClickCallback_ != null) printClickCallback_.printWasClicked(position);
+				Log.i("KindredSDK", "clicked edit on position " + position);
 			}
 		});
 		

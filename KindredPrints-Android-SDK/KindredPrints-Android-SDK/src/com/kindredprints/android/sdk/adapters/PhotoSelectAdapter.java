@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.R;
+import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ public class PhotoSelectAdapter extends BaseAdapter {
 	private Activity context_;
 	private KindredFragmentHelper fragmentHelper_;
 	
+	private CartManager cartManager_;
 	private ImageManager imageManager_;
 	
 	private ArrayList<KPhoto> selectedPhotos_;
@@ -37,12 +40,11 @@ public class PhotoSelectAdapter extends BaseAdapter {
 		this.allPhotos_ = pendingPhotos;
 		this.selectedPhotos_ = new ArrayList<KPhoto>();
 		this.imageManager_ = ImageManager.getInstance(context);
+		this.cartManager_ = CartManager.getInstance(context);
 		
 		this.gridItemWidth_ = gridItemWidth;
 		this.checkItemWidth_ = (int)(this.gridItemWidth_*PERCENT_CHECK);
 		this.lastIndexLoaded_ = -1;
-		
-		updateNextButton();
 	}
 	
 	public ArrayList<KPhoto> getSelectedPhotos() {
@@ -64,24 +66,14 @@ public class PhotoSelectAdapter extends BaseAdapter {
 		return position;
 	}
 
-	private void setChecked(ImageView imgChecked, int position, boolean checked) {
+	private void setChecked(ImageView imgChecked, boolean checked) {
 		if (checked) {
-			 this.selectedPhotos_.add(this.allPhotos_.get(position));
 			 imgChecked.setImageDrawable(this.context_.getResources().getDrawable(R.drawable.select_checked));
 		} else {
-			this.selectedPhotos_.remove(this.allPhotos_.get(position));
 			 imgChecked.setImageDrawable(null);
 		}
-		updateNextButton();
 	}
-	
-	private void updateNextButton() {
-		if (this.selectedPhotos_.size() == 0) {
-			this.fragmentHelper_.setNextButtonEnabled(false);
-		} else {
-			this.fragmentHelper_.setNextButtonEnabled(true);
-		}
-	}
+
 	
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -98,6 +90,12 @@ public class PhotoSelectAdapter extends BaseAdapter {
 			this.lastIndexLoaded_ = position;
 			
 		final ImageView imgChecked = (ImageView) squareView.findViewById(R.id.imgChecked);
+		if (this.cartManager_.hasPartnerIdInCart(allPhotos_.get(position).getId()) >= 0) {
+			setChecked(imgChecked, true);
+		} else {
+			setChecked(imgChecked, false);
+		}
+		
 		ImageView imgThumb = (ImageView) squareView.findViewById(R.id.imgThumb);
 		imgThumb.getLayoutParams().width = this.gridItemWidth_;
 		imgThumb.getLayoutParams().height = this.gridItemWidth_;
@@ -107,11 +105,9 @@ public class PhotoSelectAdapter extends BaseAdapter {
 		imgThumb.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean checked = true;
-				if (selectedPhotos_.contains(allPhotos_.get(position))) {
-					checked = false;
-				}
-				setChecked(imgChecked, position, checked);
+				Bundle bun = new Bundle();
+				bun.putInt("index", position);
+				fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
 			}
 		}); 
 		this.imageManager_.setImageAsync(imgThumb, this.allPhotos_.get(position), String.valueOf(position), new Size(this.gridItemWidth_, this.gridItemWidth_));

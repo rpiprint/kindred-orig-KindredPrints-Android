@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
@@ -7,27 +8,23 @@
         android:id="@+id/txtTotalTitle"
        	android:layout_width="wrap_content"
        	android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/viewBackground"
+        android:layout_toLeftOf="@+id/txtTotal"
         android:paddingRight="@dimen/order_total_size"
+        android:layout_marginRight="@dimen/order_total_padding_size"
         android:gravity="center_vertical"
         android:textSize="@dimen/order_total_text_size" 
         android:text="@string/cart_subtotal"
     />
     
-	<View 
-        android:id="@+id/viewBackground"
-        android:layout_width="@dimen/order_total_width"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        />
-    
     <TextView
         android:id="@+id/txtTotal"
        	android:layout_width="wrap_content"
-       	android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/viewBackground"
-        android:paddingLeft="@dimen/order_total_size"
-        android:gravity="center_vertical"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentRight="true"   
+       	android:layout_margin="@dimen/order_total_padding_size"
+       	android:padding="@dimen/order_total_padding_size"
+       	android:layout_centerVertical="true"
         android:textSize="@dimen/order_total_text_size" 
+        android:background="@drawable/rounded_filled_grey"
     />
 </RelativeLayout>
