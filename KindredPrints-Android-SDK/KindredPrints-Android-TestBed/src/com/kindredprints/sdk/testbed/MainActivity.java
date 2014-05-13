@@ -55,10 +55,10 @@ public class MainActivity extends Activity {
         
         counter = 0;
         
-        this.orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
-        orderFlow.setImageBorderColor(Color.WHITE);
-        orderFlow.setImageBorderDisabled(false);
-		orderFlow.setAppKey(KINDRED_APP_KEY);
+       // this.orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
+        //orderFlow.setImageBorderColor(Color.WHITE);
+        //orderFlow.setImageBorderDisabled(false);
+		//orderFlow.setAppKey(KINDRED_APP_KEY);
 		
 		this.cmdAddCustom = (Button) findViewById(R.id.cmdAddSpecial);
 		this.cmdAddCustom.setOnClickListener(new OnClickListener() {
@@ -179,10 +179,13 @@ public class MainActivity extends Activity {
             cursor.close();
 			counter = counter + 1;
 
+			KindredOrderFlow flow = new KindredOrderFlow(this, KINDRED_APP_KEY);
             if (picturePath.contains("http"))
-            	orderFlow.addImageToCart(new KURLPhoto(String.valueOf(counter), picturePath));
+            	flow.addImageToCart(new KURLPhoto(String.valueOf(counter), picturePath));
             else
-            	orderFlow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
+            	flow.addImageToCart(new KLOCPhoto(String.valueOf(counter), picturePath));
+            Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+			startActivityForResult(i, 0);
 			showToast("image added");
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();

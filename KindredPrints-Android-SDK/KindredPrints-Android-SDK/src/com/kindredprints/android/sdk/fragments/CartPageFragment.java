@@ -37,7 +37,7 @@ public class CartPageFragment extends KindredFragment {
 	
 	private int currIndex_;
 	private CartPageUpdateListener callback_;
-	//private KindredFragmentHelper fragmentHelper_;
+	private Context context_;
 	
 	private boolean frontSideUp_;
 	
@@ -57,9 +57,18 @@ public class CartPageFragment extends KindredFragment {
 	public CartPageFragment() { }
 	
 	public void init(Context context, KindredFragmentHelper fragmentHelper) {
-		this.cartManager_ = CartManager.getInstance(context);
-		this.imageManager_ = ImageManager.getInstance(context);
-		//this.fragmentHelper_ = fragmentHelper;
+		getStaticHelpers(context);
+	}
+	
+	private void getStaticHelpers(Context context) {
+		if (context != null) {
+			this.context_ = context;
+			this.cartManager_ = CartManager.getInstance(context);
+			this.imageManager_ = ImageManager.getInstance(context);	
+		} else {
+			this.cartManager_ = CartManager.getInstance(getActivity());
+			this.imageManager_ = ImageManager.getInstance(getActivity());
+		}
 	}
 	
 	@Override
@@ -69,6 +78,8 @@ public class CartPageFragment extends KindredFragment {
 		this.interfacePrefHelper_ = new InterfacePrefHelper(getActivity());
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
+		getStaticHelpers(null);
+				
 		this.progBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
 		this.cmdLeft_ = (SideArrow) view.findViewById(R.id.cmdLeft);
 		this.cmdRight_ = (SideArrow) view.findViewById(R.id.cmdRight);
@@ -216,10 +227,10 @@ public class CartPageFragment extends KindredFragment {
 			}
 		};
 
-		float imgWidth = this.getView().getWidth()-2*getActivity().getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
+		float imgWidth = this.getView().getWidth()-2*this.context_.getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
 		if (this.currObject_.getPrintProducts().size() > 0) {
 			this.imageManager_.setImageAsync(this.imgPreview_, image, this.currObject_.getPrintProducts().get(0), new Size(imgWidth, imgWidth), this.imageSetCallback_);
-		}
+		} 
 	}
 	
 	private void initInterface() {
@@ -228,7 +239,7 @@ public class CartPageFragment extends KindredFragment {
 		
 		this.currObject_ = this.cartManager_.getOrderForIndex(this.currIndex_);
 		this.txtImageCount_.setText("Picture " + String.valueOf(currIndex_+1) + " of " + String.valueOf(this.cartManager_.countOfOrders()));
-				
+
 		loadAppropriateImage();
 		
 		this.productListAdapter_ = new ProductListAdapter(getActivity(), this.currObject_);
@@ -237,7 +248,7 @@ public class CartPageFragment extends KindredFragment {
 			public void userDeletedPageAtIndex(int index) { }
 			@Override
 			public void userChangedOrderTotalBy(int deltaTotal) {
-				callback_.userChangedOrderTotalBy(deltaTotal);
+				if (callback_ != null) callback_.userChangedOrderTotalBy(deltaTotal);
 			}
 			@Override
 			public void userClickedGoPrevPage() { }

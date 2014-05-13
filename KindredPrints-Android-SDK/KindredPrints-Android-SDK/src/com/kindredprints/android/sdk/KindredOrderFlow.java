@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-
 import com.kindredprints.android.sdk.data.CartManager;
 
 import com.kindredprints.android.sdk.data.PrintProduct;
@@ -33,25 +32,39 @@ public class KindredOrderFlow {
 	private int asyncConfigRoutineCount_;
 	private int returnedAsyncConfigRoutines_;
 	
+	private static KindredOrderFlow orderFlow_;
+	
+	public KindredOrderFlow() {
+		
+	}
+	
 	public KindredOrderFlow(Context context) {
-		initHelpers(context);
-		initLocalConfig();
+		if (orderFlow_ == null) {
+			orderFlow_ = new KindredOrderFlow();
+			initHelpers(context);
+			initLocalConfig();
+		}	
 	}
 	public KindredOrderFlow(Context context, String key) {
-		initHelpers(context);
-		devPrefHelper_.setAppKey(key);
-		initLocalConfig();
+		if (orderFlow_ == null) {
+			orderFlow_ = new KindredOrderFlow();
+			initHelpers(context);
+			orderFlow_.devPrefHelper_.setAppKey(key);
+			initLocalConfig();
+		} else {
+			orderFlow_.devPrefHelper_.setAppKey(key);
+		}
 	}
 	
 	public void setAppKey(String key) {
-		devPrefHelper_.setAppKey(key);
+		orderFlow_.devPrefHelper_.setAppKey(key);
 		JSONObject keyObject = new JSONObject();
 		try {
 			keyObject.put("key", key);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		this.mixpanel_.track("partner_key", keyObject);
+		orderFlow_.mixpanel_.track("partner_key", keyObject);
 	}
 	
 	// CART MANAGEMENT
@@ -75,15 +88,15 @@ public class KindredOrderFlow {
 		preRegisterEmail(email, "a Kindred user");
 	}
 	public void preRegisterEmail(String email, String name) {
-		UserObject currUser = this.userPrefHelper_.getUserObject();
+		UserObject currUser = orderFlow_.userPrefHelper_.getUserObject();
 		
 		if (currUser.getId().equals(UserObject.USER_VALUE_NONE)) {
-			this.mixpanel_.track("preregister_email", null);
+			orderFlow_.mixpanel_.track("preregister_email", null);
 			
 			currUser = new UserObject();
 			currUser.setEmail(email);
 			currUser.setName(name);
-			this.userPrefHelper_.setUserObject(currUser);
+			orderFlow_.userPrefHelper_.setUserObject(currUser);
 			
 			final JSONObject obj = new JSONObject();
 			try {
@@ -95,7 +108,7 @@ public class KindredOrderFlow {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						kindredRemoteInterface_.createUser(obj);
+						orderFlow_.kindredRemoteInterface_.createUser(obj);
 					}
 				}).start();
 			} catch (JSONException ex) {
@@ -105,75 +118,75 @@ public class KindredOrderFlow {
 	}
 	
 	public void setNavBarBackgroundColor(int color) {
-		this.interfacePrefHelper_.setNavColor(color);
+		orderFlow_.interfacePrefHelper_.setNavColor(color);
 	}
 	public void setBaseBackgroundColor(int color) {
-		this.interfacePrefHelper_.setBackgroundColor(color);
+		orderFlow_.interfacePrefHelper_.setBackgroundColor(color);
 	}
 	public void setTextColor(int color) {
-		this.interfacePrefHelper_.setTextColor(color);
+		orderFlow_.interfacePrefHelper_.setTextColor(color);
 	}
 	public void setImageBorderColor(int color) {
-		this.interfacePrefHelper_.setBorderColor(color);
+		orderFlow_.interfacePrefHelper_.setBorderColor(color);
 	}
 	public void setImageBorderDisabled(boolean disabled) {
 		if (disabled)
-			this.interfacePrefHelper_.disableBorder();
+			orderFlow_.interfacePrefHelper_.disableBorder();
 		else
-			this.interfacePrefHelper_.enableBorder();
+			orderFlow_.interfacePrefHelper_.enableBorder();
 	}
 	
 	// INTERNAL CONFIG
 	
 	private void initHelpers(Context context) {
-		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
-		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
-		this.devPrefHelper_ = new DevPrefHelper(context);
-		this.userPrefHelper_ = new UserPrefHelper(context);
-		this.kindredRemoteInterface_ = new KindredRemoteInterface(context);
-		this.kindredRemoteInterface_.setNetworkCallbackListener(new ConfigServerCallback());
-		this.cartManager_ = CartManager.getInstance(context);
+		orderFlow_.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
+		orderFlow_.interfacePrefHelper_ = new InterfacePrefHelper(context);
+		orderFlow_.devPrefHelper_ = new DevPrefHelper(context);
+		orderFlow_.userPrefHelper_ = new UserPrefHelper(context);
+		orderFlow_.kindredRemoteInterface_ = new KindredRemoteInterface(context);
+		orderFlow_.kindredRemoteInterface_.setNetworkCallbackListener(new ConfigServerCallback());
+		orderFlow_.cartManager_ = CartManager.getInstance(context);
 	}
 	
 	private void initLocalConfig() {
-		this.asyncConfigRoutineCount_ = 0;
-		this.returnedAsyncConfigRoutines_ = 0;
+		orderFlow_.asyncConfigRoutineCount_ = 0;
+		orderFlow_.returnedAsyncConfigRoutines_ = 0;
 		
-		if (this.devPrefHelper_.needDownloadCountries()) {
-			this.asyncConfigRoutineCount_ = this.asyncConfigRoutineCount_ + 1;
+		if (orderFlow_.devPrefHelper_.needDownloadCountries()) {
+			orderFlow_.asyncConfigRoutineCount_ = orderFlow_.asyncConfigRoutineCount_ + 1;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					kindredRemoteInterface_.getCountryList();
+					orderFlow_.kindredRemoteInterface_.getCountryList();
 				}
 			}).start();	
 		}
-		if (this.devPrefHelper_.needDownloadSizes()) {
-			this.asyncConfigRoutineCount_ = this.asyncConfigRoutineCount_ + 1;
+		if (orderFlow_.devPrefHelper_.needDownloadSizes()) {
+			orderFlow_.asyncConfigRoutineCount_ = orderFlow_.asyncConfigRoutineCount_ + 1;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					kindredRemoteInterface_.getCurrentImageSizes();
+					orderFlow_.kindredRemoteInterface_.getCurrentImageSizes();
 				}
 			}).start();
 		}
-		if (this.devPrefHelper_.needPartnerDetails()) {
-			this.asyncConfigRoutineCount_ = this.asyncConfigRoutineCount_ + 1;
+		if (orderFlow_.devPrefHelper_.needPartnerDetails()) {
+			orderFlow_.asyncConfigRoutineCount_ = orderFlow_.asyncConfigRoutineCount_ + 1;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					kindredRemoteInterface_.getPartnerDetails();
+					orderFlow_.kindredRemoteInterface_.getPartnerDetails();
 				}
 			}).start();
 		}
 	}
 	
 	private void flexAddToCart(KPhoto photo) {
-		this.cartManager_.addPartnerImage(photo);
+		orderFlow_.cartManager_.addPartnerImage(photo);
 	}
 	
 	private void flexAddManyToCart(ArrayList<KPhoto> photos) {
-		this.cartManager_.addManyPartnerImages(photos);
+		orderFlow_.cartManager_.addManyPartnerImages(photos);
 	}
 	
 	private boolean flexDeleteFromCart(KPhoto photo) {
@@ -211,26 +224,26 @@ public class KindredOrderFlow {
 				if (printProd.getTrimmed().getWidth() >= printProd.getTrimmed().getHeight()) {
 					printProd.setThumbSize(
 							new Size(
-									this.interfacePrefHelper_.getThumbMaxSize(), 
-									this.interfacePrefHelper_.getThumbMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth()));
+									orderFlow_.interfacePrefHelper_.getThumbMaxSize(), 
+									orderFlow_.interfacePrefHelper_.getThumbMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth()));
 					printProd.setPreviewSize(
 							new Size(
-									this.interfacePrefHelper_.getPreviewMaxSize(), 
-									this.interfacePrefHelper_.getPreviewMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth()));
+									orderFlow_.interfacePrefHelper_.getPreviewMaxSize(), 
+									orderFlow_.interfacePrefHelper_.getPreviewMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth()));
 				} else {
 					printProd.setThumbSize(
 							new Size(
-									this.interfacePrefHelper_.getThumbMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth(), 
-									this.interfacePrefHelper_.getThumbMaxSize()));
+									orderFlow_.interfacePrefHelper_.getThumbMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth(), 
+									orderFlow_.interfacePrefHelper_.getThumbMaxSize()));
 					printProd.setPreviewSize(
 							new Size(
-									this.interfacePrefHelper_.getPreviewMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth(), 
-									this.interfacePrefHelper_.getPreviewMaxSize()));
+									orderFlow_.interfacePrefHelper_.getPreviewMaxSize()*printProd.getTrimmed().getHeight()/printProd.getTrimmed().getWidth(), 
+									orderFlow_.interfacePrefHelper_.getPreviewMaxSize()));
 				}
 				printProducts.add(printProd);
 			}
 			
-			this.devPrefHelper_.setCurrentSizes(printProducts);
+			orderFlow_.devPrefHelper_.setCurrentSizes(printProducts);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -255,23 +268,23 @@ public class KindredOrderFlow {
 								}
 							}
 							
-							devPrefHelper_.setCountries(countries);
-							devPrefHelper_.resetDownloadCountryStatus();
+							orderFlow_.devPrefHelper_.setCountries(countries);
+							orderFlow_.devPrefHelper_.resetDownloadCountryStatus();
 						}
-						returnedAsyncConfigRoutines_ = returnedAsyncConfigRoutines_ + 1;
+						orderFlow_.returnedAsyncConfigRoutines_ = orderFlow_.returnedAsyncConfigRoutines_ + 1;
 					} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_GET_IMAGE_SIZES)) {
 						if (status == 200) {
 							processReturnedProductTypes(serverResponse);
-							devPrefHelper_.resetSizeDownloadStatus();
-							cartManager_.updateAllOrdersWithNewSizes();
+							orderFlow_.devPrefHelper_.resetSizeDownloadStatus();
+							orderFlow_.cartManager_.updateAllOrdersWithNewSizes();
 						}
-						returnedAsyncConfigRoutines_ = returnedAsyncConfigRoutines_ + 1;
+						orderFlow_.returnedAsyncConfigRoutines_ = orderFlow_.returnedAsyncConfigRoutines_ + 1;
 					} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_GET_PARTNER_DETAILS)) {
 						if (status == 200) {
 							JSONObject obj = serverResponse.getJSONObject("partner");
-							devPrefHelper_.setPartnerName(obj.getString("name"));
-							devPrefHelper_.setPartnerUrl(obj.getString("logo"));
-							devPrefHelper_.resetPartnerDetailStatus();
+							orderFlow_.devPrefHelper_.setPartnerName(obj.getString("name"));
+							orderFlow_.devPrefHelper_.setPartnerUrl(obj.getString("logo"));
+							orderFlow_.devPrefHelper_.resetPartnerDetailStatus();
 						}
 						returnedAsyncConfigRoutines_ = returnedAsyncConfigRoutines_ + 1;
 					} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_REGISTER)) {
@@ -288,7 +301,7 @@ public class KindredOrderFlow {
 			                currUser.setAuthKey(authKey);
 			                currUser.setPaymentSaved(false);
 			                
-							userPrefHelper_.setUserObject(currUser);
+			                orderFlow_.userPrefHelper_.setUserObject(currUser);
 						}
 					}
 				} catch (JSONException e) {

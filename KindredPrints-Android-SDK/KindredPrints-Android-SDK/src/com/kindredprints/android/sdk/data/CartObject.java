@@ -1,7 +1,6 @@
 package com.kindredprints.android.sdk.data;
 
 import java.util.ArrayList;
-
 import com.kindredprints.android.sdk.helpers.ImageEditor;
 
 public class CartObject {
@@ -52,7 +51,7 @@ public class CartObject {
 			
 			if (!exists) finalList.add(product.copy());
 		}
-		
+
 		this.setPrintProducts(finalList);
 	}
 	

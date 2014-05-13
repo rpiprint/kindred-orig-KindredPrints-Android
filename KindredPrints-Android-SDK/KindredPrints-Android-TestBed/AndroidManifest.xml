@@ -27,7 +27,9 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity" />
+        <activity 
+            android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

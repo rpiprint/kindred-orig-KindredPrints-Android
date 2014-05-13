@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
-import android.util.Log;
 
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
@@ -32,7 +31,6 @@ public class ImageEditor {
 	}
 	
 	private static boolean matchesFilter(PrintProduct product, String filter) {
-		Log.i("KindredSDK", "filter = " + filter + " title = " + product.getType());
 		if (!filter.equals(NO_FILTER)) {
 			return product.getType().contains(filter);
 		} else {
