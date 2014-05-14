@@ -88,13 +88,15 @@ public class OrderCompleteFragment extends KindredFragment {
 				
 				if (!devPrefHelper_.getPartnerUrl().equals(DevPrefHelper.NO_STRING_VALUE)) {
 					if (imManager.cacheOrigImageFromUrl(partnerName, devPrefHelper_.getPartnerUrl())) {
-						Handler mainHandler = new Handler(getActivity().getMainLooper());
-						mainHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								imgPartnerLogo.setImageBitmap(imManager.getImageFromFileSystem(partnerName, displaySize));
-							}
-						});
+						if (activity_ != null) {
+							Handler mainHandler = new Handler(activity_.getMainLooper());
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									imgPartnerLogo.setImageBitmap(imManager.getImageFromFileSystem(partnerName, displaySize));
+								}
+							});
+						}
 					}
 				}
 			}
