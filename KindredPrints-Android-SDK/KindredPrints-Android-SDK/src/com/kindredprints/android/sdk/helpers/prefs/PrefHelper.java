@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.DisplayMetrics;
+import android.view.Surface;
 import android.view.WindowManager;
 
 public class PrefHelper {
@@ -28,8 +29,13 @@ public class PrefHelper {
 		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		wm.getDefaultDisplay().getMetrics(displaymetrics);
-		this.screenWidth = displaymetrics.widthPixels;
-		this.screenHeight = displaymetrics.heightPixels;
+		if (wm.getDefaultDisplay().getRotation() == Surface.ROTATION_0 || wm.getDefaultDisplay().getRotation() == Surface.ROTATION_180) {
+			this.screenWidth = displaymetrics.widthPixels;
+			this.screenHeight = displaymetrics.heightPixels;
+		} else {
+			this.screenWidth = displaymetrics.heightPixels;
+			this.screenHeight = displaymetrics.widthPixels;
+		}
 	}
 	
 	public static PrefHelper getInstance(Context context) {

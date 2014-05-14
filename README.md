@@ -135,7 +135,9 @@ You need to register the order flow activity inside your manifest. Add the line 
 ```xml
 <application>
     ....
-    <activity android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity" />
+    <activity 
+      android:name="com.kindredprints.android.sdk.KindredOrderFlowActivity"
+      android:screenOrientation="portrait" />
 </application>
 ```
 

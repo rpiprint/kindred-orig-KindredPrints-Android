@@ -6,7 +6,6 @@ import com.kindredprints.android.sdk.fragments.KindredFragmentHelper;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -24,8 +23,13 @@ public class KindredOrderFlowActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+<<<<<<< HEAD
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+=======
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+>>>>>>> master
 		setContentView(R.layout.activity_kporder_flow_process);
 		
 		this.fManager_ = getSupportFragmentManager();
