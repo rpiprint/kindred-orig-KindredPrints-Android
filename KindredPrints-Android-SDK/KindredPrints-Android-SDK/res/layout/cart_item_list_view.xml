@@ -3,6 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/cart_page_product_height" >
     
+   	
+    
+   
+    
     <RelativeLayout 
         android:id="@+id/imgContainer"
         android:layout_height="@dimen/cart_page_product_height"
@@ -14,9 +18,25 @@
 	     	android:contentDescription="@string/img_content"
 	        android:layout_height="wrap_content"
 	        android:layout_width="wrap_content"
-	        android:layout_centerInParent="true"
         />
+        
+        <com.kindredprints.android.sdk.customviews.PlusButtonView
+	        android:id="@+id/cmdPlusQuantity"
+	        android:layout_width="@dimen/cart_page_product_height"
+	        android:layout_height="@dimen/cart_page_product_height"
+	      	android:layout_marginLeft="@dimen/cart_page_product_row_padding"
+	        android:layout_centerInParent="true"
+        	/>
     </RelativeLayout>
+    
+    <TextView
+       android:id="@+id/txtHeaderTitle"
+       android:layout_height="wrap_content"
+       android:layout_width="wrap_content"
+       android:layout_centerVertical="true"
+       android:layout_marginLeft="@dimen/cart_page_product_row_padding"
+       android:layout_toRightOf="@+id/imgContainer"
+       android:textSize="@dimen/cart_page_row_title_text_size" />
     
      <ImageView
         android:id="@+id/imgWarning"

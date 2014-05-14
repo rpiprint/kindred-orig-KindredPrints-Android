@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kindredprints.android.sdk.data.Address;
-import com.kindredprints.android.sdk.data.CartObject;
 import com.kindredprints.android.sdk.data.LineItem;
 import com.kindredprints.android.sdk.data.PrintableImage;
 import com.kindredprints.android.sdk.data.UserObject;
@@ -15,7 +14,6 @@ import android.content.Context;
 public class UserPrefHelper extends PrefHelper {
 	private static final String KEY_CART_ADDRESSES = "kp_cart_addresses";
 	private static final String KEY_ALL_ADDRESSES = "kp_all_addresses";
-	private static final String KEY_CART_ORDERS = "kp_cart_orders";
 	private static final String KEY_SELECTED_ORDERS = "kp_selected_orders";
 	private static final String KEY_LINE_ITEMS = "kp_line_items";
 	private static final String KEY_CURRENT_USER = "kp_current_user";
@@ -127,24 +125,4 @@ public class UserPrefHelper extends PrefHelper {
 		
 		return currAddresses;
 	}
-
-	public void setCartOrders(ArrayList<CartObject> orders) {
-		Type orderListType = new TypeToken<ArrayList<CartObject>>() {}.getType();
-		String serializedOrders = new Gson().toJson(orders, orderListType);
-		this.prefHelper_.setString(KEY_CART_ORDERS, serializedOrders);
-	}
-	public ArrayList<CartObject> getCartOrders() {
-		ArrayList<CartObject> currOrders;
-		String serializedArray = this.prefHelper_.getString(KEY_CART_ORDERS);
-		
-		if(serializedArray.equals(NO_STRING_VALUE)) {
-			currOrders = new ArrayList<CartObject>();
-		} else {
-			Type addressListType = new TypeToken<ArrayList<CartObject>>() {}.getType();
-			currOrders = new Gson().fromJson(serializedArray, addressListType);
-		}
-		
-		return currOrders;
-	}
-
 }

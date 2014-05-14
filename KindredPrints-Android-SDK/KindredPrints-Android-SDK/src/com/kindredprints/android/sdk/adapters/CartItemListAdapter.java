@@ -1,19 +1,17 @@
 package com.kindredprints.android.sdk.adapters;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
+import com.kindredprints.android.sdk.customviews.PlusButtonView;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.PrintableImage;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +27,6 @@ public class CartItemListAdapter extends BaseAdapter {
 	private CartManager cartManager_;
 	private InterfacePrefHelper interfacePrefHelper_;
 	
-	private MixpanelAPI mixpanel_;
 	
 	private PrintSelectedListener printClickCallback_;
 	
@@ -37,7 +34,6 @@ public class CartItemListAdapter extends BaseAdapter {
 	
 	public CartItemListAdapter(Activity context) {
 		this.context_ = context;
-		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
 
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		this.cartManager_ = CartManager.getInstance(context);
@@ -64,12 +60,12 @@ public class CartItemListAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		return this.cartObjects_.size();
+		return this.cartObjects_.size()+1;
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return this.cartObjects_.get(position);
+		return position;
 	}
 
 	@Override
@@ -87,10 +83,54 @@ public class CartItemListAdapter extends BaseAdapter {
 			productView = convertView;
 		}		
 		
+		if (position < this.cartObjects_.size()) {
+			productView = prepareProductView(productView, position);
+		} else {
+			productView = prepareAddRow(productView);
+		}
+		
+		productView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if (printClickCallback_ != null) printClickCallback_.printWasClicked(position);
+			}
+		});
+		
+		return productView;
+	}
+	
+	private View prepareAddRow(View productView) {
+		TextView txtHeaderTitle = (TextView) productView.findViewById(R.id.txtHeaderTitle);
+		PlusButtonView plusButton = (PlusButtonView) productView.findViewById(R.id.cmdPlusQuantity);
+		txtHeaderTitle.setVisibility(View.VISIBLE);
+		plusButton.setVisibility(View.VISIBLE);
 		ImageView imgProdPrev = (ImageView) productView.findViewById(R.id.imgProdPrev);
 		ImageView imgWarning = (ImageView) productView.findViewById(R.id.imgWarning);
 		TextView txtTitle = (TextView) productView.findViewById(R.id.txtTitle);
 		TextView txtSubtitle = (TextView) productView.findViewById(R.id.txtSubtitle);
+		imgProdPrev.setVisibility(View.INVISIBLE);
+		imgWarning.setVisibility(View.INVISIBLE);
+		txtTitle.setVisibility(View.INVISIBLE);
+		txtSubtitle.setVisibility(View.INVISIBLE);
+		
+		txtHeaderTitle.setText(this.context_.getResources().getString(R.string.cart_add_more_image));
+		txtHeaderTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+		return productView;
+	}
+
+	private View prepareProductView(View productView, final int position) {
+		TextView txtHeaderTitle = (TextView) productView.findViewById(R.id.txtHeaderTitle);
+		PlusButtonView plusButton = (PlusButtonView) productView.findViewById(R.id.cmdPlusQuantity);
+		txtHeaderTitle.setVisibility(View.INVISIBLE);
+		plusButton.setVisibility(View.INVISIBLE);
+		ImageView imgProdPrev = (ImageView) productView.findViewById(R.id.imgProdPrev);
+		ImageView imgWarning = (ImageView) productView.findViewById(R.id.imgWarning);
+		TextView txtTitle = (TextView) productView.findViewById(R.id.txtTitle);
+		TextView txtSubtitle = (TextView) productView.findViewById(R.id.txtSubtitle);
+		imgProdPrev.setVisibility(View.VISIBLE);
+		imgWarning.setVisibility(View.VISIBLE);
+		txtTitle.setVisibility(View.VISIBLE);
+		txtSubtitle.setVisibility(View.VISIBLE);
 		
 		PrintableImage printImage = this.cartObjects_.get(position);
 		if (printImage.getPrintType().getDpi() < printImage.getPrintType().getWarnDPI()) {
@@ -113,17 +153,9 @@ public class CartItemListAdapter extends BaseAdapter {
 		
 		this.imageManager_.setImageAsync(imgProdPrev, printImage.getImage(), printImage.getPrintType(), printImage.getPrintType().getThumbSize(), null);
 		
-		productView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				if (printClickCallback_ != null) printClickCallback_.printWasClicked(position);
-				Log.i("KindredSDK", "clicked edit on position " + position);
-			}
-		});
-		
 		return productView;
 	}
-
+	
 	public interface PrintSelectedListener {
 		public void printWasClicked(int index);
 	}

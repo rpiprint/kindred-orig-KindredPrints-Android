@@ -38,6 +38,8 @@ public class CartItemListFragment extends KindredFragment {
 	
 	private Context context_;
 	
+	private MixpanelAPI mixpanel_;
+	
 	private KindredFragmentHelper fragmentHelper_;
 		
 	private CartItemListAdapter itemsAdapter_;
@@ -77,6 +79,8 @@ public class CartItemListFragment extends KindredFragment {
 			@Override
 			public void orderHasBeenUploaded(PartnerImage obj) { }
 		});
+		this.mixpanel_ = MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token));
+		this.mixpanel_.track("cart_list_page_view", null);
 	}
 	
 	public class BackButtonHandler implements BackButtonPressInterrupter {
@@ -132,9 +136,13 @@ public class CartItemListFragment extends KindredFragment {
 		this.itemsAdapter_.setPrintClickListener(new PrintSelectedListener() {
 			@Override
 			public void printWasClicked(int index) {
-				Bundle bun = new Bundle();
-				bun.putInt("cart_index", index);
-				fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
+				if (index < cartManager_.countOfSelectedOrders()) {
+					Bundle bun = new Bundle();
+					bun.putInt("cart_index", index);
+					fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
+				} else {
+					fragmentHelper_.triggerBackButton();
+				}
 			}
 		});
 		this.lvCart_.setDivider(new ColorDrawable(0x00000000));

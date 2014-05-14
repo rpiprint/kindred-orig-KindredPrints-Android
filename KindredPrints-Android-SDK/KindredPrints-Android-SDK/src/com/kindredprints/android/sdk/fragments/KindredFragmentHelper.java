@@ -98,6 +98,10 @@ public class KindredFragmentHelper {
 		this.navBarView_.triggerNextButton();
 	}
 	
+	public void triggerBackButton() {
+		this.navBarView_.triggerBackButton();
+	}
+	
 	public void showProgressBarWithMessage(String message) {
 		this.progBar_.show(message, 0.5f);
 	}
@@ -186,18 +190,10 @@ public class KindredFragmentHelper {
 			if (this.userPrefHelper_.getUserObject().getId().equals(UserObject.USER_VALUE_NONE)) {
 				nextFrag = FRAG_LOGIN;
 			} else {
-				nextFrag = FRAG_SHIPPING;
-				if (userPrefHelper_.getAllAddresses().size() == 0) {
-					nextFrag = FRAG_SHIPPING_EDIT;
-					this.currFragHash_ = FRAG_SHIPPING;
-				}
+				nextFrag = FRAG_ORDER_SUMMARY;
 			}
 		} else if (this.currFragHash_.equals(FRAG_LOGIN)) {
-			nextFrag = FRAG_SHIPPING;
-			if (userPrefHelper_.getAllAddresses().size() == 0) {
-				nextFrag = FRAG_SHIPPING_EDIT;
-				this.currFragHash_ = FRAG_SHIPPING;
-			}
+			nextFrag = FRAG_ORDER_SUMMARY;
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING_EDIT)) {
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING)) {

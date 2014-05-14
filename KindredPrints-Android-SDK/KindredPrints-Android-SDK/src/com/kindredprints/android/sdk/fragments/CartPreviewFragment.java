@@ -17,6 +17,7 @@ import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonP
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager.ImageManagerCallback;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -47,7 +48,9 @@ public class CartPreviewFragment extends KindredFragment {
 	private KindredFragmentHelper fragmentHelper_;
 	
 	private boolean frontSideUp_;
-	
+
+	private MixpanelAPI mixpanel_;
+
 	private ProgressBar progBar_;
 	private QuantityView quantityView_;
 	private Button cmdAddToCart_;
@@ -123,6 +126,9 @@ public class CartPreviewFragment extends KindredFragment {
 		if (this.currObject_.getPrintType() != null) {
 			this.currProduct_ = this.currObject_.getPrintType();
 		}
+		
+		this.mixpanel_ = MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token));
+		this.mixpanel_.track("cart_preview_page_view", null);
 	}
 	
 	public class BackButtonHandler implements BackButtonPressInterrupter {
