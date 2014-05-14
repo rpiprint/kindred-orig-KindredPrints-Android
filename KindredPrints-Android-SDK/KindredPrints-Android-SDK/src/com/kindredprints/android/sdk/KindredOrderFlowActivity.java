@@ -23,13 +23,8 @@ public class KindredOrderFlowActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-<<<<<<< HEAD
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-=======
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
->>>>>>> master
 		setContentView(R.layout.activity_kporder_flow_process);
 		
 		this.fManager_ = getSupportFragmentManager();
