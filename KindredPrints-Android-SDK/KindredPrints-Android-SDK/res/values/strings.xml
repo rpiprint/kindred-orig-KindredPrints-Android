@@ -26,13 +26,13 @@
     <string name="nav_next_title_login_reset">RESET</string>
     
     <string name="nav_title_shipping">CHOOSE DESTINATION</string>
-    <string name="nav_next_title_shipping">NEXT</string>
+    <string name="nav_next_title_shipping">SAVE</string>
     
     <string name="nav_title_edit_shipping">NEW ADDRESS</string>
     <string name="nav_next_title_edit_shipping">DONE</string>
     
     <string name="nav_title_purchase">ORDER SUMMARY</string>
-    <string name="nav_next_title_purchase">DONE</string>
+    <string name="nav_next_title_purchase">CHECKOUT</string>
     
     <string name="nav_title_preview">ADD TO CART</string>
     <string name="nav_next_title_preview">CHECKOUT</string>
@@ -43,7 +43,7 @@
     <string name="cart_subtotal">Subtotal</string>
     <string name="cart_add_to_cart">Add to cart</string>
     <string name="cart_update_in_cart">Update in cart</string>
-    <string name="cart_remove_from_cart">Remove from cart</string>
+    <string name="cart_remove_from_cart">Remove</string>
     <string name="cart_add_more_image">Add more images</string>
     <string name="cart_checkout">CHECKOUT</string>
     
@@ -61,16 +61,18 @@
     <string name="shipping_hint_zip">Zip</string>
     
     <!-- ORDER SUMMARY PAGE -->
-    <string name="order_summary_title">Order info:</string>
+    <string name="order_summary_title">Order summary</string>
     <string name="order_summary_edit">EDIT</string>
     <string name="order_summary_no_coupon">Enter coupon code here</string>
     <string name="order_summary_apply">APPLY</string>
     <string name="order_summary_subtotal">Subtotal</string>
+    <string name="order_summary_shipping_header">Shipping</string>
     <string name="order_summary_shipping">Shipping to</string>
+    <string name="order_summary_coupon_header">Coupons</string>
     <string name="order_summary_credits">Credits applied</string>
     <string name="order_summary_total">Total</string>
     <string name="order_summary_blank_total">$0</string>
-    <string name="order_summary_payment">Payment:</string>
+    <string name="order_summary_payment">Payment</string>
     <string name="order_summary_complete">COMPLETE ORDER</string>
     <string name="order_summary_type_lineitem">lineitem</string>
     <string name="order_summary_type_shipping">shipping</string>

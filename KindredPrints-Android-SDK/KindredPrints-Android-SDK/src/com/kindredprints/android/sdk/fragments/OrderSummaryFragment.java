@@ -51,8 +51,8 @@ public class OrderSummaryFragment extends KindredFragment {
 	
 	private MixpanelAPI mixpanel_;
 	
-	private TextView txtTitle_;
-	private Button cmdEditOrder_;
+	private TextView txtTotal_;
+	private Button cmdCompleteOrder_;
 	private ListView lvOrderLineItems_;
 	private OrderSummaryAdapter lineItemAdapter_;
 
@@ -98,29 +98,30 @@ public class OrderSummaryFragment extends KindredFragment {
 		
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
-		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);
-		this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdCompleteOrder_ = (Button) view.findViewById(R.id.cmdCheckout);
+		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdCompleteOrder_.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mixpanel_.track("order_summary_complete_order", null);
+				fragmentHelper_.showProgressBarWithMessage("validating payment..");
+				orderProcessingHelper_.initiateCheckoutSequence();
+			}
+		});
 		
-		this.cmdEditOrder_ = (Button) view.findViewById(R.id.cmdEditOrder);
-		this.cmdEditOrder_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.cmdEditOrder_.setOnClickListener(new OnClickListener() {
+		this.txtTotal_ = (TextView) view.findViewById(R.id.txtTotal);
+		this.txtTotal_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		this.lvOrderLineItems_ = (ListView) view.findViewById(R.id.lvOrderItemList);
+		this.lvOrderLineItems_.setBackgroundColor(Color.TRANSPARENT);
+		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_);
+		this.lineItemAdapter_.setEditCartOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_CART);
 			}
 		});
-		
-		this.lvOrderLineItems_ = (ListView) view.findViewById(R.id.lvOrderItemList);
-		this.lvOrderLineItems_.setBackgroundColor(Color.TRANSPARENT);
-		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_);
 		this.lvOrderLineItems_.setAdapter(lineItemAdapter_);
-		
-		Bundle bun = getArguments();
-		if (bun.containsKey("checkout")) {
-			if (bun.getBoolean("checkout")) {
-				launchPurchaseSequence();
-			}
-		}
 		
 		if (this.devPrefHelper_.needUpdateOrderId()) {
 			fragmentHelper_.showProgressBarWithMessage("checking prices..");

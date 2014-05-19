@@ -8,4 +8,5 @@ public interface CartUpdatedCallback {
 	public void orderHasBeenUpdatedWithSize(PartnerImage obj, ArrayList<PrintProduct> fittedList);
 	public void orderHasBeenServerInit(PartnerImage obj);
 	public void orderHasBeenUploaded(PartnerImage obj);
+	public void introPagesHaveBeenUpdated(ArrayList<String> pageUrls);
 }

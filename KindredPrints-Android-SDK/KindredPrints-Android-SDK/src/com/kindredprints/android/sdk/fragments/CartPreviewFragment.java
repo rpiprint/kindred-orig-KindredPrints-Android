@@ -100,6 +100,8 @@ public class CartPreviewFragment extends KindredFragment {
 
 			@Override
 			public void orderHasBeenUploaded(PartnerImage obj) { }
+			@Override
+			public void introPagesHaveBeenUpdated(ArrayList<String> pageUrls) { }
 		});
 		this.fragmentHelper_.setNextButtonCartType(true);
 		Bundle bun = this.getArguments();

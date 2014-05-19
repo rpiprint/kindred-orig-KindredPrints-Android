@@ -52,6 +52,16 @@ public class CartManager {
 		return manager_;
 	}
 	
+	public void updateIntroImageUrls(final ArrayList<String> pageUrls) {
+		Handler mainHandler = new Handler(Looper.getMainLooper());
+		mainHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				callback_.introPagesHaveBeenUpdated(pageUrls);
+			}
+		});
+	}
+	
 	public void updateAllOrdersWithNewSizes() {
 		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {

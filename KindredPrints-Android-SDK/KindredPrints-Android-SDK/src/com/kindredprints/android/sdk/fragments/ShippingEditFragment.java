@@ -462,9 +462,10 @@ public class ShippingEditFragment extends KindredFragment {
 									}
 									
 									userPrefHelper_.setSelectedShippingAddresses(currSelectedAddresses);
+									devPrefHelper_.setNeedUpdateOrderId(true);
 									serverStatus = true;
 									continueCheck_ = true;
-									fragmentHelper_.moveNextFragment();
+									fragmentHelper_.moveLastFragment();
 								} else {
 									serverStatus = false;
 									setInterfaceState(STATE_ERROR);

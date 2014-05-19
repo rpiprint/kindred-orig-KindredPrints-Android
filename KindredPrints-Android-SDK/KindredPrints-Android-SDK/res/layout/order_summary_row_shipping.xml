@@ -37,4 +37,12 @@
         android:text="@string/order_summary_blank_total"
     />
     
+    <com.kindredprints.android.sdk.customviews.DeleteButtonView 
+        android:id="@+id/cmdDelete"
+        android:layout_width="@dimen/order_summary_edit_height"
+        android:layout_height="@dimen/order_summary_edit_height"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        />
+    
 </RelativeLayout>

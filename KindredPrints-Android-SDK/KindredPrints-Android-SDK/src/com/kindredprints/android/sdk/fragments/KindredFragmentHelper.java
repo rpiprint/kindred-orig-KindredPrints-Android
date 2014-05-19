@@ -7,6 +7,7 @@ import com.kindredprints.android.sdk.customviews.NavBarView;
 import com.kindredprints.android.sdk.customviews.NetworkProgressBar;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.UserObject;
+import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
 import android.app.Activity;
@@ -14,8 +15,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 public class KindredFragmentHelper {
+	public static final String FRAG_INTRO = "kp_fragment_intro";
 	public static final String FRAG_SELECT = "kp_fragment_select";
 	public static final String FRAG_PREVIEW = "kp_fragment_preview";
 	public static final String FRAG_CART = "kp_fragment_cart";
@@ -27,6 +30,7 @@ public class KindredFragmentHelper {
 	public static final String FRAG_ORDER_FINISHED = "kp_order_finished";
 	
 	
+	private DevPrefHelper devPrefHelper_;
 	private UserPrefHelper userPrefHelper_;
 	private String currFragHash_;
 	private FragmentManager fManager_;
@@ -67,6 +71,7 @@ public class KindredFragmentHelper {
 	public void updateActivity(Activity activity) {
 		this.activity_ = activity;
 		this.userPrefHelper_ = new UserPrefHelper(activity);
+		this.devPrefHelper_ = new DevPrefHelper(activity);
 		this.progBar_ = new NetworkProgressBar(activity);
 	}
 	
@@ -121,23 +126,22 @@ public class KindredFragmentHelper {
 	public void initRootFragment() {
 		this.backStack_.clear();
 		KindredFragment f = null;
-		int numPending = this.cartManager_.getPendingImages().size();
-		if (numPending > 0) {
-			if (numPending > 1) {
-				this.currFragHash_ = FRAG_SELECT;
-				f = fragForHash(FRAG_SELECT);
-				f.initFragment(this, this.activity_);
+		if (this.devPrefHelper_.getSeenIntroStatus()) {
+			int numPending = this.cartManager_.getPendingImages().size();
+			if (numPending > 0) {
+				if (numPending > 1) {
+					this.currFragHash_ = FRAG_SELECT;
+				} else {
+					this.currFragHash_ = FRAG_PREVIEW;
+				}
 			} else {
-				this.currFragHash_ = FRAG_PREVIEW;
-				f = fragForHash(FRAG_PREVIEW);
-				f.initFragment(this, this.activity_);
+				this.currFragHash_ = FRAG_CART;
 			}
 		} else {
-			this.currFragHash_ = FRAG_CART;
-			f = fragForHash(FRAG_CART);
-			f.initFragment(this, this.activity_);
+			this.currFragHash_ = FRAG_INTRO;
 		}
-		
+		f = fragForHash(this.currFragHash_);
+		f.initFragment(this, this.activity_);
 		moveRightFragment(f);
 	}
 	
@@ -152,10 +156,10 @@ public class KindredFragmentHelper {
 	public boolean moveToFragmentWithBundle(String hash, Bundle bun) {
 		KindredFragment f = fragForHash(hash);
 		if (f != null) {
-			f.setArguments(bun);
-			f.initFragment(this, this.activity_);
 			this.backStack_.add(this.currFragHash_);
 			this.currFragHash_ = hash;
+			f.setArguments(bun);
+			f.initFragment(this, this.activity_);
 			moveRightFragment(f);
 			return true;
 		}
@@ -318,11 +322,17 @@ public class KindredFragmentHelper {
 			if (f == null) {
 				return new CartPreviewFragment();
 			}
+		} else if (hash.equals(FRAG_INTRO)) {
+			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_INTRO);
+			if (f == null) {
+				return new IntroPageFlipperFragment();
+			}
 		}
 		return f;
 	}
 	
 	public void configNavBarForHash(String hash) {
+		Log.i("KindredSDK", "config nav bar for hash " + hash);
 		if (hash.equals(FRAG_CART)) {
 			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_cart));

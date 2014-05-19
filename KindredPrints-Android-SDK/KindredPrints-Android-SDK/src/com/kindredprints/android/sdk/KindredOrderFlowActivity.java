@@ -33,6 +33,7 @@ public class KindredOrderFlowActivity extends FragmentActivity {
 		this.navBar_.show();
 		
 		this.fHelper_ = KindredFragmentHelper.getInstance(this.fManager_, this.navBar_, this);
+		this.fHelper_.updateActivity(this);
 		this.fHelper_.initRootFragment();
 		fHelper_.configNavBar();
 		

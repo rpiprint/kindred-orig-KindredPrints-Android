@@ -78,6 +78,8 @@ public class CartItemListFragment extends KindredFragment {
 
 			@Override
 			public void orderHasBeenUploaded(PartnerImage obj) { }
+			@Override
+			public void introPagesHaveBeenUpdated(ArrayList<String> pageUrls) { }
 		});
 		this.mixpanel_ = MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token));
 		this.mixpanel_.track("cart_list_page_view", null);

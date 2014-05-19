@@ -19,4 +19,6 @@
 	
 	<color name="dialog_grey">#FFfffbfb</color>
     <color name="dialog_grey_pressed">#FFaaaaaa</color>
+    
+    <color name="color_order_highlight">#FF888888</color>
 </resources>

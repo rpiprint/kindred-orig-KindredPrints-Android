@@ -1,17 +1,21 @@
 package com.kindredprints.android.sdk.fragments;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.EditTextView;
 import com.kindredprints.android.sdk.customviews.EditTextView.TextFieldModifiedListener;
+import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.data.UserObject;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.ImageUploadHelper;
+import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
@@ -38,6 +42,7 @@ public class LoginViewFragment extends KindredFragment {
 	
 	private InterfacePrefHelper interfacePrefHelper_;
 	private UserPrefHelper userPrefHelper_;
+	private DevPrefHelper devPrefHelper_;
 	private KindredRemoteInterface kindredRemoteInterface_;
 	private UserObject currUser_;
 		
@@ -63,6 +68,7 @@ public class LoginViewFragment extends KindredFragment {
 
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
 		this.userPrefHelper_ = new UserPrefHelper(activity);
+		this.devPrefHelper_ = new DevPrefHelper(activity);
 		this.currUser_ = this.userPrefHelper_.getUserObject();
 		this.kindredRemoteInterface_ = new KindredRemoteInterface(activity);
 		this.kindredRemoteInterface_.setNetworkCallbackListener(new UserLoginRegCallback());
@@ -315,8 +321,19 @@ public class LoginViewFragment extends KindredFragment {
 									
 									ImageUploadHelper.getInstance(getActivity()).validateAllOrdersInit();
 									
-									continueCheck_ = true;
-									fragmentHelper_.moveNextFragment();
+									fragmentHelper_.showProgressBarWithMessage("importing user data..");
+									new Thread(new Runnable() {
+										@Override
+										public void run() {
+											JSONObject postObj = new JSONObject();
+											try {
+												postObj.put("auth_key", currUser_.getAuthKey());
+												kindredRemoteInterface_.downloadAllAddresses(postObj, currUser_.getId());
+											} catch (JSONException e) {
+												Log.i(getClass().getSimpleName(), "JSON exception: " + e.getMessage());
+											}
+										}
+									}).start();
 								} else if (status == 421) {
 									setInterfaceState(STATE_NEED_PASSWORD, null);
 								} else {
@@ -327,6 +344,39 @@ public class LoginViewFragment extends KindredFragment {
 								if (status == 200) {
 									setInterfaceState(STATE_OTHER_ERROR, getActivity().getResources().getString(R.string.err_login_reset_done));
 									editTextPassword_.clearText();
+								}
+							} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_GET_ADDRESSES)) {
+								if (status == 200) {
+									ArrayList<Address> addresses = new ArrayList<Address>();
+									
+									JSONArray addressList = serverResponse.getJSONArray("addresses");
+									JSONObject obj;
+									for (int i = 0; i < addressList.length(); i++) {
+										obj = (JSONObject)addressList.get(i);
+										
+										Address addy = new Address();
+										addy.setAddressId(obj.getString("address_id")); 
+										addy.setName(obj.getString("name"));
+										addy.setStreet(obj.getString("street1"));
+										addy.setCity(obj.getString("city"));
+										addy.setState(obj.getString("state"));
+										addy.setZip(obj.getString("zip"));
+										addy.setCountry(obj.getString("country"));
+										addy.setEmail(obj.getString("email"));
+										addy.setPhone(obj.getString("number"));
+
+										if (addy.getCountry().equals("waiting"))
+											addy.setCountry("United States");
+																				
+										addresses.add(addy);
+									}
+									
+									userPrefHelper_.setAllShippingAddresses(addresses);
+									
+									devPrefHelper_.resetAddressDownloadStatus();
+									
+									continueCheck_ = true;
+									fragmentHelper_.moveNextFragment();
 								}
 							}
 						} catch (JSONException e) {

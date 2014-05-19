@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.kindredprints.android.sdk.R;
+import com.kindredprints.android.sdk.customviews.DeleteButtonView;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.data.LineItem;
@@ -26,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,16 +43,12 @@ import android.widget.TextView;
 public class OrderSummaryAdapter extends BaseAdapter {
 	private final static int MAX_NAME_LENGTH = 7;
 
-	private final static int ADDITIONAL_ROWS_NO_CREDIT = 4;
-	private final static int ADDITIONAL_ROWS = 6;
-	private final static int COMPLETE_OFFSET = -1;
-	private final static int CARD_OFFSET = -3;
-	private final static int CARD_OFFSET_NO_CREDIT = 1;
-	private final static int COUPON_OFFSET = -5;
-	private final static int COUPON_OFFSET_NO_CREDIT = -3;
+	private final static int HEADER_ORDER_SUMMARY = 0;
+	private final static int HEADER_SHIPPING_SUMMARY = 1;
+	private final static int HEADER_PAYMENT_SUMMARY = 2;
+	private final static int HEADER_COUPON_SUMMARY = 3;
 	
 	private KindredFragmentHelper fragmentHelper_;
-	private OrderProcessingHelper orderProcessingHelper_;
 	private KindredRemoteInterface kindredRemoteInterface_;
 	private DevPrefHelper devPrefHelper_;
 	private InterfacePrefHelper interfacePrefHelper_;
@@ -60,19 +58,17 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	
 	private MixpanelAPI mixpanel_;
 	
-	private ArrayList<View> rowViews;
+	private OnClickListener editCartClickListener_;
+	
 	private ArrayList<LineItem> lineItems_;
+	private ArrayList<View> printRowViews_;
+	private ArrayList<View> couponRowViews_;
+	private ArrayList<View> addressRowViews_;
+	private ArrayList<View> paymentRowViews_;
 
-	private View rowViewApplyCoupon;
-	private View rowViewCreditCard;
-	private View rowViewCompletePurchase;
+	private View rowViewTotal_;
 	
 	private ListView currParentListView_;
-	
-	private int extraRows_;
-	private int offsetCoupon_;
-	private int offsetCard_;
-	private int offsetComplete_;
 		
 	public OrderSummaryAdapter(Activity context, KindredFragmentHelper fragmentHelper, ListView listView) {
 		this.context_ = context;
@@ -83,59 +79,125 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		this.kindredRemoteInterface_ = new KindredRemoteInterface(context);
 		this.kindredRemoteInterface_.setNetworkCallbackListener(new EditShippingNetworkCallback());
 		
-		this.orderProcessingHelper_ = OrderProcessingHelper.getInstance(context);
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		this.devPrefHelper_ = new DevPrefHelper(context);
 		this.userPrefHelper_ = new UserPrefHelper(context);
 		this.fragmentHelper_ = fragmentHelper;
 		this.currUser_ = this.userPrefHelper_.getUserObject();
-		updateCardOffsets();
 		
 		initialInit();
+		updateRows();
+	}
+	
+	public void setEditCartOnClickListener(OnClickListener editCartOnClickListener) {
+		this.editCartClickListener_ = editCartOnClickListener;
 	}
 	
 	private void initialInit() {
 		this.lineItems_ = new ArrayList<LineItem>();
-		this.rowViews = new ArrayList<View>();
+		this.printRowViews_ = new ArrayList<View>();
+		this.couponRowViews_ = new ArrayList<View>();
+		this.addressRowViews_ = new ArrayList<View>();
+		this.paymentRowViews_ = new ArrayList<View>();
 	}
 	
 	public void updateCreditCardInfo(UserObject updatedUserObject) {
 		this.currUser_ = updatedUserObject;
-		this.rowViewCreditCard = generateRowViewCreditCart();
-		updateCardOffsets();
+		updateRows();
 		this.notifyDataSetChanged();
 	}
 	
 	public void updateCouponRow() {
+		updateRows();
 		this.notifyDataSetChanged();
 	}
 	
-	private void updateCardOffsets() {
-		this.offsetComplete_ = COMPLETE_OFFSET;
-		if (this.currUser_.isPaymentSaved()) {
-			this.offsetCard_ = CARD_OFFSET;
-			this.offsetCoupon_ = COUPON_OFFSET;
-			this.extraRows_ = ADDITIONAL_ROWS;
-		} else {
-			this.offsetCard_ = CARD_OFFSET_NO_CREDIT;
-			this.offsetCoupon_ = COUPON_OFFSET_NO_CREDIT;
-			this.extraRows_ = ADDITIONAL_ROWS_NO_CREDIT;
+	private void updateRows() {
+		ArrayList<LineItem> printLineItems = new ArrayList<LineItem>();
+		ArrayList<LineItem> couponLineItems = new ArrayList<LineItem>();
+		ArrayList<LineItem> addressLineItems = new ArrayList<LineItem>();
+ 		LineItem totalLineItem = null;
+		
+ 		for (LineItem item : this.lineItems_) {
+ 			if (item.getLiType().equals(LineItem.ORDER_PRODUCT_LINE_TYPE) || item.getLiType().equals(LineItem.ORDER_SUBTOTAL_LINE_TYPE)) {
+ 				printLineItems.add(item);
+ 			} else if (item.getLiType().equals(LineItem.ORDER_COUPON_APPLIED_LINE_TYPE) || item.getLiType().equals(LineItem.ORDER_CREDITS_LINE_TYPE)) {
+ 				couponLineItems.add(item);
+ 			} else if (item.getLiType().equals(LineItem.ORDER_SHIPPING_LINE_TYPE)) {
+ 				addressLineItems.add(item);
+ 			} else if (item.getLiType().equals(LineItem.ORDER_TOTAL_LINE_TYPE)) {
+ 				totalLineItem = item;
+ 			}
+ 		}
+ 		
+		constructPrintRows(printLineItems);
+		constructAddressRows(addressLineItems);
+		constructCouponRows(couponLineItems);
+		constructPaymentRows();
+		this.rowViewTotal_ = generateViewForLineItem(totalLineItem);
+	}
+	
+	private void constructPrintRows(ArrayList<LineItem> lineItems) {
+		this.printRowViews_.clear();
+		this.printRowViews_.add(generateHeaderRowView(HEADER_ORDER_SUMMARY));
+		for (LineItem item : lineItems) {
+			this.printRowViews_.add(generateViewForLineItem(item));
 		}
+		this.printRowViews_.add(generateBlankRowView());
+	}
+	
+	private void constructAddressRows(ArrayList<LineItem> lineItems) {
+		this.addressRowViews_.clear();
+		this.addressRowViews_.add(generateHeaderRowView(HEADER_SHIPPING_SUMMARY));
+		for (LineItem item : lineItems) {
+			this.addressRowViews_.add(generateViewForLineItem(item));
+		}
+		this.addressRowViews_.add(generateAddShippingButton());
+		this.addressRowViews_.add(generateBlankRowView());
+	}
+	
+	private void constructCouponRows(ArrayList<LineItem> lineItems) {
+		this.couponRowViews_.clear();
+		this.couponRowViews_.add(generateHeaderRowView(HEADER_COUPON_SUMMARY));
+		for (LineItem item : lineItems) {
+			this.couponRowViews_.add(generateViewForLineItem(item));
+		}
+		this.couponRowViews_.add(generateCouponEditView());
+		this.couponRowViews_.add(generateBlankRowView());
+	}
+	
+	private void constructPaymentRows() {
+		this.paymentRowViews_.clear();
+		this.paymentRowViews_.add(generateHeaderRowView(HEADER_PAYMENT_SUMMARY));
+		this.paymentRowViews_.add(generateRowViewCreditCard());
+		this.paymentRowViews_.add(generateBlankRowView());
 	}
 	
 	public void updateLineItemList(ArrayList<LineItem> lineItems) {
 		this.lineItems_ = lineItems;
-		this.rowViews.clear();
-		for (int i = 0; i < this.lineItems_.size(); i++) {
-			LineItem item = this.lineItems_.get(i);
-			this.rowViews.add(generateViewForLineItem(item));
-		}
+		updateRows();
 		this.notifyDataSetChanged();
 	}
 	
 	@Override
 	public int getCount() {
-		return this.rowViews.size()+this.extraRows_;
+		return countOfPrintRows() + countOfShippingRows() + countOfPaymentRows() + countOfCouponRows() + 1;
+	}
+	
+	private int countOfPrintRows() {
+		return this.printRowViews_.size();
+	}
+	
+	private int countOfShippingRows() {
+		return this.addressRowViews_.size();
+	}
+	
+	private int countOfPaymentRows() {
+		return 3;
+	}
+	
+	private int countOfCouponRows() {
+		return this.couponRowViews_.size();
 	}
 
 	@Override
@@ -150,43 +212,37 @@ public class OrderSummaryAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parentView) {
-		if (position < this.rowViews.size()) {
-			return this.rowViews.get(position);
-		} else if (position == getCount()+this.offsetComplete_) {
-			if (this.rowViewCompletePurchase == null) {
-				this.rowViewCompletePurchase = generateRowViewComplete();
-			}
-			return this.rowViewCompletePurchase;
-		} else if (position == getCount()+this.offsetCard_) {
-			if (this.rowViewCreditCard == null) {
-				this.rowViewCreditCard = generateRowViewCreditCart();
-			}
-			return this.rowViewCreditCard;
-		} else if (position == getCount()+this.offsetCoupon_) {
-			LineItem item = new LineItem();
-			item.setLiType(LineItem.ORDER_COUPON_LINE_TYPE);
-			this.rowViewApplyCoupon = generateCouponLineItemView(item); 
-			return this.rowViewApplyCoupon;
-		} else {
-			return generateBlankRowView();
-		}
+		if (position < this.printRowViews_.size()) {
+			return this.printRowViews_.get(position);
+		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size()) {
+			return this.addressRowViews_.get(position-this.printRowViews_.size());
+		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size()) {
+			return this.paymentRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size());
+		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size() + this.couponRowViews_.size()) {
+			return this.couponRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size()-this.paymentRowViews_.size());
+		} else
+			return this.rowViewTotal_;
 	}
 
 	private View generateViewForLineItem(LineItem item) {
 		View view = null;
 		
-		if (item.getLiType().equals(LineItem.ORDER_PRODUCT_LINE_TYPE)) {
-			view = generateProductLineItemView(item);
-		} else if (item.getLiType().equals(LineItem.ORDER_SUBTOTAL_LINE_TYPE)) {
-			view = generateSubtotalLineItemView(item);
-		} else if (item.getLiType().equals(LineItem.ORDER_SHIPPING_LINE_TYPE)) {
-			view = generateShippingLineItemView(item);
-		} else if (item.getLiType().equals(LineItem.ORDER_CREDITS_LINE_TYPE)) {
-			view = generateCreditsLineItemView(item);
-		} else if (item.getLiType().equals(LineItem.ORDER_COUPON_APPLIED_LINE_TYPE)) {
-			view = generateCouponAppliedLineItemView(item);
-		} else if (item.getLiType().equals(LineItem.ORDER_TOTAL_LINE_TYPE)) {
-			view = generateTotalLineItemView(item);
+		if (item != null) {
+			if (item.getLiType().equals(LineItem.ORDER_PRODUCT_LINE_TYPE)) {
+				view = generateProductLineItemView(item);
+			} else if (item.getLiType().equals(LineItem.ORDER_SUBTOTAL_LINE_TYPE)) {
+				view = generateSubtotalLineItemView(item);
+			} else if (item.getLiType().equals(LineItem.ORDER_SHIPPING_LINE_TYPE)) {
+				view = generateShippingLineItemView(item);
+			} else if (item.getLiType().equals(LineItem.ORDER_CREDITS_LINE_TYPE)) {
+				view = generateCreditsLineItemView(item);
+			} else if (item.getLiType().equals(LineItem.ORDER_COUPON_APPLIED_LINE_TYPE)) {
+				view = generateCouponAppliedLineItemView(item);
+			} else if (item.getLiType().equals(LineItem.ORDER_TOTAL_LINE_TYPE)) {
+				view = generateTotalLineItemView(item);
+			}
+		} else {
+			view = generateBlankRowView(); 
 		}
 		
 		return view;
@@ -201,11 +257,38 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		return view;
 	}
 	
+	private View generateHeaderRowView(int type) {
+		LayoutInflater inflater = this.context_.getLayoutInflater();
+		View view = inflater.inflate(R.layout.order_summary_row_header, this.currParentListView_, false);
+		
+		view.setBackgroundColor(Color.TRANSPARENT);
+		Button cmdEdit = (Button) view.findViewById(R.id.cmdEdit);
+		TextView txtHeader = (TextView) view.findViewById(R.id.txtHeaderTitle);
+		txtHeader.setTextColor(this.interfacePrefHelper_.getTextColor());
+		cmdEdit.setTextColor(this.interfacePrefHelper_.getTextColor());
+		if (type == HEADER_ORDER_SUMMARY) {
+			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_title));
+			cmdEdit.setVisibility(View.VISIBLE);
+			cmdEdit.setOnClickListener(this.editCartClickListener_);
+		} else if (type == HEADER_SHIPPING_SUMMARY) {
+			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_shipping_header));
+			cmdEdit.setVisibility(View.INVISIBLE);
+		} else if (type == HEADER_PAYMENT_SUMMARY) {
+			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_payment));
+			cmdEdit.setVisibility(View.INVISIBLE);
+		} else if (type == HEADER_COUPON_SUMMARY) {
+			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_coupon_header));
+			cmdEdit.setVisibility(View.INVISIBLE);
+		}
+		
+		return view;
+	}
+	
 	private View generateProductLineItemView(LineItem item) {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_lineitem, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		TextView txtItemQuantity = (TextView) view.findViewById(R.id.txtLineItemQuantity);
 		txtItemQuantity.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -243,11 +326,35 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		return view;
 	}
 	
+	private View generateAddShippingButton() {
+		LayoutInflater inflater = this.context_.getLayoutInflater();
+		View view = inflater.inflate(R.layout.order_summary_row_add_shipping, this.currParentListView_, false);
+		
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		TextView txtTitle = (TextView) view.findViewById(R.id.txtShippingDescription);
+		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		view.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (userPrefHelper_.getAllAddresses().size() == 0) {
+					Bundle bun = new Bundle();
+					bun.putBoolean("return_to_order", true);
+					fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_SHIPPING_EDIT, bun);
+				} else {
+					fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_SHIPPING);
+				}
+			}
+		});
+		
+		return view;
+	}
+	
 	private View generateShippingLineItemView(final LineItem item) {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_shipping, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		Button cmdEditShipping = (Button) view.findViewById(R.id.cmdEditShipping);
 		cmdEditShipping.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -263,6 +370,25 @@ public class OrderSummaryAdapter extends BaseAdapter {
 						kindredRemoteInterface_.getShipQuoteFor(userPrefHelper_.getCurrentOrderId(), item.getLiAddressId());
 					}
 				}).start();
+			}
+		});
+		
+		DeleteButtonView cmdDeleteShipping = (DeleteButtonView) view.findViewById(R.id.cmdDelete);
+		cmdDeleteShipping.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				fragmentHelper_.showProgressBarWithMessage("removing shipment address..");
+				ArrayList<Address> selAddresses = userPrefHelper_.getSelectedAddresses();
+				for (int i = 0; i < selAddresses.size(); i++) {
+					Address currAddress = selAddresses.get(i);
+					if (currAddress.getAddressId().equals(item.getLiAddressId())) {
+						selAddresses.remove(i);
+						break;
+					}
+				}
+				userPrefHelper_.setSelectedShippingAddresses(selAddresses);
+				devPrefHelper_.setNeedUpdateOrderId(true);
+				OrderProcessingHelper.getInstance(context_).initiateOrderCreationOrUpdateSequence();
 			}
 		});
 		
@@ -289,7 +415,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -308,7 +434,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -323,21 +449,16 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		return view;
 	}
 	
-	private View generateCouponLineItemView(LineItem item) {
+	private View generateCouponEditView() {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		final View view = inflater.inflate(R.layout.order_summary_row_coupons, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 	
 
 		final EditText editTextCoupon = (EditText) view.findViewById(R.id.editTextCoupon);
 		editTextCoupon.setTextColor(this.interfacePrefHelper_.getTextColor());
 		editTextCoupon.setBackgroundColor(Color.TRANSPARENT);
-		
-		if (!item.getLiCouponId().equals(LineItem.LINE_ITEM_NO_VALUE)) {
-			editTextCoupon.setText(item.getLiCouponId());
-		}
-		
 		
 		final Button cmdEditApplyCoupon = (Button) view.findViewById(R.id.cmdEditApplyCoupon);
 		cmdEditApplyCoupon.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -368,21 +489,10 @@ public class OrderSummaryAdapter extends BaseAdapter {
 				}
 			}
 		});
-	
-		
-		if (!item.getLiCouponId().equals(LineItem.LINE_ITEM_NO_VALUE)) {
-			editTextCoupon.setText(item.getLiCouponId());
-			if (!item.getLiCouponId().equals(LineItem.LINE_ITEM_NO_VALUE)) {
-				editTextCoupon.setText(item.getLiCouponId());
-			} else {
-				editTextCoupon.setText("Enter coupon");
-			}
-			editTextCoupon.selectAll();
-		}
+
 		cmdEditApplyCoupon.setText("APPLY");
 		editTextCoupon.setVisibility(View.VISIBLE);
-			
-		
+					
 		return view;
 	}
 	
@@ -390,7 +500,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_total, this.currParentListView_, false);
 		
-		view.setBackgroundColor(Color.TRANSPARENT);
+		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		TextView txtTotalTitle = (TextView) view.findViewById(R.id.txtTotalTitle);
 		txtTotalTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -405,32 +515,13 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		
 		return view;
 	}
-	private View generateRowViewComplete() {
-		LayoutInflater inflater = this.context_.getLayoutInflater();
-		View viewComplete = inflater.inflate(R.layout.order_summary_row_completebutton, this.currParentListView_, false);	
 	
-		viewComplete.setBackgroundColor(Color.TRANSPARENT);
-		
-		Button cmdComplete = (Button) viewComplete.findViewById(R.id.cmdCompleteOrder);
-		cmdComplete.setTextColor(this.interfacePrefHelper_.getTextColor());
-		cmdComplete.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mixpanel_.track("order_summary_complete_order", null);
-
-				fragmentHelper_.showProgressBarWithMessage("validating payment..");
-				orderProcessingHelper_.initiateCheckoutSequence();
-			}
-		});
-		
-		return viewComplete;
-	}
 	
-	private View generateRowViewCreditCart() {
+	private View generateRowViewCreditCard() {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View viewCC = inflater.inflate(R.layout.order_summary_row_card, this.currParentListView_, false);	
 	
-		viewCC.setBackgroundColor(Color.TRANSPARENT);
+		viewCC.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
 		
 		TextView txtTitle = (TextView) viewCC.findViewById(R.id.txtCardTitle);
 		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());

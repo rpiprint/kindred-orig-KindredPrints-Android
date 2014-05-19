@@ -98,13 +98,13 @@
     <dimen name="order_summary_text_size">13sp</dimen>
     <dimen name="order_summary_title_text_size">17sp</dimen>
     <dimen name="order_summary_quantity_text_size">22sp</dimen>
-    <dimen name="order_summary_edit_height">30dp</dimen>
+    <dimen name="order_summary_edit_height">22dp</dimen>
     <dimen name="order_summary_edit_width">60dp</dimen>
     <dimen name="order_summary_quantity_width">30dp</dimen>
     <dimen name="order_summary_amount_width">80dp</dimen>
     <dimen name="order_summary_row_height">35dp</dimen>
     <dimen name="order_summary_special_row_height">45dp</dimen>
-    <dimen name="order_summary_blank_row_height">15dp</dimen>
+    <dimen name="order_summary_blank_row_height">10dp</dimen>
     <dimen name="order_summary_padding">5dp</dimen>
     
     <dimen name="card_edit_vertical_margin">20dp</dimen>
