@@ -28,7 +28,7 @@
 	        android:id="@+id/icon"
 	 		android:contentDescription="@string/img_content"
 	        android:layout_width="@dimen/nav_next_button_width"
-	        android:padding="@dimen/nav_padding_size"
+	        android:padding="@dimen/nav_image_padding_size"
 	        android:layout_height="match_parent"
 	        android:layout_centerInParent="true"
 	   		/>

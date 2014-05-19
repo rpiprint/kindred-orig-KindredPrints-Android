@@ -9,8 +9,8 @@ import com.kindredprints.android.sdk.data.CartUpdatedCallback;
 import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.PrintProduct;
 
-import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
+import com.kindredprints.android.sdk.helpers.ImageUploadHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -41,7 +41,8 @@ public class CartItemListFragment extends KindredFragment {
 	private MixpanelAPI mixpanel_;
 	
 	private KindredFragmentHelper fragmentHelper_;
-		
+	private ImageUploadHelper imageUploadHelper_;
+	
 	private CartItemListAdapter itemsAdapter_;
 	private Button cmdCheckout_;
 	private ListView lvCart_;
@@ -52,10 +53,12 @@ public class CartItemListFragment extends KindredFragment {
 	
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
 		this.context_ = activity.getApplicationContext();
+		
+		this.imageUploadHelper_ = ImageUploadHelper.getInstance(this.context_);
 		this.cartManager_ = CartManager.getInstance(this.context_);
 		this.fragmentHelper_ = fragmentHelper;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
-		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonHandler());
+		this.fragmentHelper_.setBackButtonDreamCatcher_(null);
 		this.fragmentHelper_.setNextButtonVisible(true);
 		this.cartManager_.setCartUpdatedCallback(new CartUpdatedCallback() {
 			@Override
@@ -81,16 +84,11 @@ public class CartItemListFragment extends KindredFragment {
 			@Override
 			public void introPagesHaveBeenUpdated(ArrayList<String> pageUrls) { }
 		});
+		
+		this.imageUploadHelper_.validateAllOrdersInit();
+		
 		this.mixpanel_ = MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token));
 		this.mixpanel_.track("cart_list_page_view", null);
-	}
-	
-	public class BackButtonHandler implements BackButtonPressInterrupter {
-		@Override
-		public boolean interruptBackButton() {
-			
-			return false;
-		}
 	}
 	
 	public class NextButtonHandler implements NextButtonPressInterrupter {
@@ -116,11 +114,11 @@ public class CartItemListFragment extends KindredFragment {
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
 		this.cmdCheckout_ = (Button) view.findViewById(R.id.cmdCheckout);
-		this.cmdCheckout_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdCheckout_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		this.orderTotalView_ = (OrderTotalView) view.findViewById(R.id.orderTotal);
 		this.lvCart_ = (ListView) view.findViewById(R.id.lvCartItems);
 		this.txtSubtotal_ = (TextView) view.findViewById(R.id.txtSubtotal);
-		this.txtSubtotal_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtSubtotal_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		
 		int orderTotal = this.cartManager_.getOrderTotal();
 		this.orderTotalView_.setOrderTotal(orderTotal);
@@ -153,9 +151,16 @@ public class CartItemListFragment extends KindredFragment {
 		this.cmdCheckout_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				
+				fragmentHelper_.triggerNextButton();
 			}
 		});
+		
+		if (this.cartManager_.countOfSelectedOrders() == 0) {
+			this.fragmentHelper_.setNextButtonEnabled(false);
+			this.cmdCheckout_.setEnabled(false);
+			this.cmdCheckout_.setBackgroundResource(R.drawable.rounded_filled_grey);
+			this.txtSubtotal_.setBackgroundResource(R.drawable.rounded_filled_grey);
+		}
 		
 		return view;
 	}

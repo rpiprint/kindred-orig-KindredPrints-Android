@@ -4,7 +4,7 @@
         <shape android:shape="rectangle">
             <stroke 
                 android:width="@dimen/login_page_edit_text_stroke"
-                android:color="@color/color_white" />
+                android:color="@color/color_grey" />
             <corners android:radius="@dimen/login_page_edit_text_corners" />
             <solid 
                 android:color="@color/color_transparent" />

@@ -171,7 +171,7 @@ public class ImageManager {
 	
 	}
 	
-	private void deleteFromCache(String id) {
+	public void deleteFromCache(String id) {
 		this.imCache_.removeImage(id);
 		this.fCache_.deleteImageForKey(id);
 	}
@@ -372,8 +372,9 @@ public class ImageManager {
 				mainHandler.post(new Runnable() {
 					@Override
 					public void run() {
-				        view.setImageBitmap(imCache_.getImageForKey(uniqueId, view));
-				        if (callback != null) callback.imageAssigned();
+						Bitmap bm = imCache_.getImageForKey(uniqueId, view);
+				        view.setImageBitmap(bm);
+				        if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 					}
 				});
 				this.waitingCallbacks_.remove(uniqueId);
@@ -385,9 +386,11 @@ public class ImageManager {
 		}
 	}
 
-	public void setImageAsync(final ImageView view, final KPhoto image, final String pid, final Size size) {
+	public void setImageAsync(final ImageView view, final KPhoto image, final String pid, final Size size, final ImageManagerCallback callback) {
 		if (this.imCache_.hasImage(pid)) {
-			view.setImageBitmap(this.imCache_.getImageForKey(pid, view));
+			Bitmap bm = this.imCache_.getImageForKey(pid, view);
+			view.setImageBitmap(bm);
+			if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 		} else {
 			try {
 				this.processingSema_.acquire();				
@@ -412,7 +415,13 @@ public class ImageManager {
 									fCache_.addImageFromUrl(urlPhoto.getPrevUrl(), pid);
 								}
 							}
-							final Bitmap bm = ImageEditor.crop_square(fCache_.getImageForKey(pid, size), -1);
+							Bitmap tempBM = null;
+							if (size.getHeight() == size.getWidth()) {
+								tempBM = ImageEditor.crop_square(fCache_.getImageForKey(pid, size), -1);
+							} else {
+								tempBM = ImageEditor.crop_rectangle(fCache_.getImageForKey(pid, size), size, -1);
+							}
+							final Bitmap bm = tempBM;
 							imCache_.addImage(bm, view, pid);
 							try {
 								processingSema_.acquire();				
@@ -426,6 +435,7 @@ public class ImageManager {
 								@Override
 								public void run() {
 									view.setImageBitmap(bm);
+									if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 								}
 							});
 						}
@@ -453,7 +463,7 @@ public class ImageManager {
 		if (this.imCache_.hasImage(uid)) {
 			Bitmap bm = this.imCache_.getImageForKey(uid, view);
 			view.setImageBitmap(bm);
-			if (callback != null) callback.imageAssigned();
+			if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 		} else {
 			new Thread(new Runnable() {
 				@Override
@@ -466,7 +476,7 @@ public class ImageManager {
 							@Override
 							public void run() {
 								view.setImageBitmap(bm);
-								if (callback != null) callback.imageAssigned();
+								if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 							}
 						});
 						assignAnyWaitingViewsForId(fUid);
@@ -546,6 +556,6 @@ public class ImageManager {
 	}
 	
 	public interface ImageManagerCallback {
-		public void imageAssigned();
+		public void imageAssigned(Size size);
 	}
 }

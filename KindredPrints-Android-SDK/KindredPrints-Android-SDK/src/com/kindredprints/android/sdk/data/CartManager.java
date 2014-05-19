@@ -57,7 +57,9 @@ public class CartManager {
 		mainHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				callback_.introPagesHaveBeenUpdated(pageUrls);
+				if (callback_ != null) {
+					callback_.introPagesHaveBeenUpdated(pageUrls);
+				}
 			}
 		});
 	}
@@ -280,7 +282,7 @@ public class CartManager {
 	
 			this.selOrdersSema_.release();
 
-			Handler mainHandler = new Handler(Looper.getMainLooper());
+			/*Handler mainHandler = new Handler(Looper.getMainLooper());
 			mainHandler.post(new Runnable() {
 				@Override
 				public void run() {
@@ -289,7 +291,7 @@ public class CartManager {
 						callback_.ordersHaveAllBeenUpdated();
 					}
 				}
-			});
+			});*/
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

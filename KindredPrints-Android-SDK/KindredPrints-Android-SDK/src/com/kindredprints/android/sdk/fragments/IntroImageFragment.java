@@ -4,6 +4,7 @@ import com.kindredprints.android.sdk.KURLPhoto;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
+import com.kindredprints.android.sdk.helpers.cache.ImageManager.ImageManagerCallback;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,13 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 public class IntroImageFragment extends KindredFragment {
 
 	private ImageManager imManager_;
 	private ImageView imgBackground_;
+	private ProgressBar progressBar_;
 	private String imageUrl_;
 	private boolean drawn_;
+	
+	private ImageManagerCallback imageSetCallback_;
 	
 	public IntroImageFragment() { }
 
@@ -33,6 +38,10 @@ public class IntroImageFragment extends KindredFragment {
 
 		this.imgBackground_ = (ImageView) view.findViewById(R.id.imgBackground);
 		imgBackground_.setImageBitmap(null);
+		
+		this.progressBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
+
+		setImageVisible(false);
 		
 		this.drawn_ = false;
 		view.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -59,12 +68,30 @@ public class IntroImageFragment extends KindredFragment {
 		}
 	}
 	
+	private void setImageVisible(boolean visible) {
+		if (visible) {
+			this.imgBackground_.setVisibility(View.VISIBLE);
+			this.progressBar_.setVisibility(View.INVISIBLE);
+		} else {
+			this.imgBackground_.setVisibility(View.INVISIBLE);
+			this.progressBar_.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	private void loadImage() {
 		this.drawn_ = true;
 		if (this.imageUrl_ != null) {
 			String[] sections = this.imageUrl_.split("/");
 			String pid = sections[sections.length-1];
-			this.imManager_.setImageAsync(this.imgBackground_, new KURLPhoto(this.imageUrl_), pid, new Size(this.imgBackground_.getWidth(), this.imgBackground_.getHeight()));
+			
+			this.imageSetCallback_ = new ImageManagerCallback() {
+				@Override
+				public void imageAssigned(Size size) {
+					setImageVisible(true);
+				}
+			};
+			
+			this.imManager_.setImageAsync(this.imgBackground_, new KURLPhoto(this.imageUrl_), pid, new Size(this.imgBackground_.getWidth(), this.imgBackground_.getHeight()), this.imageSetCallback_);
 		}
 	}
 }

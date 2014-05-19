@@ -46,7 +46,7 @@
 	        android:layout_width="@dimen/order_complete_logo_width"
 	        android:layout_height="wrap_content"
 	       	android:layout_toRightOf="@+id/txtPoweredBy"
-	        android:src="@drawable/ico_kindred_white" />
+	        android:src="@drawable/ico_kindred_blue" />
 	</RelativeLayout>
 	
 	

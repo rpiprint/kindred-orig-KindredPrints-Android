@@ -11,6 +11,11 @@
         android:layout_marginTop="@dimen/preview_page_vertical_padding"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+       	android:background="@drawable/shadow_black"
+        android:paddingTop="5dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
 	/>
 	
 	<ProgressBar
@@ -27,7 +32,7 @@
      	android:contentDescription="@string/img_content"
         android:layout_height="@dimen/cart_page_product_warning_side"
         android:layout_width="@dimen/cart_page_product_warning_side"
-        android:layout_margin="@dimen/cart_page_delete_padding_left"
+        android:layout_margin="@dimen/cart_page_delete_padding_left"        
         android:layout_alignTop="@+id/imgPreview"
         android:layout_alignLeft="@+id/imgPreview"
 		android:src="@drawable/ico_warning_yellow"
@@ -78,6 +83,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_toLeftOf="@+id/cmdAddUpdateCart"
+	        android:layout_marginLeft="@dimen/preview_page_padding"
 	        android:layout_alignParentLeft="true" >
 	    	
 	    	<com.kindredprints.android.sdk.customviews.QuantityView

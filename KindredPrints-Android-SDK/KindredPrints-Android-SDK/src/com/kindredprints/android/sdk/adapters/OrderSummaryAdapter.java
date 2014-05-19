@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.DeleteButtonView;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
+import com.kindredprints.android.sdk.customviews.PlusButtonView;
 import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.data.LineItem;
 import com.kindredprints.android.sdk.data.UserObject;
@@ -56,8 +57,11 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	private Activity context_;
 	private UserObject currUser_;
 	
+	private TextView txtTotal_;
+	
 	private MixpanelAPI mixpanel_;
 	
+	private AddressUpdateCallback addressCallback_;
 	private OnClickListener editCartClickListener_;
 	
 	private ArrayList<LineItem> lineItems_;
@@ -70,9 +74,10 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	
 	private ListView currParentListView_;
 		
-	public OrderSummaryAdapter(Activity context, KindredFragmentHelper fragmentHelper, ListView listView) {
+	public OrderSummaryAdapter(Activity context, KindredFragmentHelper fragmentHelper, ListView listView, TextView txtTotal) {
 		this.context_ = context;
 		this.currParentListView_ = listView;
+		this.txtTotal_ = txtTotal;
 		
 		this.mixpanel_ = MixpanelAPI.getInstance(context, context.getResources().getString(R.string.mixpanel_token));
 		
@@ -91,6 +96,10 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	
 	public void setEditCartOnClickListener(OnClickListener editCartOnClickListener) {
 		this.editCartClickListener_ = editCartOnClickListener;
+	}
+	
+	public void setAddressUpdateCallback(AddressUpdateCallback addressUpdated) {
+		this.addressCallback_ = addressUpdated;
 	}
 	
 	private void initialInit() {
@@ -288,7 +297,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_lineitem, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		TextView txtItemQuantity = (TextView) view.findViewById(R.id.txtLineItemQuantity);
 		txtItemQuantity.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -330,9 +339,20 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_add_shipping, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		if (this.addressCallback_ != null) addressCallback_.addressesUpdated();
+		
+		PlusButtonView cmdAdd = (PlusButtonView) view.findViewById(R.id.cmdAddShipping);
 		TextView txtTitle = (TextView) view.findViewById(R.id.txtShippingDescription);
-		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		if (this.userPrefHelper_.getSelectedAddresses().size() > 0) {
+			view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+			txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
+			cmdAdd.updatePaints(this.interfacePrefHelper_.getTextColor());
+		} else {
+			view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_blue_highlight));
+			txtTitle.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
+			cmdAdd.updatePaints(this.interfacePrefHelper_.getHighlightTextColor());
+		}
 		
 		view.setOnClickListener(new OnClickListener() {
 			@Override
@@ -354,7 +374,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_shipping, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		Button cmdEditShipping = (Button) view.findViewById(R.id.cmdEditShipping);
 		cmdEditShipping.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -415,7 +435,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -434,7 +454,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -453,7 +473,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		final View view = inflater.inflate(R.layout.order_summary_row_coupons, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 	
 
 		final EditText editTextCoupon = (EditText) view.findViewById(R.id.editTextCoupon);
@@ -500,7 +520,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_total, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		TextView txtTotalTitle = (TextView) view.findViewById(R.id.txtTotalTitle);
 		txtTotalTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -509,6 +529,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		TextView txtTotalTotal = (TextView) view.findViewById(R.id.txtTotalTotal);
 		txtTotalTotal.setTextColor(this.interfacePrefHelper_.getTextColor());
 		txtTotalTotal.setText(item.getLiAmount());
+		this.txtTotal_.setText(item.getLiAmount());
 		txtTotalTotal.setBackgroundColor(Color.TRANSPARENT);
 		
 		this.devPrefHelper_.setOrderTotal(item.getLiAmount());
@@ -521,7 +542,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View viewCC = inflater.inflate(R.layout.order_summary_row_card, this.currParentListView_, false);	
 	
-		viewCC.setBackgroundColor(this.context_.getResources().getColor(R.color.color_order_highlight));
+		viewCC.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
 		TextView txtTitle = (TextView) viewCC.findViewById(R.id.txtCardTitle);
 		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -660,6 +681,10 @@ public class OrderSummaryAdapter extends BaseAdapter {
 			}
 
 		}
+	}
+	
+	public interface AddressUpdateCallback {
+		public void addressesUpdated();
 	}
 	
 }

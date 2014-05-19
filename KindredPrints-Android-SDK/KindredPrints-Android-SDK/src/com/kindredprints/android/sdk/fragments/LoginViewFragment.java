@@ -49,6 +49,10 @@ public class LoginViewFragment extends KindredFragment {
 	private KindredFragmentHelper fragmentHelper_;
 	
 	private TextView txtTitle_;
+	private TextView txtReasonOne_;
+	private TextView txtReasonTwo_;
+	private TextView txtReasonThree_;
+	private TextView txtSubtitle_;
 	private TextView txtError_;
 	private EditTextView editTextEmail_;
 	private EditTextView editTextPassword_;
@@ -92,6 +96,10 @@ public class LoginViewFragment extends KindredFragment {
 		View view = (ViewGroup) inflater.inflate(R.layout.fragment_login_view, container, false);
 	
 		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);
+		this.txtReasonOne_ = (TextView) view.findViewById(R.id.txtReasonOne);
+		this.txtReasonTwo_ = (TextView) view.findViewById(R.id.txtReasonTwo);
+		this.txtReasonThree_ = (TextView) view.findViewById(R.id.txtReasonThree);
+		this.txtSubtitle_ = (TextView) view.findViewById(R.id.txtSubtitle);
 		this.txtError_ = (TextView) view.findViewById(R.id.txtError);
 		this.editTextEmail_ = (EditTextView) view.findViewById(R.id.editTextEmail);
 		this.editTextPassword_ = (EditTextView) view.findViewById(R.id.editTextPassword);
@@ -124,6 +132,16 @@ public class LoginViewFragment extends KindredFragment {
 		this.editTextPassword_.setTextFieldModifiedListener(new TextFieldsClearForLogin());
 		
 		this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtSubtitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonOne_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonTwo_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonThree_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_more));
+		this.txtReasonOne_.setText(getActivity().getResources().getString(R.string.login_title_order_conf));
+		this.txtReasonTwo_.setText(getActivity().getResources().getString(R.string.login_title_shipment_conf));
+		this.txtReasonThree_.setText(getActivity().getResources().getString(R.string.login_title_customer_support));
+		
 		this.txtError_.setTextColor(getActivity().getResources().getColor(R.color.color_red));
 		
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
@@ -145,24 +163,40 @@ public class LoginViewFragment extends KindredFragment {
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN);
 				this.editTextPassword_.setVisibility(View.INVISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title));
+				this.txtSubtitle_.setVisibility(View.VISIBLE);
+				this.txtReasonOne_.setVisibility(View.VISIBLE);
+				this.txtReasonTwo_.setVisibility(View.VISIBLE);
+				this.txtReasonThree_.setVisibility(View.VISIBLE);
 				this.txtError_.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_NEED_PASSWORD:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN+String.valueOf(STATE_NEED_PASSWORD));
 				this.editTextPassword_.setVisibility(View.VISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title_password));
+				this.txtReasonOne_.setVisibility(View.GONE);
+				this.txtReasonTwo_.setVisibility(View.GONE);
+				this.txtReasonThree_.setVisibility(View.GONE);
 				this.txtError_.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_WRONG_PASSWORD:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN+String.valueOf(STATE_WRONG_PASSWORD));
 				this.editTextPassword_.setVisibility(View.VISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title_password));
+				this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_password_more));
+				this.txtReasonOne_.setVisibility(View.GONE);
+				this.txtReasonTwo_.setVisibility(View.GONE);
+				this.txtReasonThree_.setVisibility(View.GONE);
 				this.txtError_.setVisibility(View.VISIBLE);
 				this.txtError_.setText(errorMsg);
 				break;
 			case STATE_OTHER_ERROR:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title));
+				this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_password_more));
+				this.txtSubtitle_.setVisibility(View.VISIBLE);
+				this.txtReasonOne_.setVisibility(View.VISIBLE);
+				this.txtReasonTwo_.setVisibility(View.VISIBLE);
+				this.txtReasonThree_.setVisibility(View.VISIBLE);
 				this.txtError_.setVisibility(View.VISIBLE);
 				this.txtError_.setText(errorMsg);
 				break;

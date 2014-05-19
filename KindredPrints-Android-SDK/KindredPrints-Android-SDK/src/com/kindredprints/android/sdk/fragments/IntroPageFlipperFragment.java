@@ -21,6 +21,7 @@ import com.kindredprints.android.sdk.data.CartUpdatedCallback;
 import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
+import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -32,6 +33,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 	private int currIndex_;
 	
 	private CartManager cartManager_;
+	private ImageManager imManager_;
 	private DevPrefHelper devPrefHelper_;
 	
 	private Context context_;
@@ -43,6 +45,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 	public void initFragment(KindredFragmentHelper fragmentHelper, Activity activity) {
 		context_ = activity.getApplicationContext();
 		
+		this.imManager_ = ImageManager.getInstance(context_);
 		this.devPrefHelper_ = new DevPrefHelper(context_);
 		this.pageUrls_ = this.devPrefHelper_.getIntroUrls();
 		
@@ -61,7 +64,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = (ViewGroup) inflater.inflate(R.layout.fragment_cart_view_pager, container, false);
+		View view = (ViewGroup) inflater.inflate(R.layout.fragment_intro_page_flipper, container, false);
 		InterfacePrefHelper interfacePrefHelper = new InterfacePrefHelper(this.context_);
 		view.setBackgroundColor(interfacePrefHelper.getBackgroundColor());
 
@@ -89,6 +92,13 @@ public class IntroPageFlipperFragment extends KindredFragment {
 
 		@Override
 		public boolean interruptNextButton() {
+			devPrefHelper_.setSeenIntroStatus();
+			for (String url : pageUrls_) {
+				String[] sections = url.split("/");
+				String pid = sections[sections.length-1];
+				
+				imManager_.deleteFromCache(pid);
+			}
 			return false;
 		}
 	}

@@ -23,6 +23,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -62,6 +63,7 @@ public class CartPreviewFragment extends KindredFragment {
 	
 	private ImageManagerCallback imageSetCallback_;
 	
+	private boolean cartEditState_;
 	private boolean quantityChanged_;
 	
 	public CartPreviewFragment() { }
@@ -78,7 +80,9 @@ public class CartPreviewFragment extends KindredFragment {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
 				if (currObject_ != null) {
-					refreshProductList();
+					Log.i("KindredSDK", "ALL orders has been updated init");
+
+					initInterface();
 				}
 			}
 			@Override
@@ -90,7 +94,9 @@ public class CartPreviewFragment extends KindredFragment {
 						if (fittedProducts.size() > 0) {
 							currObject_.setPrintType(fittedProducts.get(0));
 						}
-						refreshProductList();
+						Log.i("KindredSDK", "order has been updated init");
+
+						initInterface();
 					}
 				}
 			}
@@ -110,6 +116,7 @@ public class CartPreviewFragment extends KindredFragment {
 			index = bun.getInt("cart_index");
 			this.currObject_ = this.cartManager_.getSelectedOrderForIndex(index);
 			this.fragmentHelper_.setNextButtonVisible(false);
+			this.cartEditState_ = true;
 		} else {
 			if (bun != null && bun.containsKey("index")) {
 				index = bun.getInt("index");
@@ -124,6 +131,7 @@ public class CartPreviewFragment extends KindredFragment {
 			}
 			this.cartManager_.cacheIncomingImage(pImage, incPhoto);
 			this.fragmentHelper_.setNextButtonVisible(true);
+			this.cartEditState_ = false;
 		}
 		if (this.currObject_.getPrintType() != null) {
 			this.currProduct_ = this.currObject_.getPrintType();
@@ -160,7 +168,7 @@ public class CartPreviewFragment extends KindredFragment {
 		
 		this.progBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
 		this.cmdAddToCart_ = (Button) view.findViewById(R.id.cmdAddUpdateCart);
-		this.cmdAddToCart_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdAddToCart_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		this.quantityView_ = (QuantityView) view.findViewById(R.id.viewQuantity);
 		if (this.currProduct_ != null)
 			this.quantityView_.setQuantity(this.currProduct_.getQuantity());
@@ -209,6 +217,10 @@ public class CartPreviewFragment extends KindredFragment {
 					cartManager_.addOrderToSelected(currObject_, currProduct_);
 				} else if (currProduct_.getQuantity() == 0) {
 					cartManager_.deleteSelectedOrderImageForId(currObject_.getImage().getId());
+					if (cartEditState_)
+						fragmentHelper_.triggerBackButton();
+					else
+						fragmentHelper_.triggerNextButton();
 					return;
 				} 
 				cartManager_.imageWasUpdatedWithQuantities(currObject_.getImage(), currProduct_);
@@ -222,6 +234,8 @@ public class CartPreviewFragment extends KindredFragment {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onGlobalLayout() {
+				Log.i("KindredSDK", "global layout init");
+
 				initInterface();
 				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
 					view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -253,8 +267,8 @@ public class CartPreviewFragment extends KindredFragment {
 				this.quantityChanged_ = false;
 			}
 		}
-		loadAppropriateImage();
-		adjustDisplay();
+		//loadAppropriateImage();
+		//adjustDisplay();
 		adjustButtonState();
 	}
 	
@@ -262,6 +276,7 @@ public class CartPreviewFragment extends KindredFragment {
 		if (this.quantityChanged_) {
 			this.cmdAddToCart_.setEnabled(true);
 			this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
+			this.cmdAddToCart_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 			if (this.cartManager_.hasImageInCart(this.currObject_) >= 0) {
 				if (this.currProduct_.getQuantity() == 0) {
 					this.cmdAddToCart_.setText(this.context_.getResources().getString(R.string.cart_remove_from_cart));
@@ -279,6 +294,7 @@ public class CartPreviewFragment extends KindredFragment {
 		} else {
 			this.cmdAddToCart_.setEnabled(false);
 			this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_button);
+			this.cmdAddToCart_.setTextColor(this.interfacePrefHelper_.getTextColor());
 		}
 	}
 	
@@ -321,13 +337,13 @@ public class CartPreviewFragment extends KindredFragment {
 			
 			this.imageSetCallback_ = new ImageManagerCallback() {
 				@Override
-				public void imageAssigned() {
+				public void imageAssigned(Size size) {
 					setImageVisible(true);
 				}
 			};
 	
 			float padding = this.context_.getResources().getDimensionPixelSize(R.dimen.cart_page_image_side_padding);
-			float imgWidth = this.getView().getWidth();//-2*padding;
+			float imgWidth = this.getView().getWidth();
 			float imgHeight = this.getView().getHeight()-3*padding-this.cmdAddToCart_.getHeight();
 			if (this.currProduct_ != null) {
 				this.imageManager_.setImageAsync(this.imgPreview_, image, this.currProduct_, new Size(imgWidth, imgHeight), this.imageSetCallback_);

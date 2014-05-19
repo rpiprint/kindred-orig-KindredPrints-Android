@@ -16,14 +16,16 @@
     <dimen name="nav_back_button_width">40dp</dimen>
     <dimen name="nav_bar_height">50dp</dimen>
     <dimen name="nav_next_button_width">100dp</dimen>
+    <dimen name="nav_image_padding_size">3dp</dimen>
     <dimen name="nav_padding_size">10dp</dimen>
     <dimen name="nav_bar_text_size">14sp</dimen>
     
     <dimen name="order_total_height">40dp</dimen>
     <dimen name="order_total_width">70dp</dimen>
     <dimen name="order_total_size">5dp</dimen>
-    <dimen name="order_total_text_size">18sp</dimen>
+    <dimen name="order_total_text_size">14sp</dimen>
     <dimen name="order_total_padding_size">5dp</dimen>
+    <dimen name="order_total_side_padding_size">15dp</dimen>
     
     <dimen name="cart_page_blank_padding">16dp</dimen>
     <dimen name="cart_page_blank_text_size">20dp</dimen>
@@ -40,13 +42,13 @@
     <dimen name="cart_page_delete_stroke">1dp</dimen>
     <dimen name="cart_page_text_size">16sp</dimen>
     
-    <dimen name="preview_page_padding">15dp</dimen>
-    <dimen name="preview_page_control_height">60dp</dimen>
-    <dimen name="preview_page_control_width">120dp</dimen>
+    <dimen name="preview_page_padding">10dp</dimen>
+    <dimen name="preview_page_control_height">50dp</dimen>
+    <dimen name="preview_page_control_width">150dp</dimen>
     <dimen name="preview_page_vertical_padding">40dp</dimen>
-    <dimen name="preview_page_button_width">150dp</dimen>
+    <dimen name="preview_page_button_width">140dp</dimen>
     <dimen name="preview_page_quantity_text_size">30sp</dimen>
-    <dimen name="preview_page_text_size">20sp</dimen>
+    <dimen name="preview_page_text_size">18sp</dimen>
     <dimen name="preview_page_subtitle_text_size">16sp</dimen>
     
     <dimen name="cart_page_plusminus_stroke">1dp</dimen>
@@ -106,6 +108,7 @@
     <dimen name="order_summary_special_row_height">45dp</dimen>
     <dimen name="order_summary_blank_row_height">10dp</dimen>
     <dimen name="order_summary_padding">5dp</dimen>
+    <dimen name="order_summary_small_padding">2dp</dimen>
     
     <dimen name="card_edit_vertical_margin">20dp</dimen>
     <dimen name="card_edit_padding">5dp</dimen>

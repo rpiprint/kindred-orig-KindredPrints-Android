@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.adapters.OrderSummaryAdapter;
+import com.kindredprints.android.sdk.adapters.OrderSummaryAdapter.AddressUpdateCallback;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.data.LineItem;
 import com.kindredprints.android.sdk.data.UserObject;
@@ -99,7 +100,7 @@ public class OrderSummaryFragment extends KindredFragment {
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
 		this.cmdCompleteOrder_ = (Button) view.findViewById(R.id.cmdCheckout);
-		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		this.cmdCompleteOrder_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -110,15 +111,21 @@ public class OrderSummaryFragment extends KindredFragment {
 		});
 		
 		this.txtTotal_ = (TextView) view.findViewById(R.id.txtTotal);
-		this.txtTotal_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtTotal_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		
 		this.lvOrderLineItems_ = (ListView) view.findViewById(R.id.lvOrderItemList);
 		this.lvOrderLineItems_.setBackgroundColor(Color.TRANSPARENT);
-		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_);
+		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_, this.txtTotal_);
 		this.lineItemAdapter_.setEditCartOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_CART);
+			}
+		});
+		this.lineItemAdapter_.setAddressUpdateCallback(new AddressUpdateCallback() {
+			@Override
+			public void addressesUpdated() {
+				updateCheckoutButtons();
 			}
 		});
 		this.lvOrderLineItems_.setAdapter(lineItemAdapter_);
@@ -134,12 +141,33 @@ public class OrderSummaryFragment extends KindredFragment {
 		return view;
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		updateCheckoutButtons();
+	}
+	
 	private void initOrderSummaryPage() {
 		this.returnedDownloads_ = 0;
 		launchCardRefreshCall();
 		launchOrderObjectCreateOrUpdate();
 	}
 	
+	private void updateCheckoutButtons() {
+		if (this.userPrefHelper_ != null) {
+			if (this.userPrefHelper_.getSelectedAddresses().size() == 0) {
+				this.fragmentHelper_.setNextButtonEnabled(false);
+				this.cmdCompleteOrder_.setEnabled(false);
+				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.rounded_filled_grey);
+				this.txtTotal_.setBackgroundResource(R.drawable.rounded_filled_grey);
+			} else {
+				this.fragmentHelper_.setNextButtonEnabled(true);
+				this.cmdCompleteOrder_.setEnabled(true);
+				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
+				this.txtTotal_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
+			}
+		} 
+	}
 	
 	private void launchCardRefreshCall() {
 		new Thread(new Runnable() {
@@ -158,10 +186,6 @@ public class OrderSummaryFragment extends KindredFragment {
 	
 	private void launchOrderObjectCreateOrUpdate() {
 		this.orderProcessingHelper_.initiateOrderCreationOrUpdateSequence();
-	}
-	
-	private void launchPurchaseSequence() {
-		this.orderProcessingHelper_.initiateCheckoutSequence();
 	}
 	
 	private void checkConfigDownloadsComplete() {
@@ -193,7 +217,6 @@ public class OrderSummaryFragment extends KindredFragment {
 		
 		@Override
 		public void orderFailedToProcess(String error) {
-			// TODO hide progress bar
 			fragmentHelper_.hideProgressBar();
 
 			KindredAlertDialog kad = new KindredAlertDialog(activity_, error, false);
@@ -202,7 +225,6 @@ public class OrderSummaryFragment extends KindredFragment {
 
 		@Override
 		public void orderProcessed() {
-			// TODO hide progress bar
 			fragmentHelper_.hideProgressBar();
 
 			continueCheck_ = true;

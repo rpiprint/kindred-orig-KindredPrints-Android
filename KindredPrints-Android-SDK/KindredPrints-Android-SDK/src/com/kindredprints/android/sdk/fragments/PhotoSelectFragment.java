@@ -39,6 +39,7 @@ public class PhotoSelectFragment extends KindredFragment {
 		fragmentHelper.setNextButtonDreamCatcher_(null);
 		fragmentHelper.setBackButtonDreamCatcher_(new SelectBackButtonHandler());
 		fragmentHelper.configNavBar();
+		fragmentHelper.setNextButtonCartType(true);
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

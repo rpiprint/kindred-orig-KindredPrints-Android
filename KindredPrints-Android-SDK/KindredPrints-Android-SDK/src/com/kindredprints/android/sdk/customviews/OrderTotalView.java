@@ -35,8 +35,8 @@ public class OrderTotalView extends RelativeLayout {
 	    this.txtTitle_ = (TextView) findViewById(R.id.txtTotalTitle);
 	    this.txtOrderTotal_ = (TextView) findViewById(R.id.txtTotal);
 	    this.setBackgroundColor(context.getResources().getColor(R.color.color_order_total));
-	    this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
-	    this.txtOrderTotal_.setTextColor(this.interfacePrefHelper_.getTextColor());
+	    this.txtTitle_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
+	    this.txtOrderTotal_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 	    this.viewTotalBackground_.setBackgroundColor(context.getResources().getColor(R.color.color_order_total_label));
 	}
 

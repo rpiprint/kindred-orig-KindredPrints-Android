@@ -103,7 +103,7 @@ public class OrderCompleteFragment extends KindredFragment {
 		}).start();
 		
 		Button cmdDone = (Button) view.findViewById(R.id.cmdDone);
-		cmdDone.setTextColor(this.interfacePrefHelper_.getTextColor());
+		cmdDone.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		cmdDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {

@@ -35,6 +35,11 @@ public class PlusButtonView extends Button {
 		this.fillPaint_.setStyle(Paint.Style.FILL);
 	}
 
+	public void updatePaints(int color) {
+		this.strokePaint_.setColor(color);
+		this.fillPaint_.setColor(color);
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);

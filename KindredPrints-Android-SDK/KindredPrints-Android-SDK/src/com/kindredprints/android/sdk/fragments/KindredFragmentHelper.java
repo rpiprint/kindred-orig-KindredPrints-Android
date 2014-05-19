@@ -132,6 +132,7 @@ public class KindredFragmentHelper {
 				if (numPending > 1) {
 					this.currFragHash_ = FRAG_SELECT;
 				} else {
+					Log.i("KindredSDK", "init root fragment to preview screen");
 					this.currFragHash_ = FRAG_PREVIEW;
 				}
 			} else {
@@ -210,6 +211,9 @@ public class KindredFragmentHelper {
 			nextFrag = FRAG_CART;
 		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
 			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
+		} else if (this.currFragHash_.equals(FRAG_INTRO)) {
+			initRootFragment();
+			return true;
 		}
 		if (nextFrag != null) {
 			KindredFragment f = fragForHash(nextFrag);
@@ -354,6 +358,9 @@ public class KindredFragmentHelper {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
 		} else if (hash.equals(FRAG_PREVIEW)) {
 			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
+		} else if (hash.equals(FRAG_INTRO)) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
+			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_intro));
 		}
 	}
 	

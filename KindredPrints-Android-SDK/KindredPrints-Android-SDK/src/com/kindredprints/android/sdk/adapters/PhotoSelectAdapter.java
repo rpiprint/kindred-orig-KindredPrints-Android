@@ -110,7 +110,7 @@ public class PhotoSelectAdapter extends BaseAdapter {
 				fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
 			}
 		}); 
-		this.imageManager_.setImageAsync(imgThumb, this.allPhotos_.get(position), String.valueOf(position), new Size(this.gridItemWidth_, this.gridItemWidth_));
+		this.imageManager_.setImageAsync(imgThumb, this.allPhotos_.get(position), String.valueOf(position), new Size(this.gridItemWidth_, this.gridItemWidth_), null);
 		return squareView;
 	}
 
