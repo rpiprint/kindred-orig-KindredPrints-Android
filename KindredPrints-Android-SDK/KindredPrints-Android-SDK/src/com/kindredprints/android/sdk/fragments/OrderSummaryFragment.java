@@ -168,7 +168,7 @@ public class OrderSummaryFragment extends KindredFragment {
 				this.fragmentHelper_.setNextButtonEnabled(true);
 				this.blockCheckout_ = false;
 				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
-				this.txtTotal_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
+				this.txtTotal_.setBackgroundResource(R.drawable.rounded_filled_button);
 			}
 		} 
 	}

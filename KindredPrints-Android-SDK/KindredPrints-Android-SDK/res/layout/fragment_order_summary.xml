@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:gravity="center"
             android:padding="@dimen/cart_page_product_row_padding"
 	        android:layout_marginRight="@dimen/cart_page_product_subtotal_row_padding"
             android:background="@drawable/cmd_rounded_blue_filled_button"
