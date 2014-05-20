@@ -18,6 +18,8 @@
     <dimen name="nav_next_button_width">100dp</dimen>
     <dimen name="nav_image_padding_size">3dp</dimen>
     <dimen name="nav_padding_size">10dp</dimen>
+    <dimen name="nav_quantity_side">20dp</dimen>
+    <dimen name="nav_quantity_text_size">12sp</dimen>
     <dimen name="nav_bar_text_size">14sp</dimen>
     
     <dimen name="order_total_height">40dp</dimen>

@@ -93,9 +93,9 @@ public class KindredFragmentHelper {
 	
 	public void setNextButtonCartType(boolean cart) {
 		if (cart) {
-			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
 		} else {
-			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
 		}
 	}
 	
@@ -202,14 +202,15 @@ public class KindredFragmentHelper {
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING_EDIT)) {
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING)) {
-			nextFrag = FRAG_ORDER_SUMMARY;
+			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_ORDER_SUMMARY)) {
 			nextFrag = FRAG_ORDER_FINISHED;
 		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) { 
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
-			nextFrag = FRAG_CART;
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
 		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
+			this.backStack_.clear();
 			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
 		} else if (this.currFragHash_.equals(FRAG_INTRO)) {
 			initRootFragment();
@@ -338,7 +339,7 @@ public class KindredFragmentHelper {
 	public void configNavBarForHash(String hash) {
 		Log.i("KindredSDK", "config nav bar for hash " + hash);
 		if (hash.equals(FRAG_CART)) {
-			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_cart));
 		} else if (hash.equals(FRAG_LOGIN)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
@@ -355,11 +356,11 @@ public class KindredFragmentHelper {
 		} else if (hash.equals(FRAG_ORDER_FINISHED)) {
 			this.navBarView_.setNextTitle("");
 		} else if (hash.equals(FRAG_SELECT)) {
-			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
 		} else if (hash.equals(FRAG_PREVIEW)) {
-			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON);
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
 		} else if (hash.equals(FRAG_INTRO)) {
-			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON);
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_intro));
 		}
 	}

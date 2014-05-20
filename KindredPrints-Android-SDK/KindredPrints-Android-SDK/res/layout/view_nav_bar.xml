@@ -32,5 +32,16 @@
 	        android:layout_height="match_parent"
 	        android:layout_centerInParent="true"
 	   		/>
+	    <TextView 
+	        android:id="@+id/txtQuantity"
+	        android:layout_width="@dimen/nav_quantity_side"
+	        android:layout_height="@dimen/nav_quantity_side"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true"
+	        android:layout_marginTop="@dimen/nav_image_padding_size"
+	        android:padding="0dp"
+	        android:gravity="center"
+	        android:textSize="@dimen/nav_quantity_text_size"
+	        android:background="@drawable/green_circle_background"/>
     </RelativeLayout>
 </RelativeLayout>

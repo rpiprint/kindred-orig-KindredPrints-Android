@@ -16,7 +16,6 @@ import android.provider.MediaStore;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +28,6 @@ public class MainActivity extends Activity {
 	private static int RESULT_IMAGE_CAPTURE = 2;
 	
 	private final static String KINDRED_APP_KEY = "test_SDHdPzfxotJ8xAQ674ABbXap";
-	private KindredOrderFlow orderFlow;
 	
 	EditText editTxtUrl;
 	Button cmdAddUrl;
@@ -37,6 +35,7 @@ public class MainActivity extends Activity {
 	Button cmdAddMany;
 	Button cmdAddCustom;
 	
+	Activity activity_;
 	
 	Button cmdTakePhoto;
 	Button cmdPickFromGallery;
@@ -45,27 +44,23 @@ public class MainActivity extends Activity {
 	Button cmdRegister;
 	
 	Button cmdShowCart;
-	
-	int counter;
-	
+		
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        counter = 0;
-        
-        this.orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
-        orderFlow.setImageBorderColor(Color.WHITE);
-        orderFlow.setImageBorderDisabled(false);
-		orderFlow.setAppKey(KINDRED_APP_KEY);
-		
+        this.activity_ = this;
+        		
 		this.cmdAddCustom = (Button) findViewById(R.id.cmdAddSpecial);
 		this.cmdAddCustom.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+		        KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+		        orderFlow.setImageBorderDisabled(false);
 				orderFlow.addImageToCart(new KCustomPhoto("0", "allthecooks", "http://www.allthecooks.com/amies-achara.html"));
 				showToast("image added");
+				Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+				startActivityForResult(i, 0);
 			}
 		});
 
@@ -85,9 +80,12 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (editTxtUrl.getText().toString().length() > 0) {
-					counter = counter + 1;
+					KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+				    orderFlow.setImageBorderDisabled(false);
 					orderFlow.addImageToCart(new KURLPhoto(editTxtUrl.getText().toString(), editTxtUrl.getText().toString()));
 					showToast("image added");
+					Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+					startActivityForResult(i, 0);
 				}
 			}
         });
@@ -95,12 +93,13 @@ public class MainActivity extends Activity {
         this.cmdAddThree.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				counter = counter + 1;
+				KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+			    orderFlow.setImageBorderDisabled(false);
 				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
-				counter = counter + 1;
 				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
-				counter = counter + 1;
 				orderFlow.addImageToCart(new KURLPhoto("http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
+				Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+				startActivityForResult(i, 0);
 				showToast("images added");
 			}
         });
@@ -109,12 +108,15 @@ public class MainActivity extends Activity {
         this.cmdAddMany.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+			    orderFlow.setImageBorderDisabled(false);
 				ArrayList<KPhoto> photosToAdd = new ArrayList<KPhoto>();
 				for (int i = 0; i < 11; i++) {
-					counter = counter + 1;
 					photosToAdd.add(new KURLPhoto("https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg", "https://s3-us-west-1.amazonaws.com/kindredmetaimages/electronics.jpg"));
 				}
 				orderFlow.addImagesToCart(photosToAdd);
+				Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+				startActivityForResult(i, 0);
 			}
         });
         
@@ -146,6 +148,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				if (editTxtEmail.getText().toString().length() > 0) {
+					KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+					orderFlow.setImageBorderDisabled(false);
 					orderFlow.preRegisterEmail(editTxtEmail.getText().toString());
 				}
 			}
@@ -177,13 +181,16 @@ public class MainActivity extends Activity {
             String picturePath = cursor.getString(columnIndex);
 
             cursor.close();
-			counter = counter + 1;
 
+            KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+		    orderFlow.setImageBorderDisabled(false);
             if (picturePath.contains("http"))
             	orderFlow.addImageToCart(new KURLPhoto(picturePath));
             else
             	orderFlow.addImageToCart(new KLOCPhoto(picturePath));
 			showToast("image added");
+			Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+			startActivityForResult(i, 0);
     	} else if (requestCode == RESULT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
     		Uri selectedImage = data.getData();
     		
@@ -194,13 +201,16 @@ public class MainActivity extends Activity {
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
-			counter = counter + 1;
 
+            KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
+		    orderFlow.setImageBorderDisabled(false);
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 			orderFlow.addImageToCart(new KLOCPhoto(picturePath));
 			showToast("image added");
+			Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
+			startActivityForResult(i, 0);
     	}
     }
 }

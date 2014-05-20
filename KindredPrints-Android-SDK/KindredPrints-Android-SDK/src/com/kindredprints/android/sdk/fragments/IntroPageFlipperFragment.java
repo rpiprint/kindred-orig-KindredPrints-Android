@@ -1,10 +1,13 @@
 package com.kindredprints.android.sdk.fragments;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,8 +40,11 @@ public class IntroPageFlipperFragment extends KindredFragment {
 	private DevPrefHelper devPrefHelper_;
 	
 	private Context context_;
+	private Timer pageFlipTimer_;
 	
 	private MixpanelAPI mixpanel_;
+	
+	private boolean scrollIdle_;
 	
 	private KindredFragmentHelper fragmentHelper_;
 
@@ -55,6 +61,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		this.cartManager_ = CartManager.getInstance(activity);
 		this.cartManager_.setCartUpdatedCallback(new IntroUpdatedListener());
 		
+		this.scrollIdle_ = true;
 		this.currIndex_ = 0;
 		fragmentHelper.setNextButtonDreamCatcher_(new IntroNextButtonHandler());
 		fragmentHelper.setBackButtonDreamCatcher_(null);
@@ -75,7 +82,13 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		this.pageFlipper_.setAdapter(this.introDataAdapter_);
 		this.pageFlipper_.setOnPageChangeListener(new OnPageChangeListener() {
 			@Override
-			public void onPageScrollStateChanged(int arg0) {}
+			public void onPageScrollStateChanged(int scrollState) {
+				if (scrollState == ViewPager.SCROLL_STATE_DRAGGING || scrollState == ViewPager.SCROLL_STATE_SETTLING) {
+					scrollIdle_ = false;
+				} else {
+					scrollIdle_ = true;
+				}
+			} 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) { }
 
@@ -85,7 +98,35 @@ public class IntroPageFlipperFragment extends KindredFragment {
 			}
 		});
 		this.pageFlipper_.setCurrentItem(this.currIndex_);
+		
+		this.pageFlipTimer_ = new Timer();
+		this.pageFlipTimer_.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (scrollIdle_) {
+					Handler mainHandler = new Handler(getActivity().getMainLooper());
+					mainHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							int count = 4;
+							if (pageUrls_.size() == 0)
+								count = pageUrls_.size();
+							currIndex_ = (currIndex_+1)%count;
+							pageFlipper_.setCurrentItem(currIndex_, true);
+						}
+					});
+				}
+			}
+		}, 0, 3000);
+		
 		return view;
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		if (this.pageFlipTimer_ != null)
+			this.pageFlipTimer_.cancel();
 	}
 	
 	private class IntroNextButtonHandler implements NextButtonPressInterrupter {

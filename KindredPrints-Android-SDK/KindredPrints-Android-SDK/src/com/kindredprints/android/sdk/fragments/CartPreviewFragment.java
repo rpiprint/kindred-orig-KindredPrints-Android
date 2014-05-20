@@ -273,6 +273,7 @@ public class CartPreviewFragment extends KindredFragment {
 	}
 	
 	private void adjustButtonState() {
+		this.fragmentHelper_.configNavBar();
 		if (this.quantityChanged_) {
 			this.cmdAddToCart_.setEnabled(true);
 			this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
