@@ -12,8 +12,6 @@ import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.PrintableImage;
 
 import com.kindredprints.android.sdk.data.Size;
-import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
-import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager.ImageManagerCallback;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
@@ -73,8 +71,8 @@ public class CartPreviewFragment extends KindredFragment {
 		this.cartManager_ = CartManager.getInstance(this.context_);
 		this.imageManager_ = ImageManager.getInstance(this.context_);
 		this.fragmentHelper_ = fragmentHelper;
-		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonHandler());
-		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonHandler());
+		this.fragmentHelper_.setNextButtonDreamCatcher_(null);
+		this.fragmentHelper_.setBackButtonDreamCatcher_(null);
 		
 		this.cartManager_.setCartUpdatedCallback(new CartUpdatedCallback() {
 			@Override
@@ -139,22 +137,6 @@ public class CartPreviewFragment extends KindredFragment {
 		
 		this.mixpanel_ = MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token));
 		this.mixpanel_.track("cart_preview_page_view", null);
-	}
-	
-	public class BackButtonHandler implements BackButtonPressInterrupter {
-		@Override
-		public boolean interruptBackButton() {
-			
-			return false;
-		}
-	}
-	
-	public class NextButtonHandler implements NextButtonPressInterrupter {
-		@Override
-		public boolean interruptNextButton() {
-			cartManager_.cleanUpPendingImages();
-			return false;
-		}
 	}
 	
 	@Override
@@ -267,13 +249,12 @@ public class CartPreviewFragment extends KindredFragment {
 				this.quantityChanged_ = false;
 			}
 		}
-		//loadAppropriateImage();
-		//adjustDisplay();
 		adjustButtonState();
 	}
 	
 	private void adjustButtonState() {
-		this.fragmentHelper_.configNavBar();
+		if (!this.cartEditState_)
+			this.fragmentHelper_.configNavBar();
 		if (this.quantityChanged_) {
 			this.cmdAddToCart_.setEnabled(true);
 			this.cmdAddToCart_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);

@@ -208,10 +208,9 @@ public class KindredFragmentHelper {
 		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) { 
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
-			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
+			nextFrag = FRAG_CART;
 		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
-			this.backStack_.clear();
-			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
+			nextFrag = FRAG_CART;
 		} else if (this.currFragHash_.equals(FRAG_INTRO)) {
 			initRootFragment();
 			return true;
@@ -256,6 +255,7 @@ public class KindredFragmentHelper {
 			FragmentTransaction ft = this.fManager_.beginTransaction();
 			ft.remove(f);
 			ft.commit();
+			this.cartManager_.cleanUpPendingImages();
 		}
 		return false;
 	}

@@ -437,9 +437,15 @@ public class ImageUploadHelper {
 							image.setServerId(sId);
 							image.setServerInit(true);
 							processingBin_.put(identTag, image);
-							imageUploadMap_.put(identTag, serverResponse.getJSONObject("upload"));
+							if (serverResponse.has("upload")) {
+								imageUploadMap_.put(identTag, serverResponse.getJSONObject("upload"));
+								uploadQueue_.add(identTag);
+							} else {
+								if (!serverResponse.getString("upload_status").equals("succeeded")) {
+									uploadQueue_.add(identTag);
+								}
+							}
 						}
-						uploadQueue_.add(identTag);
 						removeStringFromProcessing(identTag);
 						processNextImage();
 					} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_CREATE_URL_IMAGE)) {

@@ -109,7 +109,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 						@Override
 						public void run() {
 							int count = 4;
-							if (pageUrls_.size() == 0)
+							if (pageUrls_.size() > 0)
 								count = pageUrls_.size();
 							currIndex_ = (currIndex_+1)%count;
 							pageFlipper_.setCurrentItem(currIndex_, true);
