@@ -59,6 +59,7 @@ public class OrderSummaryFragment extends KindredFragment {
 
 	private int returnedDownloads_;
 	private boolean continueCheck_;
+	private boolean blockCheckout_;
 	
 	public OrderSummaryFragment() { }
 	
@@ -104,9 +105,12 @@ public class OrderSummaryFragment extends KindredFragment {
 		this.cmdCompleteOrder_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mixpanel_.track("order_summary_complete_order", null);
-				fragmentHelper_.showProgressBarWithMessage("validating payment..");
-				orderProcessingHelper_.initiateCheckoutSequence();
+				if (blockCheckout_) {
+					KindredAlertDialog alertDialog = new KindredAlertDialog(activity_, "Please add a shipping address!", false);
+					alertDialog.show();
+				} else {
+					startCheckoutSequence();
+				}
 			}
 		});
 		
@@ -157,12 +161,12 @@ public class OrderSummaryFragment extends KindredFragment {
 		if (this.userPrefHelper_ != null) {
 			if (this.userPrefHelper_.getSelectedAddresses().size() == 0) {
 				this.fragmentHelper_.setNextButtonEnabled(false);
-				this.cmdCompleteOrder_.setEnabled(false);
+				this.blockCheckout_ = true;
 				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.rounded_filled_grey);
 				this.txtTotal_.setBackgroundResource(R.drawable.rounded_filled_grey);
 			} else {
 				this.fragmentHelper_.setNextButtonEnabled(true);
-				this.cmdCompleteOrder_.setEnabled(true);
+				this.blockCheckout_ = false;
 				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
 				this.txtTotal_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
 			}
@@ -236,27 +240,29 @@ public class OrderSummaryFragment extends KindredFragment {
 		@Override
 		public boolean interruptNextButton() {
 			if (!continueCheck_) {
-				
-				fragmentHelper_.showProgressBarWithMessage("validating payment..");
-				orderProcessingHelper_.initiateCheckoutSequence();
-				
-				JSONObject cardStored = new JSONObject();
-				try {
-					cardStored.put("card_stored", currUser_.getCreditType());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				mixpanel_.track("order_summary_click_next", cardStored);
-
-				
-				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-					    Activity.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-				
+				startCheckoutSequence();
 				return true;
 			}
 			return false;
 		}
+	}
+	
+	private void startCheckoutSequence() {
+		fragmentHelper_.showProgressBarWithMessage("validating payment..");
+		orderProcessingHelper_.initiateCheckoutSequence();
+		
+		JSONObject cardStored = new JSONObject();
+		try {
+			cardStored.put("card_stored", currUser_.getCreditType());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		mixpanel_.track("order_summary_click_next", cardStored);
+
+		
+		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+			    Activity.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 	
 	public class OrderSummaryNetworkCallback implements NetworkCallback {
