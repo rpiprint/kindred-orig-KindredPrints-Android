@@ -347,11 +347,11 @@ public class KindredFragmentHelper {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
 		} else if (hash.equals(FRAG_LOGIN+String.valueOf(LoginViewFragment.STATE_WRONG_PASSWORD))) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login_reset));
-		} else if (hash.equals(FRAG_SHIPPING)) {
+		} else if (hash.equals(FRAG_SHIPPING) || hash.equals(FRAG_ORDER_CARD_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_shipping));
 		} else if (hash.equals(FRAG_SHIPPING_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_edit_shipping));
-		} else if (hash.equals(FRAG_ORDER_SUMMARY) || hash.equals(FRAG_ORDER_CARD_EDIT)) {
+		} else if (hash.equals(FRAG_ORDER_SUMMARY)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_purchase));
 		} else if (hash.equals(FRAG_ORDER_FINISHED)) {
 			this.navBarView_.setNextTitle("");
