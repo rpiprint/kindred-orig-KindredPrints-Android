@@ -141,7 +141,7 @@ public class CartItemListFragment extends KindredFragment {
 					bun.putInt("cart_index", index);
 					fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_PREVIEW, bun);
 				} else {
-					fragmentHelper_.triggerBackButton();
+					fragmentHelper_.goBackAndExit();
 				}
 			}
 		});

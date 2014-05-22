@@ -107,6 +107,11 @@ public class KindredFragmentHelper {
 		this.navBarView_.triggerBackButton();
 	}
 	
+	public void goBackAndExit() {
+		this.backStack_.clear();
+		triggerBackButton();
+	}
+	
 	public void showProgressBarWithMessage(String message) {
 		this.progBar_.show(message, 0.5f);
 	}
@@ -208,9 +213,11 @@ public class KindredFragmentHelper {
 		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) { 
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
-			nextFrag = FRAG_CART;
+			this.backStack_.clear();
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
 		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
-			nextFrag = FRAG_CART;
+			this.backStack_.clear();
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
 		} else if (this.currFragHash_.equals(FRAG_INTRO)) {
 			initRootFragment();
 			return true;

@@ -35,6 +35,9 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class CartPreviewFragment extends KindredFragment {
 	private InterfacePrefHelper interfacePrefHelper_;
 	private CartManager cartManager_;
@@ -92,8 +95,6 @@ public class CartPreviewFragment extends KindredFragment {
 						if (fittedProducts.size() > 0) {
 							currObject_.setPrintType(fittedProducts.get(0));
 						}
-						Log.i("KindredSDK", "order has been updated init");
-
 						initInterface();
 					}
 				}
@@ -188,6 +189,13 @@ public class CartPreviewFragment extends KindredFragment {
 			public void userChangedQuantity(int quantity) {
 				quantityChanged_ = true;
 				currProduct_.setQuantity(quantity);
+				JSONObject quant = new JSONObject();
+				try {
+					quant.put("quantity", quantity);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("cart_preview_quant_changed", quant);
 				adjustButtonState();
 			}
 		});
@@ -199,15 +207,13 @@ public class CartPreviewFragment extends KindredFragment {
 					cartManager_.addOrderToSelected(currObject_, currProduct_);
 				} else if (currProduct_.getQuantity() == 0) {
 					cartManager_.deleteSelectedOrderImageForId(currObject_.getImage().getId());
-					if (cartEditState_)
-						fragmentHelper_.triggerBackButton();
-					else
-						fragmentHelper_.triggerNextButton();
+					closePreviewScreen();
 					return;
 				} 
 				cartManager_.imageWasUpdatedWithQuantities(currObject_.getImage(), currProduct_);
 				quantityChanged_ = false;
 				adjustButtonState();
+				closePreviewScreen();
 			}
 		});
 		
@@ -216,8 +222,6 @@ public class CartPreviewFragment extends KindredFragment {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onGlobalLayout() {
-				Log.i("KindredSDK", "global layout init");
-
 				initInterface();
 				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
 					view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -228,6 +232,13 @@ public class CartPreviewFragment extends KindredFragment {
 		});
 
 		return view;
+	}
+	
+	private void closePreviewScreen() {
+		if (cartEditState_)
+			fragmentHelper_.triggerBackButton();
+		else
+			fragmentHelper_.triggerNextButton();
 	}
 	
 	public String getUniqueId() {

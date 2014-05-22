@@ -9,6 +9,7 @@ import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.PrintableImage;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
+import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ public class CartItemListAdapter extends BaseAdapter {
 	private ImageManager imageManager_;
 	private CartManager cartManager_;
 	private InterfacePrefHelper interfacePrefHelper_;
-	
+	private DevPrefHelper devPrefHelper_;
 	
 	private PrintSelectedListener printClickCallback_;
 	
@@ -35,6 +36,7 @@ public class CartItemListAdapter extends BaseAdapter {
 	public CartItemListAdapter(Activity context) {
 		this.context_ = context;
 
+		this.devPrefHelper_ = new DevPrefHelper(context);
 		this.interfacePrefHelper_ = new InterfacePrefHelper(context);
 		this.cartManager_ = CartManager.getInstance(context);
 		this.imageManager_ = ImageManager.getInstance(context);
@@ -113,7 +115,7 @@ public class CartItemListAdapter extends BaseAdapter {
 		txtTitle.setVisibility(View.INVISIBLE);
 		txtSubtitle.setVisibility(View.INVISIBLE);
 		
-		txtHeaderTitle.setText(this.context_.getResources().getString(R.string.cart_add_more_image));
+		txtHeaderTitle.setText(this.context_.getResources().getString(R.string.cart_add_more_image) + " " + this.devPrefHelper_.getPartnerName());
 		txtHeaderTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
 		return productView;
 	}

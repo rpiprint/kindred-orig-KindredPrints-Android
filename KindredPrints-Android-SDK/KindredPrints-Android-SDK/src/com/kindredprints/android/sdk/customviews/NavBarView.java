@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -50,13 +51,20 @@ public class NavBarView extends RelativeLayout {
 		
 		this.cmdNextIcon_ = (ImageView) findViewById(R.id.icon);  
 		this.cmdNext_ = (Button) findViewById(R.id.cmdNext);
-		this.cmdNext_.setBackgroundColor(Color.TRANSPARENT);
 		this.cmdNext_.setTextColor(this.interfacePrefHelper_.getHighlightColor());
 		this.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
 		
+		this.cmdBack_.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				cmdBack_.invalidate();
+				return false;
+			}
+		});
 		this.cmdBack_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				cmdBack_.invalidate();
 				if (callback_ != null) callback_.onBackClick();
 			}
 		});

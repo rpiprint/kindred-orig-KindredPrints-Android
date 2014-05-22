@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +19,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.data.CartManager;
@@ -32,8 +37,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 public class IntroPageFlipperFragment extends KindredFragment {
 	private ViewPager pageFlipper_;
 	private IntroPageAdapter introDataAdapter_;
+	private Button cmdNext_;
 	private ArrayList<String> pageUrls_;
+	private ArrayList<String> introTitles_;
 	private int currIndex_;
+	
+	private InterfacePrefHelper interfacePrefHelper_;
 	
 	private CartManager cartManager_;
 	private ImageManager imManager_;
@@ -53,7 +62,13 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		
 		this.imManager_ = ImageManager.getInstance(context_);
 		this.devPrefHelper_ = new DevPrefHelper(context_);
+		this.interfacePrefHelper_ = new InterfacePrefHelper(context_);
 		this.pageUrls_ = this.devPrefHelper_.getIntroUrls();
+		this.introTitles_ = new ArrayList<String>();
+		this.introTitles_.add(activity.getResources().getString(R.string.intro_page_one));
+		this.introTitles_.add(activity.getResources().getString(R.string.intro_page_two));
+		this.introTitles_.add(activity.getResources().getString(R.string.intro_page_three));
+		this.introTitles_.add(activity.getResources().getString(R.string.intro_page_four));
 		
 		mixpanel_ = MixpanelAPI.getInstance(activity, activity.getResources().getString(R.string.mixpanel_token));
 		mixpanel_.track("intro_page_view", null);
@@ -78,6 +93,16 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		this.pageFlipper_ = (ViewPager) view.findViewById(R.id.viewPager);
 		this.introDataAdapter_ = new IntroPageAdapter(getActivity().getSupportFragmentManager());
 
+		this.cmdNext_ = (Button) view.findViewById(R.id.cmdStart);
+		this.cmdNext_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
+		this.cmdNext_.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_start_click", null);
+				fragmentHelper_.triggerNextButton();
+			}
+		});
+		
 		this.introDataAdapter_.notifyDataSetChanged();
 		this.pageFlipper_.setAdapter(this.introDataAdapter_);
 		this.pageFlipper_.setOnPageChangeListener(new OnPageChangeListener() {
@@ -168,7 +193,14 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		private Fragment createFragmentAt(int position) {
 			IntroImageFragment pageFrag = new IntroImageFragment();
 			pageFrag.init(context_, fragmentHelper_);
-			pageFrag.setBackgroundImage(pageUrls_.get(position));
+			JSONObject introPage = new JSONObject();
+			try {
+				introPage.put("page_index", position);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_view", introPage);
+			pageFrag.setBackgroundImage(pageUrls_.get(position), introTitles_.get(position%introTitles_.size()));
 			return pageFrag;
 		}
 

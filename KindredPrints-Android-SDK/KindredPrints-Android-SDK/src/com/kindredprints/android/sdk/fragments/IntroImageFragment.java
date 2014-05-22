@@ -5,6 +5,7 @@ import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.data.Size;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager;
 import com.kindredprints.android.sdk.helpers.cache.ImageManager.ImageManagerCallback;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,13 +16,16 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
-public class IntroImageFragment extends KindredFragment {
-
+public class IntroImageFragment extends KindredFragment {	
+	private Context context_;
 	private ImageManager imManager_;
 	private ImageView imgBackground_;
+	private TextView txtTitle_;
 	private ProgressBar progressBar_;
 	private String imageUrl_;
+	private String title_;
 	private boolean drawn_;
 	
 	private ImageManagerCallback imageSetCallback_;
@@ -29,6 +33,7 @@ public class IntroImageFragment extends KindredFragment {
 	public IntroImageFragment() { }
 
 	public void init(Context context, KindredFragmentHelper fragmentHelper) {
+		this.context_ = context;
 		this.imManager_ = ImageManager.getInstance(context);
 	}
 	
@@ -39,6 +44,7 @@ public class IntroImageFragment extends KindredFragment {
 		this.imgBackground_ = (ImageView) view.findViewById(R.id.imgBackground);
 		imgBackground_.setImageBitmap(null);
 		
+		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);		
 		this.progressBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
 
 		setImageVisible(false);
@@ -61,8 +67,9 @@ public class IntroImageFragment extends KindredFragment {
 		return view;
 	}
 	
-	public void setBackgroundImage(String url) {
+	public void setBackgroundImage(String url, String text) {
 		this.imageUrl_ = url;
+		this.title_ = text;
 		if (this.drawn_) {
 			loadImage();
 		}
@@ -70,9 +77,11 @@ public class IntroImageFragment extends KindredFragment {
 	
 	private void setImageVisible(boolean visible) {
 		if (visible) {
+			this.txtTitle_.setVisibility(View.VISIBLE);
 			this.imgBackground_.setVisibility(View.VISIBLE);
 			this.progressBar_.setVisibility(View.INVISIBLE);
 		} else {
+			this.txtTitle_.setVisibility(View.INVISIBLE);
 			this.imgBackground_.setVisibility(View.INVISIBLE);
 			this.progressBar_.setVisibility(View.VISIBLE);
 		}
@@ -81,12 +90,15 @@ public class IntroImageFragment extends KindredFragment {
 	private void loadImage() {
 		this.drawn_ = true;
 		if (this.imageUrl_ != null) {
+			this.txtTitle_.setText(this.title_);
+			
 			String[] sections = this.imageUrl_.split("/");
 			String pid = sections[sections.length-1];
 			
 			this.imageSetCallback_ = new ImageManagerCallback() {
 				@Override
 				public void imageAssigned(Size size) {
+					MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_image_load", null);
 					setImageVisible(true);
 				}
 			};

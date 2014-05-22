@@ -8,6 +8,13 @@
     <string name="dialog_warning_title">WARNING</string>
     <string name="dialog_warning_description">An image has too low of resolution and may look pixelated or blurry in print form.</string>
     
+    <!-- INTRO PAGE -->
+    <string name="intro_page_one">Delivered straight to your door.</string>
+    <string name="intro_page_two">Bursting with color.</string>
+    <string name="intro_page_three">Premium photo prints.</string>
+    <string name="intro_page_four">Thick, quality paper</string>
+    <string name="intro_page_start">START</string>
+    
     <!-- ORDER SUMMARY PAGE -->
     <string name="dialog_change">Change It</string>
     <string name="dialog_continue">Continue</string>
@@ -16,30 +23,22 @@
     
     <!-- NAV BAR TITLES -->
     <string name="nav_next_title_intro">CONTINUE</string>
-    
     <string name="nav_next_title_select">NEXT</string>
-    
     <string name="nav_next_title_cart">CHECKOUT</string>
-    
     <string name="nav_next_title_login">NEXT</string>
     <string name="nav_next_title_login_reset">RESET</string>
-    
     <string name="nav_next_title_shipping">SAVE</string>
-    
     <string name="nav_next_title_edit_shipping">DONE</string>
-    
     <string name="nav_next_title_purchase">CHECKOUT</string>
-    
     <string name="nav_next_title_preview">CHECKOUT</string>
     
     <!-- CART PAGE -->
-    
     <string name="cart_empty">Your print cart is empty..\nPlease go back to add an image</string>
     <string name="cart_subtotal">Subtotal</string>
     <string name="cart_add_to_cart">Add to cart</string>
     <string name="cart_update_in_cart">Update in cart</string>
     <string name="cart_remove_from_cart">Remove</string>
-    <string name="cart_add_more_image">Add more images</string>
+    <string name="cart_add_more_image">Add more images from</string>
     <string name="cart_checkout">CHECKOUT</string>
     
     <!-- SHIPPING LIST PAGE -->

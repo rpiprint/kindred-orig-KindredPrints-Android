@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="rectangle">
             <solid
-                android:color="@color/color_white_half_transparency" />
+                android:color="@color/color_light_blue_highlight" />
             <corners android:radius="@dimen/rounded_button_corners" />
         </shape>
     </item>

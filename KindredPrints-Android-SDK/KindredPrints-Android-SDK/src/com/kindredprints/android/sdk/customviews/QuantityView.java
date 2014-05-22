@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,16 +32,33 @@ public class QuantityView extends RelativeLayout {
 		
 		this.setBackgroundColor(Color.TRANSPARENT);
 		this.cmdMinus_ = (MinusButtonView) findViewById(R.id.cmdMinusQuantity);
+		this.cmdMinus_.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				cmdMinus_.invalidate();
+				return false;
+			}
+			
+		});
 		this.cmdMinus_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				cmdMinus_.invalidate();
 				setQuantity(Math.max(0, getQuantity()-1));
 			}
 		});
 		this.cmdPlus_ = (PlusButtonView) findViewById(R.id.cmdPlusQuantity);
+		this.cmdPlus_.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				cmdPlus_.invalidate();
+				return false;
+			}
+		});
 		this.cmdPlus_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				cmdPlus_.invalidate();
 				setQuantity(getQuantity()+1);
 			}
 		});

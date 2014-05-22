@@ -21,7 +21,8 @@
 	        android:id="@+id/cmdNext"
 	        android:layout_width="@dimen/nav_next_button_width"
 	        android:layout_height="match_parent"
-	        android:textSize="@dimen/nav_bar_text_size">
+	        android:textSize="@dimen/nav_bar_text_size"
+	        android:background="@drawable/row_highlight">
 	   </Button>
 	   
 	    <ImageView
