@@ -8,7 +8,6 @@
        	android:layout_width="match_parent"
        	android:layout_height="@dimen/shipping_list_add_new_size"
        	android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/shipping_list_vertical_margin"
         android:layout_marginLeft="@dimen/shipping_list_side_margin"
         android:layout_marginRight="@dimen/shipping_list_side_margin">
 	    
@@ -37,7 +36,6 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="@dimen/shipping_list_separator_height"
 	    android:layout_below="@+id/addContainer"
-	   	android:layout_marginTop="@dimen/shipping_list_vertical_margin"
         android:layout_marginLeft="@dimen/shipping_list_side_margin"
         android:layout_marginRight="@dimen/shipping_list_side_margin" />
 	
@@ -46,7 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/shipping_list_vertical_margin"
         android:layout_marginLeft="@dimen/shipping_list_side_margin"
         android:layout_marginRight="@dimen/shipping_list_side_margin"
         android:layout_below="@+id/viewSeparator"

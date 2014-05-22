@@ -2,10 +2,13 @@ package com.kindredprints.android.sdk.customviews;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 
 public class NetworkProgressBar {
 
 	private ProgressDialog progressBar;
+	
+	private NetworkProgressBarCallback callback_;
 	
 	private Context context;
 
@@ -13,6 +16,18 @@ public class NetworkProgressBar {
 		this.context = context;		
 		this.progressBar = new ProgressDialog(this.context);
 		this.progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		this.progressBar.setCanceledOnTouchOutside(false);
+		this.progressBar.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		       	//hide();
+		        if (callback_ != null) callback_.progressBarCancelled(); 
+		    }
+		});
+	}
+	
+	public void setNetworkProgressCallback(NetworkProgressBarCallback callback) {
+		this.callback_ = callback;
 	}
 	
 	public boolean is_open() {
@@ -21,7 +36,8 @@ public class NetworkProgressBar {
 	
 	public void show(String message, float progress) {
 		progressBar.setMessage(message);
-		progressBar.show();
+		if (!is_open())
+			progressBar.show();
 		this.progressBar.setProgress((int)(this.progressBar.getMax()*progress));
 	}
 	
@@ -41,4 +57,7 @@ public class NetworkProgressBar {
 		context = null;
 	}
 	
+	public interface NetworkProgressBarCallback {
+		public void progressBarCancelled();
+	}
 }

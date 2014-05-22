@@ -12,23 +12,5 @@
         android:gravity="center"
         android:textSize="@dimen/order_summary_title_text_size" 
     />
-    
-    <Button 
-        android:id="@+id/cmdEdit"
-        android:layout_width="@dimen/order_summary_edit_width"
-        android:layout_height="@dimen/order_summary_edit_height"
-        android:layout_toRightOf="@+id/txtHeaderTitle"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/order_summary_blank_row_height"
-       	android:textSize="@dimen/order_summary_text_size"
-        android:text="@string/order_summary_edit"
-        android:background="@drawable/cmd_rounded_button"
-        />
-    
-    <View 
-        android:id="@+id/dividerView"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/color_white"/>
+
 </RelativeLayout>

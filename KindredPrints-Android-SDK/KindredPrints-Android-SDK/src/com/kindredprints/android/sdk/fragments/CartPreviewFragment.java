@@ -311,6 +311,8 @@ public class CartPreviewFragment extends KindredFragment {
 			this.progBar_.setVisibility(View.INVISIBLE);
 			this.quantityView_.setVisibility(View.VISIBLE);
 			this.cmdAddToCart_.setVisibility(View.VISIBLE);
+			this.txtTitle_.setVisibility(View.VISIBLE);
+			this.txtSubtitle_.setVisibility(View.VISIBLE);
 			adjustDisplay();
 		} else {
 			this.cmdFlip_.setVisibility(View.INVISIBLE);
@@ -318,6 +320,8 @@ public class CartPreviewFragment extends KindredFragment {
 			this.progBar_.setVisibility(View.VISIBLE);
 			this.quantityView_.setVisibility(View.INVISIBLE);
 			this.cmdAddToCart_.setVisibility(View.INVISIBLE);
+			this.txtTitle_.setVisibility(View.INVISIBLE);
+			this.txtSubtitle_.setVisibility(View.INVISIBLE);
 		}
 	}
 	

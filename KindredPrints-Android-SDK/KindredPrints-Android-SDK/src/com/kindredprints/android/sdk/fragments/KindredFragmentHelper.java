@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.NavBarView;
 import com.kindredprints.android.sdk.customviews.NetworkProgressBar;
+import com.kindredprints.android.sdk.customviews.NetworkProgressBar.NetworkProgressBarCallback;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.UserObject;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
@@ -73,6 +74,12 @@ public class KindredFragmentHelper {
 		this.userPrefHelper_ = new UserPrefHelper(activity);
 		this.devPrefHelper_ = new DevPrefHelper(activity);
 		this.progBar_ = new NetworkProgressBar(activity);
+		this.progBar_.setNetworkProgressCallback(new NetworkProgressBarCallback() {
+			@Override
+			public void progressBarCancelled() {
+				triggerBackButton();
+			}
+		});
 	}
 	
 	public void setNextButtonDreamCatcher_(NextButtonPressInterrupter interrupter_) {

@@ -62,7 +62,6 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	private MixpanelAPI mixpanel_;
 	
 	private AddressUpdateCallback addressCallback_;
-	private OnClickListener editCartClickListener_;
 	
 	private ArrayList<LineItem> lineItems_;
 	private ArrayList<View> printRowViews_;
@@ -70,7 +69,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	private ArrayList<View> addressRowViews_;
 	private ArrayList<View> paymentRowViews_;
 
-	private View rowViewTotal_;
+	//private View rowViewTotal_;
 	
 	private ListView currParentListView_;
 		
@@ -92,10 +91,6 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		
 		initialInit();
 		updateRows();
-	}
-	
-	public void setEditCartOnClickListener(OnClickListener editCartOnClickListener) {
-		this.editCartClickListener_ = editCartOnClickListener;
 	}
 	
 	public void setAddressUpdateCallback(AddressUpdateCallback addressUpdated) {
@@ -125,17 +120,18 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		ArrayList<LineItem> printLineItems = new ArrayList<LineItem>();
 		ArrayList<LineItem> couponLineItems = new ArrayList<LineItem>();
 		ArrayList<LineItem> addressLineItems = new ArrayList<LineItem>();
- 		LineItem totalLineItem = null;
+ 		//LineItem totalLineItem = null;
 		
  		for (LineItem item : this.lineItems_) {
  			if (item.getLiType().equals(LineItem.ORDER_PRODUCT_LINE_TYPE) || item.getLiType().equals(LineItem.ORDER_SUBTOTAL_LINE_TYPE)) {
  				printLineItems.add(item);
  			} else if (item.getLiType().equals(LineItem.ORDER_COUPON_APPLIED_LINE_TYPE) || item.getLiType().equals(LineItem.ORDER_CREDITS_LINE_TYPE)) {
- 				couponLineItems.add(item);
+ 				printLineItems.add(item);
  			} else if (item.getLiType().equals(LineItem.ORDER_SHIPPING_LINE_TYPE)) {
  				addressLineItems.add(item);
  			} else if (item.getLiType().equals(LineItem.ORDER_TOTAL_LINE_TYPE)) {
- 				totalLineItem = item;
+ 				this.txtTotal_.setText(item.getLiAmount());
+ 				this.devPrefHelper_.setOrderTotal(item.getLiAmount());
  			}
  		}
  		
@@ -143,7 +139,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		constructAddressRows(addressLineItems);
 		constructCouponRows(couponLineItems);
 		constructPaymentRows();
-		this.rowViewTotal_ = generateViewForLineItem(totalLineItem);
+		//this.rowViewTotal_ = generateViewForLineItem(totalLineItem);
 	}
 	
 	private void constructPrintRows(ArrayList<LineItem> lineItems) {
@@ -168,9 +164,6 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	private void constructCouponRows(ArrayList<LineItem> lineItems) {
 		this.couponRowViews_.clear();
 		this.couponRowViews_.add(generateHeaderRowView(HEADER_COUPON_SUMMARY));
-		for (LineItem item : lineItems) {
-			this.couponRowViews_.add(generateViewForLineItem(item));
-		}
 		this.couponRowViews_.add(generateCouponEditView());
 		this.couponRowViews_.add(generateBlankRowView());
 	}
@@ -190,7 +183,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 	
 	@Override
 	public int getCount() {
-		return countOfPrintRows() + countOfShippingRows() + countOfPaymentRows() + countOfCouponRows() + 1;
+		return countOfPrintRows() + countOfShippingRows() + countOfPaymentRows() + countOfCouponRows();// + 1;
 	}
 	
 	private int countOfPrintRows() {
@@ -227,10 +220,9 @@ public class OrderSummaryAdapter extends BaseAdapter {
 			return this.addressRowViews_.get(position-this.printRowViews_.size());
 		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size()) {
 			return this.paymentRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size());
-		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size() + this.couponRowViews_.size()) {
+		} else {//if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size() + 1) {
 			return this.couponRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size()-this.paymentRowViews_.size());
-		} else
-			return this.rowViewTotal_;
+		} 
 	}
 
 	private View generateViewForLineItem(LineItem item) {
@@ -271,23 +263,16 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		View view = inflater.inflate(R.layout.order_summary_row_header, this.currParentListView_, false);
 		
 		view.setBackgroundColor(Color.TRANSPARENT);
-		Button cmdEdit = (Button) view.findViewById(R.id.cmdEdit);
 		TextView txtHeader = (TextView) view.findViewById(R.id.txtHeaderTitle);
 		txtHeader.setTextColor(this.interfacePrefHelper_.getTextColor());
-		cmdEdit.setTextColor(this.interfacePrefHelper_.getTextColor());
 		if (type == HEADER_ORDER_SUMMARY) {
 			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_title));
-			cmdEdit.setVisibility(View.VISIBLE);
-			cmdEdit.setOnClickListener(this.editCartClickListener_);
 		} else if (type == HEADER_SHIPPING_SUMMARY) {
 			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_shipping_header));
-			cmdEdit.setVisibility(View.INVISIBLE);
 		} else if (type == HEADER_PAYMENT_SUMMARY) {
 			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_payment));
-			cmdEdit.setVisibility(View.INVISIBLE);
 		} else if (type == HEADER_COUPON_SUMMARY) {
 			txtHeader.setText(this.context_.getResources().getString(R.string.order_summary_coupon_header));
-			cmdEdit.setVisibility(View.INVISIBLE);
 		}
 		
 		return view;

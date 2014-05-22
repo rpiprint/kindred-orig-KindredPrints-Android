@@ -24,15 +24,31 @@
 	        android:paddingBottom="5dp"
         />
         
-        <com.kindredprints.android.sdk.customviews.PlusButtonView
-	        android:id="@+id/cmdPlusQuantity"
-	        android:layout_width="@dimen/cart_page_product_item_width"
-	        android:layout_height="@dimen/cart_page_product_item_width"
-	      	android:layout_marginRight="@dimen/cart_page_product_row_padding"
-	        android:layout_alignParentRight="true"
-	        android:layout_centerVertical="true"
-        	/>
+        <ImageView
+	        android:id="@+id/imgWarning"
+	     	android:contentDescription="@string/img_content"
+	        android:layout_height="@dimen/cart_page_product_warning_side"
+	        android:layout_width="@dimen/cart_page_product_warning_side"
+	        android:padding="@dimen/cart_page_product_warning_padding"
+		    android:layout_marginLeft="@dimen/cart_page_left_padding"
+			android:layout_alignLeft="@+id/imgProdPrev"
+			android:layout_alignParentBottom="true"
+			android:src="@drawable/ico_warning_yellow"
+			android:visibility="invisible"
+	    />
+        
+        
     </RelativeLayout>
+    
+    <com.kindredprints.android.sdk.customviews.PlusButtonView
+        android:id="@+id/cmdPlusQuantity"
+        android:layout_width="@dimen/cart_page_product_item_width"
+        android:layout_height="@dimen/cart_page_product_item_width"
+      	android:layout_marginLeft="@dimen/cart_page_product_row_padding"
+      	android:layout_marginRight="@dimen/cart_page_product_row_padding"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+       	/>
     
     <TextView
        android:id="@+id/txtHeaderTitle"
@@ -40,21 +56,8 @@
        android:layout_width="wrap_content"
        android:layout_centerVertical="true"
        android:layout_marginLeft="@dimen/cart_page_product_row_padding"
-       android:layout_toRightOf="@+id/imgContainer"
+       android:layout_toRightOf="@+id/cmdPlusQuantity"
        android:textSize="@dimen/cart_page_row_title_text_size" />
-    
-     <ImageView
-        android:id="@+id/imgWarning"
-     	android:contentDescription="@string/img_content"
-        android:layout_height="@dimen/cart_page_product_warning_side"
-        android:layout_width="@dimen/cart_page_product_warning_side"
-        android:padding="@dimen/cart_page_product_warning_padding"
-	    android:layout_marginLeft="@dimen/cart_page_left_padding"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentBottom="true"
-		android:src="@drawable/ico_warning_yellow"
-		android:visibility="invisible"
-    />
    
   
    <TextView

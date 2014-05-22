@@ -120,12 +120,7 @@ public class OrderSummaryFragment extends KindredFragment {
 		this.lvOrderLineItems_ = (ListView) view.findViewById(R.id.lvOrderItemList);
 		this.lvOrderLineItems_.setBackgroundColor(Color.TRANSPARENT);
 		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_, this.txtTotal_);
-		this.lineItemAdapter_.setEditCartOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_CART);
-			}
-		});
+
 		this.lineItemAdapter_.setAddressUpdateCallback(new AddressUpdateCallback() {
 			@Override
 			public void addressesUpdated() {
@@ -269,7 +264,7 @@ public class OrderSummaryFragment extends KindredFragment {
 		@Override
 		public void finished(final JSONObject serverResponse) {
 			if (serverResponse != null) {
-				Handler mainHandler = new Handler(getActivity().getMainLooper());
+				Handler mainHandler = new Handler(activity_.getMainLooper());
 				mainHandler.post(new Runnable() {
 					@Override
 					public void run() {
