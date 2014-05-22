@@ -62,8 +62,6 @@ public class ShippingListFragment extends KindredFragment {
 		this.userPrefHelper_ = new UserPrefHelper(activity);
 		this.currUser_ = this.userPrefHelper_.getUserObject();
 		this.fragmentHelper_ = fragHelper;
-		this.fragmentHelper_.setBackButtonDreamCatcher_(null);
-		this.fragmentHelper_.setNextButtonDreamCatcher_(null);
 		this.fragmentHelper_.configNavBar();	
 	}
 	

@@ -6,6 +6,7 @@ import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.CheckBoxView;
 import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper;
+import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
@@ -13,6 +14,7 @@ import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,6 +50,14 @@ public class ShippingAddressAdapter extends BaseAdapter {
 			@Override
 			public boolean interruptNextButton() {
 				setNeedUpdateOrderId();
+				return false;
+			}
+		});
+		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonPressInterrupter() {
+			@Override
+			public boolean interruptBackButton() {
+				Log.i("KindredSDK", "setting back button interrupter, prev addresses = " + prevSelectedAddresses_.size());
+				userPrefHelper_.setSelectedShippingAddresses(prevSelectedAddresses_);
 				return false;
 			}
 		});

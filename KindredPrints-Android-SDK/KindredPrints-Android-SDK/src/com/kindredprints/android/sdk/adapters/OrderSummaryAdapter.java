@@ -165,7 +165,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		this.couponRowViews_.clear();
 		this.couponRowViews_.add(generateHeaderRowView(HEADER_COUPON_SUMMARY));
 		this.couponRowViews_.add(generateCouponEditView());
-		this.couponRowViews_.add(generateBlankRowView());
+		//this.couponRowViews_.add(generateBlankRowView());
 	}
 	
 	private void constructPaymentRows() {
@@ -220,7 +220,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 			return this.addressRowViews_.get(position-this.printRowViews_.size());
 		} else if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size()) {
 			return this.paymentRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size());
-		} else {//if (position < this.printRowViews_.size() + this.addressRowViews_.size() + this.paymentRowViews_.size() + 1) {
+		} else {
 			return this.couponRowViews_.get(position-this.printRowViews_.size()-this.addressRowViews_.size()-this.paymentRowViews_.size());
 		} 
 	}
@@ -282,7 +282,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_lineitem, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 		
 		TextView txtItemQuantity = (TextView) view.findViewById(R.id.txtLineItemQuantity);
 		txtItemQuantity.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -330,7 +330,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		TextView txtTitle = (TextView) view.findViewById(R.id.txtShippingDescription);
 		
 		if (this.userPrefHelper_.getSelectedAddresses().size() > 0) {
-			view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+			view.setBackgroundColor(Color.TRANSPARENT);
 			txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
 			cmdAdd.updatePaints(this.interfacePrefHelper_.getTextColor());
 		} else {
@@ -359,7 +359,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_shipping, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 		
 		Button cmdEditShipping = (Button) view.findViewById(R.id.cmdEditShipping);
 		cmdEditShipping.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -420,7 +420,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -439,7 +439,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_credits, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 		
 		TextView txtCreditTitle = (TextView) view.findViewById(R.id.txtCreditTitle);
 		txtCreditTitle.setTextColor(this.interfacePrefHelper_.getHighlightColor());
@@ -458,7 +458,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		final View view = inflater.inflate(R.layout.order_summary_row_coupons, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 	
 
 		final EditText editTextCoupon = (EditText) view.findViewById(R.id.editTextCoupon);
@@ -505,7 +505,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View view = inflater.inflate(R.layout.order_summary_row_total, this.currParentListView_, false);
 		
-		view.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		view.setBackgroundColor(Color.TRANSPARENT);
 		
 		TextView txtTotalTitle = (TextView) view.findViewById(R.id.txtTotalTitle);
 		txtTotalTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
@@ -527,7 +527,7 @@ public class OrderSummaryAdapter extends BaseAdapter {
 		LayoutInflater inflater = this.context_.getLayoutInflater();
 		View viewCC = inflater.inflate(R.layout.order_summary_row_card, this.currParentListView_, false);	
 	
-		viewCC.setBackgroundColor(this.interfacePrefHelper_.getNavColor());
+		viewCC.setBackgroundColor(Color.TRANSPARENT);
 		
 		TextView txtTitle = (TextView) viewCC.findViewById(R.id.txtCardTitle);
 		txtTitle.setTextColor(this.interfacePrefHelper_.getTextColor());
