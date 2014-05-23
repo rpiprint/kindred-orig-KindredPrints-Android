@@ -161,7 +161,7 @@ For this example, we assume that the photo is stored in local memory and you hav
     ```java
     KindredOrderFlow orderFlow  = new KindredOrderFlow(this, "YOUR_TEST_KEY_HERE");
     
-    orderFlow.addImageToCart(new KLOCPhoto(null, (String)absoluteFilePathToPicture));
+    orderFlow.addImageToCart(new KLOCPhoto((String)absoluteFilePathToPicture));
 
     Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
     startActivityForResult(i, 0);
@@ -187,13 +187,13 @@ import com.kindredprints.android.sdk.KindredOrderFlowActivity;
 1. Create a method to handle the button click and insert this code into it:
    ```java
     KindredOrderFlow orderFlow  = new KindredOrderFlow(this, KINDRED_APP_KEY);
-    KURLPhoto urlPhoto = new KURLPhoto("1", "http://site.com/img.jpg");
+    KURLPhoto urlPhoto = new KURLPhoto(http://site.com/img.jpg");
     orderFlow.addImageToCart(urlPhoto);
    ```
 Alternatively, if you also store a remote url for a pre rendered preview size image in addition to the original, you can init a KURLPhoto like this.
 
    ```java
-    KURLPhoto urlPhoto = new KURLPhoto("1", "http://site.com/img.jpg", "http://site.com/prevImg.jpg");
+    KURLPhoto urlPhoto = new KURLPhoto(http://site.com/img.jpg", "http://site.com/prevImg.jpg");
    ```
 1. Now, add a button somewhere on the display that says "Checkout"
 
