@@ -58,6 +58,7 @@ public class CartPreviewFragment extends KindredFragment {
 	private Button cmdAddToCart_;
 	private ImageView imgWarning_;
 	private Button cmdFlip_;
+	private ImageView imgFlip_;
 	private ImageView imgPreview_;
 	private TextView txtTitle_;
 	private TextView txtSubtitle_;
@@ -158,6 +159,7 @@ public class CartPreviewFragment extends KindredFragment {
 		else
 			this.quantityView_.setQuantity(0);
 		this.cmdFlip_ = (Button) view.findViewById(R.id.cmdFlip);
+		this.imgFlip_ = (ImageView) view.findViewById(R.id.imgFlip);
 		this.imgWarning_ = (ImageView) view.findViewById(R.id.imgWarning);
 		this.imgPreview_ = (ImageView) view.findViewById(R.id.imgPreview);
 		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);
@@ -295,8 +297,10 @@ public class CartPreviewFragment extends KindredFragment {
 		if (this.currObject_ != null && this.currProduct_ != null) {
 			if (this.currObject_.getImage().isTwosided()) {
 				this.cmdFlip_.setVisibility(View.VISIBLE);
+				this.imgFlip_.setVisibility(View.VISIBLE);
 			} else {
 				this.cmdFlip_.setVisibility(View.INVISIBLE);
+				this.imgFlip_.setVisibility(View.INVISIBLE);
 			}
 			if (this.currProduct_ != null && (this.currProduct_.getDpi() < this.currProduct_.getWarnDPI())) {
 				this.imgWarning_.setVisibility(View.VISIBLE);
@@ -315,13 +319,14 @@ public class CartPreviewFragment extends KindredFragment {
 			this.txtSubtitle_.setVisibility(View.VISIBLE);
 			adjustDisplay();
 		} else {
-			this.cmdFlip_.setVisibility(View.INVISIBLE);
 			this.imgWarning_.setVisibility(View.INVISIBLE);
 			this.progBar_.setVisibility(View.VISIBLE);
 			this.quantityView_.setVisibility(View.INVISIBLE);
 			this.cmdAddToCart_.setVisibility(View.INVISIBLE);
 			this.txtTitle_.setVisibility(View.INVISIBLE);
-			this.txtSubtitle_.setVisibility(View.INVISIBLE);
+			this.txtSubtitle_.setVisibility(View.INVISIBLE);				
+			this.cmdFlip_.setVisibility(View.INVISIBLE);
+			this.imgFlip_.setVisibility(View.INVISIBLE);
 		}
 	}
 	
@@ -351,8 +356,9 @@ public class CartPreviewFragment extends KindredFragment {
 	private void initInterface() {
 		if (this.getView() == null || getActivity() == null) 
 			return;
-		loadAppropriateImage();
 		adjustDisplay();
+		setImageVisible(false);
+		loadAppropriateImage();
 		refreshProductList();
 	}
 }

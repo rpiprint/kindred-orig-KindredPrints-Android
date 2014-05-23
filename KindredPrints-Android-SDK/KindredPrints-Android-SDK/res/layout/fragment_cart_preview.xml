@@ -40,17 +40,32 @@
     />
 	
     
-	<Button
-	    android:id="@+id/cmdFlip"
+	<RelativeLayout
+	    android:id="@+id/wrapper"
        	android:layout_width="@dimen/cart_page_flip_size"
        	android:layout_height="@dimen/cart_page_flip_size"
-       	android:layout_alignTop="@+id/imgPreview"
-       	android:layout_marginRight="@dimen/cart_page_image_vertical_padding"
-       	android:layout_marginTop="@dimen/cart_page_image_vertical_padding"
-        android:layout_toLeftOf="@+id/imgPreview"
-        android:background="@drawable/ico_flip_white"
+	    android:layout_marginRight="@dimen/cart_page_image_vertical_padding"
+	    android:layout_marginTop="@dimen/cart_page_image_vertical_padding"
+	    android:layout_toLeftOf="@+id/imgPreview"
+	    android:layout_alignTop="@+id/imgPreview"
+	    >
+		<Button
+		    android:id="@+id/cmdFlip"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@drawable/cmd_grey_filled_button"
+		    />
+		<ImageView
+	        android:id="@+id/imgFlip"
+	     	android:contentDescription="@string/img_content"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"   
+	    	android:padding="@dimen/cart_page_text_padding"
+			android:src="@drawable/ico_flip_white"
 	    />
-
+		
+	</RelativeLayout>
+	
 	<TextView
         android:id="@+id/txtTitle"
         android:layout_height="wrap_content"
@@ -67,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/txtTitle"
-        android:layout_marginTop="@dimen/preview_page_padding"
+        android:layout_marginTop="@dimen/preview_page_vertical_padding"
         android:textSize="@dimen/preview_page_subtitle_text_size" />
 		
 	<RelativeLayout 
@@ -76,7 +91,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentBottom="true"
 	    android:layout_centerHorizontal="true"
-	    android:layout_marginBottom="@dimen/preview_page_vertical_padding" >
+	    android:layout_marginBottom="@dimen/preview_page_padding" >
 	    
 	    <RelativeLayout 
 	        android:id="@+id/quantContainer"

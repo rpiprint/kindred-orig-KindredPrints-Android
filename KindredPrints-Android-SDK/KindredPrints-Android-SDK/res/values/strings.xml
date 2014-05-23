@@ -67,6 +67,7 @@
     <string name="order_summary_total">Total</string>
     <string name="order_summary_blank_total">$0</string>
     <string name="order_summary_payment">Payment</string>
+    <string name="order_summary_card">Card</string>
     <string name="order_summary_complete">COMPLETE ORDER</string>
     <string name="order_summary_type_lineitem">lineitem</string>
     <string name="order_summary_type_shipping">shipping</string>

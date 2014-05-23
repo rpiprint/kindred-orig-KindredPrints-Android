@@ -265,11 +265,16 @@ public class KindredFragmentHelper {
 			moveLeftFragment(f);
 			return true;
 		} else {
-			KindredFragment f = fragForHash(this.currFragHash_);
-			FragmentTransaction ft = this.fManager_.beginTransaction();
-			ft.remove(f);
-			ft.commit();
+			try {
+				KindredFragment f = fragForHash(this.currFragHash_);
+				FragmentTransaction ft = this.fManager_.beginTransaction();
+				ft.remove(f);
+				ft.commit();
+			} catch (IllegalStateException ex) {
+				Log.w("KindredSDK", ex.getLocalizedMessage());
+			}
 			this.cartManager_.cleanUpPendingImages();
+			
 		}
 		return false;
 	}
@@ -280,18 +285,26 @@ public class KindredFragmentHelper {
 	
 	private void moveRightFragment(KindredFragment f) {
 		setNextButtonEnabled(true);
-		FragmentTransaction ft = this.fManager_.beginTransaction();
-		ft.setCustomAnimations(R.anim.anim_slide_in, R.anim.anim_slide_out);
-		ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
-		ft.commit();
+		try {
+			FragmentTransaction ft = this.fManager_.beginTransaction();
+			ft.setCustomAnimations(R.anim.anim_slide_in, R.anim.anim_slide_out);
+			ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
+			ft.commit();
+		} catch (IllegalStateException ex) {
+			Log.w("KindredSDK", ex.getLocalizedMessage());
+		}
 	}
 	
 	private void moveLeftFragment(KindredFragment f) {
 		setNextButtonEnabled(true);
-		FragmentTransaction ft = this.fManager_.beginTransaction();
-		ft.setCustomAnimations(R.anim.anim_slide_in_back, R.anim.anim_slide_out_back);
-		ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
-		ft.commit();
+		try {
+			FragmentTransaction ft = this.fManager_.beginTransaction();
+			ft.setCustomAnimations(R.anim.anim_slide_in_back, R.anim.anim_slide_out_back);
+			ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
+			ft.commit();
+		} catch (IllegalStateException ex) {
+			Log.w("KindredSDK", ex.getLocalizedMessage());
+		}
 	}
 	
 	private KindredFragment fragForHash(String hash) {

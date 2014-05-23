@@ -9,9 +9,8 @@
        	android:layout_height="match_parent"
        	android:layout_alignParentLeft="true"
         android:gravity="left|center_vertical"
-        android:layout_marginLeft="@dimen/order_summary_padding"
         android:textSize="@dimen/order_summary_text_size" 
-        android:text="@string/order_summary_payment"
+        android:text="@string/order_summary_card"
         android:textStyle="bold"
     />
     
@@ -31,7 +30,6 @@
         android:layout_height="@dimen/order_summary_edit_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/order_summary_padding"
        	android:textSize="@dimen/order_summary_text_size"
         android:text="@string/order_summary_edit"
         android:background="@drawable/cmd_rounded_button"

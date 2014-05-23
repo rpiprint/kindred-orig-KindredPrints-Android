@@ -14,7 +14,6 @@ import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +33,8 @@ public class ShippingAddressAdapter extends BaseAdapter {
 	private ArrayList<Address> selectedAddresses_;
 	private ArrayList<Address> addresses_;
 	
+	private boolean save_;
+	
 	public ShippingAddressAdapter(Activity activity, KindredFragmentHelper fragmentHelper) {
 		this.context_ = activity;
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
@@ -46,18 +47,20 @@ public class ShippingAddressAdapter extends BaseAdapter {
 		for (Address addr : this.selectedAddresses_) {
 			this.prevSelectedAddresses_.add(addr.copy());
 		}
+		this.save_ = false;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonPressInterrupter() {
 			@Override
 			public boolean interruptNextButton() {
 				setNeedUpdateOrderId();
+				save_ = true;
 				return false;
 			}
 		});
 		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonPressInterrupter() {
 			@Override
 			public boolean interruptBackButton() {
-				Log.i("KindredSDK", "setting back button interrupter, prev addresses = " + prevSelectedAddresses_.size());
-				userPrefHelper_.setSelectedShippingAddresses(prevSelectedAddresses_);
+				if (!save_)
+					userPrefHelper_.setSelectedShippingAddresses(prevSelectedAddresses_);
 				return false;
 			}
 		});

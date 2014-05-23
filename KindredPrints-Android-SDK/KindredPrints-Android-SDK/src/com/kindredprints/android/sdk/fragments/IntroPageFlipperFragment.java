@@ -124,6 +124,19 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		});
 		this.pageFlipper_.setCurrentItem(this.currIndex_);
 		
+		startFlips();
+		
+		return view;
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		if (this.pageFlipTimer_ != null)
+			this.pageFlipTimer_.cancel();
+	}
+	
+	private void startFlips() {
 		this.pageFlipTimer_ = new Timer();
 		this.pageFlipTimer_.schedule(new TimerTask() {
 			@Override
@@ -143,15 +156,6 @@ public class IntroPageFlipperFragment extends KindredFragment {
 				}
 			}
 		}, 0, 3000);
-		
-		return view;
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-		if (this.pageFlipTimer_ != null)
-			this.pageFlipTimer_.cancel();
 	}
 	
 	private class IntroNextButtonHandler implements NextButtonPressInterrupter {
