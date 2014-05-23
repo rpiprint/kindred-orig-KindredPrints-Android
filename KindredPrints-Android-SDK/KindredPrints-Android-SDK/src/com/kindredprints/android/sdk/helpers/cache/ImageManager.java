@@ -9,7 +9,6 @@ import com.kindredprints.android.sdk.KMEMPhoto;
 import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.KURLPhoto;
 import com.kindredprints.android.sdk.data.CartManager;
-import com.kindredprints.android.sdk.data.CartObject;
 import com.kindredprints.android.sdk.data.PartnerImage;
 import com.kindredprints.android.sdk.data.PrintProduct;
 import com.kindredprints.android.sdk.data.Size;
@@ -140,39 +139,39 @@ public class ImageManager {
 		processImageInStorage(image, null);
 	}
 	
-	public void deleteAllImagesFromCache(CartObject cartObj) {
-		String origId = getOrigName(cartObj.getImage().getId());
-		String prevId = getPreviewName(cartObj.getImage().getId());
+	public void deleteAllImagesFromCache(PartnerImage pImage, PrintProduct product) {
+		String origId = getOrigName(pImage.getId());
+		String prevId = getPreviewName(pImage.getId());
 		
 		deleteFromCache(origId);
 		deleteFromCache(prevId);
 		
-		if (cartObj.getImage().isTwosided()) {
-			origId = getOrigName(cartObj.getImage().getBackSideImage().getId());
-			prevId = getPreviewName(cartObj.getImage().getBackSideImage().getId());
+		if (pImage.isTwosided()) {
+			origId = getOrigName(pImage.getBackSideImage().getId());
+			prevId = getPreviewName(pImage.getBackSideImage().getId());
 			
 			deleteFromCache(origId);
 			deleteFromCache(prevId);
 		}
 		
-		for (PrintProduct product : cartObj.getPrintProducts()) {
-			String thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getId());
-			String printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getId());
+		
+		String thumbId = product.getId() + "_" + getThumbName(pImage.getId());
+		String printPrevId = product.getId() + "_" + getPreviewName(pImage.getId());
+		
+		deleteFromCache(thumbId);
+		deleteFromCache(printPrevId);
+		
+		if (pImage.isTwosided()) {
+			thumbId = product.getId() + "_" + getThumbName(pImage.getBackSideImage().getId());
+			printPrevId = product.getId() + "_" + getPreviewName(pImage.getBackSideImage().getId());
 			
 			deleteFromCache(thumbId);
 			deleteFromCache(printPrevId);
-			
-			if (cartObj.getImage().isTwosided()) {
-				thumbId = product.getId() + "_" + getThumbName(cartObj.getImage().getBackSideImage().getId());
-				printPrevId = product.getId() + "_" + getPreviewName(cartObj.getImage().getBackSideImage().getId());
-				
-				deleteFromCache(thumbId);
-				deleteFromCache(printPrevId);
-			}
 		}
+	
 	}
 	
-	private void deleteFromCache(String id) {
+	public void deleteFromCache(String id) {
 		this.imCache_.removeImage(id);
 		this.fCache_.deleteImageForKey(id);
 	}
@@ -373,8 +372,9 @@ public class ImageManager {
 				mainHandler.post(new Runnable() {
 					@Override
 					public void run() {
-				        view.setImageBitmap(imCache_.getImageForKey(uniqueId, view));
-				        if (callback != null) callback.imageAssigned();
+						Bitmap bm = imCache_.getImageForKey(uniqueId, view);
+				        view.setImageBitmap(bm);
+				        if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 					}
 				});
 				this.waitingCallbacks_.remove(uniqueId);
@@ -386,9 +386,11 @@ public class ImageManager {
 		}
 	}
 
-	public void setImageAsync(final ImageView view, final KPhoto image, final String pid, final Size size) {
+	public void setImageAsync(final ImageView view, final KPhoto image, final String pid, final Size size, final ImageManagerCallback callback) {
 		if (this.imCache_.hasImage(pid)) {
-			view.setImageBitmap(this.imCache_.getImageForKey(pid, view));
+			Bitmap bm = this.imCache_.getImageForKey(pid, view);
+			view.setImageBitmap(bm);
+			if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 		} else {
 			try {
 				this.processingSema_.acquire();				
@@ -413,7 +415,13 @@ public class ImageManager {
 									fCache_.addImageFromUrl(urlPhoto.getPrevUrl(), pid);
 								}
 							}
-							final Bitmap bm = ImageEditor.crop_square(fCache_.getImageForKey(pid, size), -1);
+							Bitmap tempBM = null;
+							if (size.getHeight() == size.getWidth()) {
+								tempBM = ImageEditor.crop_square(fCache_.getImageForKey(pid, size), -1);
+							} else {
+								tempBM = ImageEditor.crop_rectangle(fCache_.getImageForKey(pid, size), size, -1);
+							}
+							final Bitmap bm = tempBM;
 							imCache_.addImage(bm, view, pid);
 							try {
 								processingSema_.acquire();				
@@ -427,6 +435,7 @@ public class ImageManager {
 								@Override
 								public void run() {
 									view.setImageBitmap(bm);
+									if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 								}
 							});
 						}
@@ -454,7 +463,7 @@ public class ImageManager {
 		if (this.imCache_.hasImage(uid)) {
 			Bitmap bm = this.imCache_.getImageForKey(uid, view);
 			view.setImageBitmap(bm);
-			if (callback != null) callback.imageAssigned();
+			if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 		} else {
 			new Thread(new Runnable() {
 				@Override
@@ -467,7 +476,7 @@ public class ImageManager {
 							@Override
 							public void run() {
 								view.setImageBitmap(bm);
-								if (callback != null) callback.imageAssigned();
+								if (callback != null) callback.imageAssigned(new Size(bm.getWidth(), bm.getHeight()));
 							}
 						});
 						assignAnyWaitingViewsForId(fUid);
@@ -520,6 +529,7 @@ public class ImageManager {
 		@Override
 		protected void onPostExecute(final String ident) {
 			if (fCache_.hasImageForKey(ident) && success) {
+				Log.i("KindredSDK", "post download fcache DOES have image " + ident);
 				// succeeded
 				new Thread(new Runnable() {
 					@Override
@@ -529,7 +539,8 @@ public class ImageManager {
 					}
 				}).start();
 			} else {
-				cartManager_.deleteOrderImageForId(imageDetails_.get(ident).getId());
+				Log.i("KindredSDK", "post download fcache does not have image " + ident);
+				cartManager_.deleteSelectedOrderImageForId(imageDetails_.get(ident).getId());
 				try {
 					processingSema_.acquire();
 					downloadingQueue_.remove(ident);
@@ -545,6 +556,6 @@ public class ImageManager {
 	}
 	
 	public interface ImageManagerCallback {
-		public void imageAssigned();
+		public void imageAssigned(Size size);
 	}
 }

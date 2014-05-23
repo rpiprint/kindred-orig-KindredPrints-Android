@@ -13,14 +13,11 @@ public class KURLPhoto extends KPhoto {
 		init(origUrl, origUrl, origUrl, null);
 	}
 	
-	public KURLPhoto(String id, String origUrl) {
-		init(id, origUrl, origUrl, null);
+	public KURLPhoto(String origUrl, String prevUrl) {
+		init(origUrl, origUrl, prevUrl, null);
 	}
-	public KURLPhoto(String id, String origUrl, String prevUrl) {
-		init(id, origUrl, prevUrl, null);
-	}
-	public KURLPhoto(String id, String origUrl, Bitmap prevThumb) {
-		init(id, origUrl, origUrl, prevThumb);
+	public KURLPhoto(String origUrl, Bitmap prevThumb) {
+		init(origUrl, origUrl, origUrl, prevThumb);
 	}
 	
 	

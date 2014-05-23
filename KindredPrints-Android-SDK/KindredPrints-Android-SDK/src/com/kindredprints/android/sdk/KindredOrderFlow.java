@@ -285,6 +285,15 @@ public class KindredOrderFlow {
 							orderFlow_.devPrefHelper_.setPartnerName(obj.getString("name"));
 							orderFlow_.devPrefHelper_.setPartnerUrl(obj.getString("logo"));
 							orderFlow_.devPrefHelper_.resetPartnerDetailStatus();
+							if (obj.has("intro_pages")) {
+								JSONArray pages = obj.getJSONArray("intro_pages");
+								ArrayList<String> pageList = new ArrayList<String>();
+								for (int i = 0; i < pages.length(); i++) {
+									pageList.add(pages.getString(i));
+								}
+								orderFlow_.devPrefHelper_.setIntroUrls(pageList);
+								orderFlow_.cartManager_.updateIntroImageUrls(pageList);
+							}
 						}
 						returnedAsyncConfigRoutines_ = returnedAsyncConfigRoutines_ + 1;
 					} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_REGISTER)) {

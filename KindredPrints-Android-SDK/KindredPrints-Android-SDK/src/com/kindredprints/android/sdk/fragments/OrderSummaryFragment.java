@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.adapters.OrderSummaryAdapter;
+import com.kindredprints.android.sdk.adapters.OrderSummaryAdapter.AddressUpdateCallback;
 import com.kindredprints.android.sdk.customviews.KindredAlertDialog;
 import com.kindredprints.android.sdk.data.LineItem;
 import com.kindredprints.android.sdk.data.UserObject;
@@ -51,13 +52,14 @@ public class OrderSummaryFragment extends KindredFragment {
 	
 	private MixpanelAPI mixpanel_;
 	
-	private TextView txtTitle_;
-	private Button cmdEditOrder_;
+	private TextView txtTotal_;
+	private Button cmdCompleteOrder_;
 	private ListView lvOrderLineItems_;
 	private OrderSummaryAdapter lineItemAdapter_;
 
 	private int returnedDownloads_;
 	private boolean continueCheck_;
+	private boolean blockCheckout_;
 	
 	public OrderSummaryFragment() { }
 	
@@ -98,29 +100,34 @@ public class OrderSummaryFragment extends KindredFragment {
 		
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
 		
-		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);
-		this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		
-		this.cmdEditOrder_ = (Button) view.findViewById(R.id.cmdEditOrder);
-		this.cmdEditOrder_.setTextColor(this.interfacePrefHelper_.getTextColor());
-		this.cmdEditOrder_.setOnClickListener(new OnClickListener() {
+		this.cmdCompleteOrder_ = (Button) view.findViewById(R.id.cmdCheckout);
+		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
+		this.cmdCompleteOrder_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_CART);
+				if (blockCheckout_) {
+					KindredAlertDialog alertDialog = new KindredAlertDialog(activity_, "Please add a shipping address!", false);
+					alertDialog.show();
+				} else {
+					startCheckoutSequence();
+				}
 			}
 		});
 		
+		this.txtTotal_ = (TextView) view.findViewById(R.id.txtTotal);
+		this.txtTotal_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
+		
 		this.lvOrderLineItems_ = (ListView) view.findViewById(R.id.lvOrderItemList);
 		this.lvOrderLineItems_.setBackgroundColor(Color.TRANSPARENT);
-		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_);
-		this.lvOrderLineItems_.setAdapter(lineItemAdapter_);
-		
-		Bundle bun = getArguments();
-		if (bun.containsKey("checkout")) {
-			if (bun.getBoolean("checkout")) {
-				launchPurchaseSequence();
+		this.lineItemAdapter_ = new OrderSummaryAdapter(getActivity(), this.fragmentHelper_, this.lvOrderLineItems_, this.txtTotal_);
+
+		this.lineItemAdapter_.setAddressUpdateCallback(new AddressUpdateCallback() {
+			@Override
+			public void addressesUpdated() {
+				updateCheckoutButtons();
 			}
-		}
+		});
+		this.lvOrderLineItems_.setAdapter(lineItemAdapter_);
 		
 		if (this.devPrefHelper_.needUpdateOrderId()) {
 			fragmentHelper_.showProgressBarWithMessage("checking prices..");
@@ -133,12 +140,33 @@ public class OrderSummaryFragment extends KindredFragment {
 		return view;
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		updateCheckoutButtons();
+	}
+	
 	private void initOrderSummaryPage() {
 		this.returnedDownloads_ = 0;
 		launchCardRefreshCall();
 		launchOrderObjectCreateOrUpdate();
 	}
 	
+	private void updateCheckoutButtons() {
+		if (this.userPrefHelper_ != null) {
+			if (this.userPrefHelper_.getSelectedAddresses().size() == 0) {
+				this.fragmentHelper_.setNextButtonEnabled(false);
+				this.blockCheckout_ = true;
+				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.rounded_filled_grey);
+				this.txtTotal_.setBackgroundResource(R.drawable.rounded_filled_grey);
+			} else {
+				this.fragmentHelper_.setNextButtonEnabled(true);
+				this.blockCheckout_ = false;
+				this.cmdCompleteOrder_.setBackgroundResource(R.drawable.cmd_rounded_blue_filled_button);
+				this.txtTotal_.setBackgroundResource(R.drawable.rounded_filled_button);
+			}
+		} 
+	}
 	
 	private void launchCardRefreshCall() {
 		new Thread(new Runnable() {
@@ -157,10 +185,6 @@ public class OrderSummaryFragment extends KindredFragment {
 	
 	private void launchOrderObjectCreateOrUpdate() {
 		this.orderProcessingHelper_.initiateOrderCreationOrUpdateSequence();
-	}
-	
-	private void launchPurchaseSequence() {
-		this.orderProcessingHelper_.initiateCheckoutSequence();
 	}
 	
 	private void checkConfigDownloadsComplete() {
@@ -192,7 +216,6 @@ public class OrderSummaryFragment extends KindredFragment {
 		
 		@Override
 		public void orderFailedToProcess(String error) {
-			// TODO hide progress bar
 			fragmentHelper_.hideProgressBar();
 
 			KindredAlertDialog kad = new KindredAlertDialog(activity_, error, false);
@@ -201,7 +224,6 @@ public class OrderSummaryFragment extends KindredFragment {
 
 		@Override
 		public void orderProcessed() {
-			// TODO hide progress bar
 			fragmentHelper_.hideProgressBar();
 
 			continueCheck_ = true;
@@ -213,34 +235,36 @@ public class OrderSummaryFragment extends KindredFragment {
 		@Override
 		public boolean interruptNextButton() {
 			if (!continueCheck_) {
-				
-				fragmentHelper_.showProgressBarWithMessage("validating payment..");
-				orderProcessingHelper_.initiateCheckoutSequence();
-				
-				JSONObject cardStored = new JSONObject();
-				try {
-					cardStored.put("card_stored", currUser_.getCreditType());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				mixpanel_.track("order_summary_click_next", cardStored);
-
-				
-				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-					    Activity.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-				
+				startCheckoutSequence();
 				return true;
 			}
 			return false;
 		}
 	}
 	
+	private void startCheckoutSequence() {
+		fragmentHelper_.showProgressBarWithMessage("validating payment..");
+		orderProcessingHelper_.initiateCheckoutSequence();
+		
+		JSONObject cardStored = new JSONObject();
+		try {
+			cardStored.put("card_stored", currUser_.getCreditType());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		mixpanel_.track("order_summary_click_next", cardStored);
+
+		
+		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+			    Activity.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+	
 	public class OrderSummaryNetworkCallback implements NetworkCallback {
 		@Override
 		public void finished(final JSONObject serverResponse) {
 			if (serverResponse != null) {
-				Handler mainHandler = new Handler(getActivity().getMainLooper());
+				Handler mainHandler = new Handler(activity_.getMainLooper());
 				mainHandler.post(new Runnable() {
 					@Override
 					public void run() {

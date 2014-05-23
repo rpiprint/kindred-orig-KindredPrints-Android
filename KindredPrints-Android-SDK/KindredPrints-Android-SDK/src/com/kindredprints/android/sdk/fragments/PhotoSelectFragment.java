@@ -1,7 +1,5 @@
 package com.kindredprints.android.sdk.fragments;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,12 +9,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.GridView;
 
-import com.kindredprints.android.sdk.KPhoto;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.adapters.PhotoSelectAdapter;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
-import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -40,9 +36,10 @@ public class PhotoSelectFragment extends KindredFragment {
 		
 		this.cartManager_ = CartManager.getInstance(activity);
 		this.fragmentHelper_ = fragmentHelper;
-		fragmentHelper.setNextButtonDreamCatcher_(new SelectNextButtonHandler());
+		fragmentHelper.setNextButtonDreamCatcher_(null);
 		fragmentHelper.setBackButtonDreamCatcher_(new SelectBackButtonHandler());
 		fragmentHelper.configNavBar();
+		fragmentHelper.setNextButtonCartType(true);
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,20 +78,6 @@ public class PhotoSelectFragment extends KindredFragment {
 		@Override
 		public boolean interruptBackButton() {
 			cartManager_.cleanUpPendingImages();
-			return false;
-		}
-	}
-	
-	public class SelectNextButtonHandler implements NextButtonPressInterrupter {
-		@Override
-		public boolean interruptNextButton() {
-			ArrayList<KPhoto> selectedPhotos = photoAdapter_.getSelectedPhotos();
-			if (selectedPhotos.size() == 0) {
-				return true;
-			} else {
-				for (KPhoto photo : selectedPhotos)
-					cartManager_.processPartnerImage(photo);
-			}
 			return false;
 		}
 	}

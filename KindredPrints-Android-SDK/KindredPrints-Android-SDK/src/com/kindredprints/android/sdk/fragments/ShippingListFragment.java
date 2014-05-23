@@ -46,8 +46,6 @@ public class ShippingListFragment extends KindredFragment {
 	private ListView lvAddresses_;
 	private View viewSeparator_;
 	
-	private boolean editAddress_;
-	
 	private MixpanelAPI mixpanel_;
 	
 	private ShippingAddressAdapter addressAdapter_;
@@ -64,8 +62,6 @@ public class ShippingListFragment extends KindredFragment {
 		this.userPrefHelper_ = new UserPrefHelper(activity);
 		this.currUser_ = this.userPrefHelper_.getUserObject();
 		this.fragmentHelper_ = fragHelper;
-		this.fragmentHelper_.setBackButtonDreamCatcher_(null);
-		this.fragmentHelper_.setNextButtonDreamCatcher_(null);
 		this.fragmentHelper_.configNavBar();	
 	}
 	
@@ -79,7 +75,9 @@ public class ShippingListFragment extends KindredFragment {
 		this.cmdAdd_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_SHIPPING_EDIT);
+				Bundle bun = new Bundle();
+				bun.putBoolean("return_to_order", false);
+				fragmentHelper_.moveToFragmentWithBundle(KindredFragmentHelper.FRAG_SHIPPING_EDIT, bun);
 			}
 		});
 		
@@ -100,13 +98,6 @@ public class ShippingListFragment extends KindredFragment {
 		this.lvAddresses_.setBackgroundColor(Color.TRANSPARENT);
 		this.addressAdapter_ = new ShippingAddressAdapter(getActivity(), this.fragmentHelper_);
 		this.lvAddresses_.setAdapter(this.addressAdapter_);
-		
-		Bundle bun = getArguments();
-		if (bun.containsKey("editback")) {
-			editAddress_ = false;
-		} else {
-			editAddress_ = true;
-		}
 		
 		if (this.devPrefHelper_.needDownloadAddresses()) {
 			fragmentHelper_.showProgressBarWithMessage("loading past addresses..");
@@ -169,11 +160,6 @@ public class ShippingListFragment extends KindredFragment {
 									addressAdapter_.updateAddressList(addresses);
 									
 									devPrefHelper_.resetAddressDownloadStatus();
-									
-									
-									
-									if (addresses.size() == 0 && editAddress_)
-										fragmentHelper_.moveToFragment(KindredFragmentHelper.FRAG_SHIPPING_EDIT);
 								}
 							}
 							fragmentHelper_.hideProgressBar();

@@ -16,7 +16,7 @@
     <dimen name="nav_bar_height">40dp</dimen>
     <dimen name="nav_next_button_width">80dp</dimen>
     <dimen name="nav_padding_size">10dp</dimen>
-    <dimen name="nav_bar_text_size">18sp</dimen>
+    <dimen name="nav_bar_text_size">14sp</dimen>
     
     <dimen name="order_total_height">40dp</dimen>
     <dimen name="order_total_width">100dp</dimen>
@@ -25,6 +25,15 @@
     
     <dimen name="cart_page_blank_padding">16dp</dimen>
     <dimen name="cart_page_blank_text_size">20dp</dimen>
+    
+    <dimen name="preview_page_padding">10dp</dimen>
+    <dimen name="preview_page_control_height">50dp</dimen>
+    <dimen name="preview_page_control_width">150dp</dimen>
+    <dimen name="preview_page_vertical_padding">10dp</dimen>
+    <dimen name="preview_page_button_width">140dp</dimen>
+    <dimen name="preview_page_quantity_text_size">30sp</dimen>
+    <dimen name="preview_page_text_size">18sp</dimen>
+    <dimen name="preview_page_subtitle_text_size">16sp</dimen>
     
     <dimen name="cart_page_left_padding">0dp</dimen>
     <dimen name="cart_page_right_padding">0dp</dimen>
@@ -93,6 +102,7 @@
     <dimen name="order_summary_special_row_height">45dp</dimen>
     <dimen name="order_summary_blank_row_height">15dp</dimen>
     <dimen name="order_summary_padding">5dp</dimen>
+    <dimen name="order_summary_small_padding">1dp</dimen>
     
     <dimen name="card_edit_vertical_margin">20dp</dimen>
     <dimen name="card_edit_padding">5dp</dimen>

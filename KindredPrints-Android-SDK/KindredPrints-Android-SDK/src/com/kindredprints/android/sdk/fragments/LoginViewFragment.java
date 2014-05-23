@@ -1,17 +1,21 @@
 package com.kindredprints.android.sdk.fragments;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.EditTextView;
 import com.kindredprints.android.sdk.customviews.EditTextView.TextFieldModifiedListener;
+import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.data.UserObject;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.ImageUploadHelper;
+import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 import com.kindredprints.android.sdk.remote.KindredRemoteInterface;
@@ -38,12 +42,17 @@ public class LoginViewFragment extends KindredFragment {
 	
 	private InterfacePrefHelper interfacePrefHelper_;
 	private UserPrefHelper userPrefHelper_;
+	private DevPrefHelper devPrefHelper_;
 	private KindredRemoteInterface kindredRemoteInterface_;
 	private UserObject currUser_;
 		
 	private KindredFragmentHelper fragmentHelper_;
 	
 	private TextView txtTitle_;
+	private TextView txtReasonOne_;
+	private TextView txtReasonTwo_;
+	private TextView txtReasonThree_;
+	private TextView txtSubtitle_;
 	private TextView txtError_;
 	private EditTextView editTextEmail_;
 	private EditTextView editTextPassword_;
@@ -63,6 +72,7 @@ public class LoginViewFragment extends KindredFragment {
 
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
 		this.userPrefHelper_ = new UserPrefHelper(activity);
+		this.devPrefHelper_ = new DevPrefHelper(activity);
 		this.currUser_ = this.userPrefHelper_.getUserObject();
 		this.kindredRemoteInterface_ = new KindredRemoteInterface(activity);
 		this.kindredRemoteInterface_.setNetworkCallbackListener(new UserLoginRegCallback());
@@ -86,6 +96,10 @@ public class LoginViewFragment extends KindredFragment {
 		View view = (ViewGroup) inflater.inflate(R.layout.fragment_login_view, container, false);
 	
 		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);
+		this.txtReasonOne_ = (TextView) view.findViewById(R.id.txtReasonOne);
+		this.txtReasonTwo_ = (TextView) view.findViewById(R.id.txtReasonTwo);
+		this.txtReasonThree_ = (TextView) view.findViewById(R.id.txtReasonThree);
+		this.txtSubtitle_ = (TextView) view.findViewById(R.id.txtSubtitle);
 		this.txtError_ = (TextView) view.findViewById(R.id.txtError);
 		this.editTextEmail_ = (EditTextView) view.findViewById(R.id.editTextEmail);
 		this.editTextPassword_ = (EditTextView) view.findViewById(R.id.editTextPassword);
@@ -118,6 +132,16 @@ public class LoginViewFragment extends KindredFragment {
 		this.editTextPassword_.setTextFieldModifiedListener(new TextFieldsClearForLogin());
 		
 		this.txtTitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtSubtitle_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonOne_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonTwo_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.txtReasonThree_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		
+		this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_more));
+		this.txtReasonOne_.setText(getActivity().getResources().getString(R.string.login_title_order_conf));
+		this.txtReasonTwo_.setText(getActivity().getResources().getString(R.string.login_title_shipment_conf));
+		this.txtReasonThree_.setText(getActivity().getResources().getString(R.string.login_title_customer_support));
+		
 		this.txtError_.setTextColor(getActivity().getResources().getColor(R.color.color_red));
 		
 		view.setBackgroundColor(this.interfacePrefHelper_.getBackgroundColor());
@@ -139,24 +163,40 @@ public class LoginViewFragment extends KindredFragment {
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN);
 				this.editTextPassword_.setVisibility(View.INVISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title));
+				this.txtSubtitle_.setVisibility(View.VISIBLE);
+				this.txtReasonOne_.setVisibility(View.VISIBLE);
+				this.txtReasonTwo_.setVisibility(View.VISIBLE);
+				this.txtReasonThree_.setVisibility(View.VISIBLE);
 				this.txtError_.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_NEED_PASSWORD:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN+String.valueOf(STATE_NEED_PASSWORD));
 				this.editTextPassword_.setVisibility(View.VISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title_password));
+				this.txtReasonOne_.setVisibility(View.GONE);
+				this.txtReasonTwo_.setVisibility(View.GONE);
+				this.txtReasonThree_.setVisibility(View.GONE);
 				this.txtError_.setVisibility(View.INVISIBLE);
 				break;
 			case STATE_WRONG_PASSWORD:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN+String.valueOf(STATE_WRONG_PASSWORD));
 				this.editTextPassword_.setVisibility(View.VISIBLE);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title_password));
+				this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_password_more));
+				this.txtReasonOne_.setVisibility(View.GONE);
+				this.txtReasonTwo_.setVisibility(View.GONE);
+				this.txtReasonThree_.setVisibility(View.GONE);
 				this.txtError_.setVisibility(View.VISIBLE);
 				this.txtError_.setText(errorMsg);
 				break;
 			case STATE_OTHER_ERROR:
 				this.fragmentHelper_.configNavBarForHash(KindredFragmentHelper.FRAG_LOGIN);
 				this.txtTitle_.setText(getActivity().getResources().getString(R.string.login_title));
+				this.txtSubtitle_.setText(getActivity().getResources().getString(R.string.login_title_password_more));
+				this.txtSubtitle_.setVisibility(View.VISIBLE);
+				this.txtReasonOne_.setVisibility(View.VISIBLE);
+				this.txtReasonTwo_.setVisibility(View.VISIBLE);
+				this.txtReasonThree_.setVisibility(View.VISIBLE);
 				this.txtError_.setVisibility(View.VISIBLE);
 				this.txtError_.setText(errorMsg);
 				break;
@@ -315,8 +355,19 @@ public class LoginViewFragment extends KindredFragment {
 									
 									ImageUploadHelper.getInstance(getActivity()).validateAllOrdersInit();
 									
-									continueCheck_ = true;
-									fragmentHelper_.moveNextFragment();
+									fragmentHelper_.showProgressBarWithMessage("importing user data..");
+									new Thread(new Runnable() {
+										@Override
+										public void run() {
+											JSONObject postObj = new JSONObject();
+											try {
+												postObj.put("auth_key", currUser_.getAuthKey());
+												kindredRemoteInterface_.downloadAllAddresses(postObj, currUser_.getId());
+											} catch (JSONException e) {
+												Log.i(getClass().getSimpleName(), "JSON exception: " + e.getMessage());
+											}
+										}
+									}).start();
 								} else if (status == 421) {
 									setInterfaceState(STATE_NEED_PASSWORD, null);
 								} else {
@@ -327,6 +378,39 @@ public class LoginViewFragment extends KindredFragment {
 								if (status == 200) {
 									setInterfaceState(STATE_OTHER_ERROR, getActivity().getResources().getString(R.string.err_login_reset_done));
 									editTextPassword_.clearText();
+								}
+							} else if (requestTag.equals(KindredRemoteInterface.REQ_TAG_GET_ADDRESSES)) {
+								if (status == 200) {
+									ArrayList<Address> addresses = new ArrayList<Address>();
+									
+									JSONArray addressList = serverResponse.getJSONArray("addresses");
+									JSONObject obj;
+									for (int i = 0; i < addressList.length(); i++) {
+										obj = (JSONObject)addressList.get(i);
+										
+										Address addy = new Address();
+										addy.setAddressId(obj.getString("address_id")); 
+										addy.setName(obj.getString("name"));
+										addy.setStreet(obj.getString("street1"));
+										addy.setCity(obj.getString("city"));
+										addy.setState(obj.getString("state"));
+										addy.setZip(obj.getString("zip"));
+										addy.setCountry(obj.getString("country"));
+										addy.setEmail(obj.getString("email"));
+										addy.setPhone(obj.getString("number"));
+
+										if (addy.getCountry().equals("waiting"))
+											addy.setCountry("United States");
+																				
+										addresses.add(addy);
+									}
+									
+									userPrefHelper_.setAllShippingAddresses(addresses);
+									
+									devPrefHelper_.resetAddressDownloadStatus();
+									
+									continueCheck_ = true;
+									fragmentHelper_.moveNextFragment();
 								}
 							}
 						} catch (JSONException e) {

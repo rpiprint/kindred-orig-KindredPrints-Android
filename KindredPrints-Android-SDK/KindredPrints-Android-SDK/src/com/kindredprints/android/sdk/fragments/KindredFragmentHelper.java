@@ -5,8 +5,10 @@ import java.util.LinkedList;
 import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.NavBarView;
 import com.kindredprints.android.sdk.customviews.NetworkProgressBar;
+import com.kindredprints.android.sdk.customviews.NetworkProgressBar.NetworkProgressBarCallback;
 import com.kindredprints.android.sdk.data.CartManager;
 import com.kindredprints.android.sdk.data.UserObject;
+import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.UserPrefHelper;
 
 import android.app.Activity;
@@ -17,7 +19,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 public class KindredFragmentHelper {
+	public static final String FRAG_INTRO = "kp_fragment_intro";
 	public static final String FRAG_SELECT = "kp_fragment_select";
+	public static final String FRAG_PREVIEW = "kp_fragment_preview";
 	public static final String FRAG_CART = "kp_fragment_cart";
 	public static final String FRAG_LOGIN = "kp_fragment_login";
 	public static final String FRAG_SHIPPING = "kp_fragment_shipping";
@@ -27,6 +31,7 @@ public class KindredFragmentHelper {
 	public static final String FRAG_ORDER_FINISHED = "kp_order_finished";
 	
 	
+	private DevPrefHelper devPrefHelper_;
 	private UserPrefHelper userPrefHelper_;
 	private String currFragHash_;
 	private FragmentManager fManager_;
@@ -67,7 +72,14 @@ public class KindredFragmentHelper {
 	public void updateActivity(Activity activity) {
 		this.activity_ = activity;
 		this.userPrefHelper_ = new UserPrefHelper(activity);
+		this.devPrefHelper_ = new DevPrefHelper(activity);
 		this.progBar_ = new NetworkProgressBar(activity);
+		this.progBar_.setNetworkProgressCallback(new NetworkProgressBarCallback() {
+			@Override
+			public void progressBarCancelled() {
+				triggerBackButton();
+			}
+		});
 	}
 	
 	public void setNextButtonDreamCatcher_(NextButtonPressInterrupter interrupter_) {
@@ -82,8 +94,29 @@ public class KindredFragmentHelper {
 		this.navBarView_.setNextButtonEnabled(enabled);
 	}
 	
+	public void setNextButtonVisible(boolean visible) {
+		this.navBarView_.setNextButtonVisible(visible);
+	}
+	
+	public void setNextButtonCartType(boolean cart) {
+		if (cart) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
+		} else {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
+		}
+	}
+	
 	public void triggerNextButton() {
 		this.navBarView_.triggerNextButton();
+	}
+	
+	public void triggerBackButton() {
+		this.navBarView_.triggerBackButton();
+	}
+	
+	public void goBackAndExit() {
+		this.backStack_.clear();
+		triggerBackButton();
 	}
 	
 	public void showProgressBarWithMessage(String message) {
@@ -105,16 +138,23 @@ public class KindredFragmentHelper {
 	public void initRootFragment() {
 		this.backStack_.clear();
 		KindredFragment f = null;
-		if (this.cartManager_.needFilterPendingPhotos()) {
-			this.currFragHash_ = FRAG_SELECT;
-			f = fragForHash(FRAG_SELECT);
-			f.initFragment(this, this.activity_);
+		if (this.devPrefHelper_.getSeenIntroStatus()) {
+			int numPending = this.cartManager_.getPendingImages().size();
+			if (numPending > 0) {
+				if (numPending > 1) {
+					this.currFragHash_ = FRAG_SELECT;
+				} else {
+					Log.i("KindredSDK", "init root fragment to preview screen");
+					this.currFragHash_ = FRAG_PREVIEW;
+				}
+			} else {
+				this.currFragHash_ = FRAG_CART;
+			}
 		} else {
-			this.currFragHash_ = FRAG_CART;
-			f = fragForHash(FRAG_CART);
-			f.initFragment(this, this.activity_);
+			this.currFragHash_ = FRAG_INTRO;
 		}
-		
+		f = fragForHash(this.currFragHash_);
+		f.initFragment(this, this.activity_);
 		moveRightFragment(f);
 	}
 	
@@ -129,10 +169,10 @@ public class KindredFragmentHelper {
 	public boolean moveToFragmentWithBundle(String hash, Bundle bun) {
 		KindredFragment f = fragForHash(hash);
 		if (f != null) {
-			f.setArguments(bun);
-			f.initFragment(this, this.activity_);
 			this.backStack_.add(this.currFragHash_);
 			this.currFragHash_ = hash;
+			f.setArguments(bun);
+			f.initFragment(this, this.activity_);
 			moveRightFragment(f);
 			return true;
 		}
@@ -167,28 +207,27 @@ public class KindredFragmentHelper {
 			if (this.userPrefHelper_.getUserObject().getId().equals(UserObject.USER_VALUE_NONE)) {
 				nextFrag = FRAG_LOGIN;
 			} else {
-				nextFrag = FRAG_SHIPPING;
-				if (userPrefHelper_.getAllAddresses().size() == 0) {
-					nextFrag = FRAG_SHIPPING_EDIT;
-					this.currFragHash_ = FRAG_SHIPPING;
-				}
+				nextFrag = FRAG_ORDER_SUMMARY;
 			}
 		} else if (this.currFragHash_.equals(FRAG_LOGIN)) {
-			nextFrag = FRAG_SHIPPING;
-			if (userPrefHelper_.getAllAddresses().size() == 0) {
-				nextFrag = FRAG_SHIPPING_EDIT;
-				this.currFragHash_ = FRAG_SHIPPING;
-			}
+			nextFrag = FRAG_ORDER_SUMMARY;
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING_EDIT)) {
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SHIPPING)) {
-			nextFrag = FRAG_ORDER_SUMMARY;
+			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_ORDER_SUMMARY)) {
 			nextFrag = FRAG_ORDER_FINISHED;
 		} else if (this.currFragHash_.equals(FRAG_ORDER_CARD_EDIT)) { 
 			return moveLastFragmentWithBundle(bun);
 		} else if (this.currFragHash_.equals(FRAG_SELECT)) {
-			nextFrag = FRAG_CART;
+			this.backStack_.clear();
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
+		} else if (this.currFragHash_.equals(FRAG_PREVIEW)) {
+			this.backStack_.clear();
+			return replaceCurrentFragmentWithFragmentAndBundle(FRAG_CART, bun);
+		} else if (this.currFragHash_.equals(FRAG_INTRO)) {
+			initRootFragment();
+			return true;
 		}
 		if (nextFrag != null) {
 			KindredFragment f = fragForHash(nextFrag);
@@ -217,7 +256,6 @@ public class KindredFragmentHelper {
 		
 		if (!this.backStack_.isEmpty()) {
 			this.currFragHash_ = this.backStack_.removeLast();
-			Log.i("KindredNav", "moving back to fragment hash " + this.currFragHash_);
 			if (this.currFragHash_.equals(FRAG_LOGIN) && !this.userPrefHelper_.getUserObject().getId().equals(UserObject.USER_VALUE_NONE)) {
 				this.currFragHash_ = this.backStack_.remove();
 			}
@@ -227,14 +265,16 @@ public class KindredFragmentHelper {
 			moveLeftFragment(f);
 			return true;
 		} else {
-			KindredFragment f = fragForHash(this.currFragHash_);
-			FragmentTransaction ft = this.fManager_.beginTransaction();
-			if (f instanceof CartViewPagerFragment) {
-				CartViewPagerFragment frag = (CartViewPagerFragment)f;
-				frag.cleanUp();
+			try {
+				KindredFragment f = fragForHash(this.currFragHash_);
+				FragmentTransaction ft = this.fManager_.beginTransaction();
+				ft.remove(f);
+				ft.commit();
+			} catch (IllegalStateException ex) {
+				Log.w("KindredSDK", ex.getLocalizedMessage());
 			}
-			ft.remove(f);
-			ft.commit();
+			this.cartManager_.cleanUpPendingImages();
+			
 		}
 		return false;
 	}
@@ -245,18 +285,26 @@ public class KindredFragmentHelper {
 	
 	private void moveRightFragment(KindredFragment f) {
 		setNextButtonEnabled(true);
-		FragmentTransaction ft = this.fManager_.beginTransaction();
-		ft.setCustomAnimations(R.anim.anim_slide_in, R.anim.anim_slide_out);
-		ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
-		ft.commit();
+		try {
+			FragmentTransaction ft = this.fManager_.beginTransaction();
+			ft.setCustomAnimations(R.anim.anim_slide_in, R.anim.anim_slide_out);
+			ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
+			ft.commit();
+		} catch (IllegalStateException ex) {
+			Log.w("KindredSDK", ex.getLocalizedMessage());
+		}
 	}
 	
 	private void moveLeftFragment(KindredFragment f) {
 		setNextButtonEnabled(true);
-		FragmentTransaction ft = this.fManager_.beginTransaction();
-		ft.setCustomAnimations(R.anim.anim_slide_in_back, R.anim.anim_slide_out_back);
-		ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
-		ft.commit();
+		try {
+			FragmentTransaction ft = this.fManager_.beginTransaction();
+			ft.setCustomAnimations(R.anim.anim_slide_in_back, R.anim.anim_slide_out_back);
+			ft.replace(R.id.fragmentHolder, f, this.currFragHash_);
+			ft.commit();
+		} catch (IllegalStateException ex) {
+			Log.w("KindredSDK", ex.getLocalizedMessage());
+		}
 	}
 	
 	private KindredFragment fragForHash(String hash) {
@@ -264,8 +312,7 @@ public class KindredFragmentHelper {
 		if (hash.equals(FRAG_CART)) {
 			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_CART);
 			if (f == null) {
-				Log.i("KindredSDK", "initting a new cart view pager fragment!!");
-				return new CartViewPagerFragment();
+				return new CartItemListFragment();
 			}
 		} else if (hash.equals(FRAG_LOGIN)) {
 			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_LOGIN);
@@ -302,38 +349,46 @@ public class KindredFragmentHelper {
 			if (f == null) {
 				return new PhotoSelectFragment();
 			}
+		} else if (hash.equals(FRAG_PREVIEW)) {
+			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_PREVIEW);
+			if (f == null) {
+				return new CartPreviewFragment();
+			}
+		} else if (hash.equals(FRAG_INTRO)) {
+			f = (KindredFragment) this.fManager_.findFragmentByTag(FRAG_INTRO);
+			if (f == null) {
+				return new IntroPageFlipperFragment();
+			}
 		}
 		return f;
 	}
 	
 	public void configNavBarForHash(String hash) {
+		Log.i("KindredSDK", "config nav bar for hash " + hash);
 		if (hash.equals(FRAG_CART)) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_cart));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_cart));
 		} else if (hash.equals(FRAG_LOGIN)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
 		} else if (hash.equals(FRAG_LOGIN+String.valueOf(LoginViewFragment.STATE_NEED_PASSWORD))) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
 		} else if (hash.equals(FRAG_LOGIN+String.valueOf(LoginViewFragment.STATE_WRONG_PASSWORD))) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_login_reset));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_login));
-		} else if (hash.equals(FRAG_SHIPPING)) {
+		} else if (hash.equals(FRAG_SHIPPING) || hash.equals(FRAG_ORDER_CARD_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_shipping));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_shipping));
 		} else if (hash.equals(FRAG_SHIPPING_EDIT)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_edit_shipping));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_edit_shipping));
-		} else if (hash.equals(FRAG_ORDER_SUMMARY) || hash.equals(FRAG_ORDER_CARD_EDIT)) {
+		} else if (hash.equals(FRAG_ORDER_SUMMARY)) {
 			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_purchase));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_purchase));
 		} else if (hash.equals(FRAG_ORDER_FINISHED)) {
 			this.navBarView_.setNextTitle("");
-			this.navBarView_.setNavTitle("");
 		} else if (hash.equals(FRAG_SELECT)) {
-			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_select));
-			this.navBarView_.setNavTitle(this.resources_.getString(R.string.nav_title_select));
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
+		} else if (hash.equals(FRAG_PREVIEW)) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_CART_BUTTON, this.cartManager_.countOfSelectedOrders());
+		} else if (hash.equals(FRAG_INTRO)) {
+			this.navBarView_.setNextButtonType(NavBarView.TYPE_NEXT_BUTTON, this.cartManager_.countOfSelectedOrders());
+			this.navBarView_.setNextTitle(this.resources_.getString(R.string.nav_next_title_intro));
 		}
 	}
 	

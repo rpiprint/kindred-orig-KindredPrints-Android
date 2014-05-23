@@ -46,7 +46,7 @@
 	        android:layout_width="@dimen/order_complete_logo_width"
 	        android:layout_height="wrap_content"
 	       	android:layout_toRightOf="@+id/txtPoweredBy"
-	        android:src="@drawable/ico_kindred_white" />
+	        android:src="@drawable/ico_kindred_blue" />
 	</RelativeLayout>
 	
 	
@@ -88,33 +88,7 @@
         android:textSize="@dimen/order_complete_text_size" 
         android:text="@string/order_complete_support_email"
     />
-    <RelativeLayout 
-        android:id="@+id/textContainer"
-        android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_centerHorizontal="true"
-	    android:layout_below="@+id/txtSupport"
-	    android:layout_marginTop="@dimen/order_complete_top_vertical_margin" >
-        <TextView
-	        android:id="@+id/txtReturnTo"
-	       	android:layout_width="wrap_content"
-	       	android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-	        android:textSize="@dimen/order_complete_text_size" 
-	        android:text="@string/order_done_before"
-	    />
-	    <TextView
-	        android:id="@+id/txtPartnerApp"
-	       	android:layout_width="wrap_content"
-	       	android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/txtReturnTo"
-			android:layout_toRightOf="@+id/txtReturnTo"
-			android:layout_marginLeft="2dp"
-			android:textStyle="bold"
-	        android:textSize="@dimen/order_complete_text_size" 
-	    />
-    </RelativeLayout>
-    
+
     
      <Button 
         android:id="@+id/cmdDone"
@@ -122,7 +96,7 @@
         android:layout_height="@dimen/order_complete_done_height"
 		android:layout_marginTop="@dimen/order_complete_vertical_margin"
 		android:layout_centerHorizontal="true"
-		android:layout_below="@+id/textContainer"
+		android:layout_below="@+id/txtSupport"
        	android:textSize="@dimen/order_complete_text_size"
         android:text="@string/order_done"
         android:background="@drawable/cmd_rounded_filled_button"

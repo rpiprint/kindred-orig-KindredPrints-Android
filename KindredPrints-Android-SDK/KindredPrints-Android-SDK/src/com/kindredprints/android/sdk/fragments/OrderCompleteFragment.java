@@ -69,13 +69,6 @@ public class OrderCompleteFragment extends KindredFragment {
 		TextView txtSupport = (TextView) view.findViewById(R.id.txtSupport);
 		txtSupport.setTextColor(this.interfacePrefHelper_.getTextColor());
 		
-		TextView txtDoneText = (TextView) view.findViewById(R.id.txtReturnTo);
-		txtDoneText.setTextColor(this.interfacePrefHelper_.getTextColor());
-		
-		TextView txtPartnerName = (TextView) view.findViewById(R.id.txtPartnerApp);
-		txtPartnerName.setTextColor(this.interfacePrefHelper_.getTextColor());
-		txtPartnerName.setText(this.devPrefHelper_.getPartnerName());
-		
 		view.invalidate();
 		
 		final ImageView imgPartnerLogo = (ImageView) view.findViewById(R.id.imgLogo);
@@ -103,7 +96,7 @@ public class OrderCompleteFragment extends KindredFragment {
 		}).start();
 		
 		Button cmdDone = (Button) view.findViewById(R.id.cmdDone);
-		cmdDone.setTextColor(this.interfacePrefHelper_.getTextColor());
+		cmdDone.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		cmdDone.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {

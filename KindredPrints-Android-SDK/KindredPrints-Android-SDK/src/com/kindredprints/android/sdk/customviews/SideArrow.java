@@ -18,6 +18,7 @@ public class SideArrow extends Button {
 	
 	private InterfacePrefHelper interfacePrefHelper_;
 
+	private Paint fillPaint_;
 	private Paint strokePaint_;
 
 	private int direction_;
@@ -31,6 +32,10 @@ public class SideArrow extends Button {
 		this.strokePaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
 		this.strokePaint_.setColor(this.interfacePrefHelper_.getTextColor());
 		this.strokePaint_.setStyle(Paint.Style.STROKE);
+		
+		this.fillPaint_ = new Paint(Paint.ANTI_ALIAS_FLAG);
+		this.fillPaint_.setColor(this.interfacePrefHelper_.getTextColor());
+		this.fillPaint_.setStyle(Paint.Style.FILL);
 	}
 	
 	public void setDirection(int direction) {
@@ -44,14 +49,18 @@ public class SideArrow extends Button {
 		float py = this.getHeight()/2.0f;
         float px = this.getWidth()/2.0f;
         
-        float stroke = LINE_THICKNESS*this.getWidth();
+        float stroke = LINE_THICKNESS*this.getHeight();
 		this.strokePaint_.setStrokeWidth(stroke);
         
-        float side = this.getWidth()*DIAMETER_PERCENT;
+        float side = this.getHeight()*DIAMETER_PERCENT;
         float halfSide = ((float)Math.sqrt(2))*side/2.0f;
         float strokePadding = ((float)Math.sqrt(2))*stroke/4.0f;
         
         canvas.drawLine(px+this.direction_*halfSide/2, py-halfSide, px-this.direction_*halfSide/2+strokePadding, py+strokePadding, this.strokePaint_);
         canvas.drawLine(px-this.direction_*halfSide/2, py, px+this.direction_*halfSide/2, py+halfSide, this.strokePaint_);
+        
+        if (isPressed()) {
+        	canvas.drawCircle(px, py, px-2, this.fillPaint_);
+        }
 	}
 }

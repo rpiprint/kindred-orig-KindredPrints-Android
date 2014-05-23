@@ -34,11 +34,15 @@ public class DevPrefHelper extends PrefHelper {
 	private static final String KEY_APP_KEY = "kp_app_key";
 	private static final String KEY_DOWNLOAD_IMAGE_SIZE_DATE = "kp_image_size_download";
 	
+	private static final String KEY_FIRST_OPEN = "kp_first_open";
+	
 	private static final String KEY_ORDER_TOTAL = "kp_order_total";
 	
 	private static final String KEY_PARTNER_NAME = "kp_partner_name";
 	private static final String KEY_PARTNER_LOGO_URL = "kp_partner_url";
 	private static final String KEY_PARTNER_DOWNLOAD_DATE = "kp_partner_download_date";
+	
+	private static final String KEY_INTRO_URLS = "kp_intro_urls";
 	
 	private static final String KEY_COUNTRIES = "kp_country_list";
 	private static final String KEY_COUNTRY_DOWNLOAD_DATE = "kp_country_download_date";
@@ -84,6 +88,14 @@ public class DevPrefHelper extends PrefHelper {
 	    } else {
 	        return STRIPE_LIVE_KEY;
 	    }
+	}
+	
+	public boolean getSeenIntroStatus() {
+		return this.prefHelper_.getBool(KEY_FIRST_OPEN);
+	}
+	
+	public void setSeenIntroStatus() {
+		this.prefHelper_.setBool(KEY_FIRST_OPEN, true);
 	}
 	
 	public boolean getIsStripeLive() {
@@ -185,6 +197,29 @@ public class DevPrefHelper extends PrefHelper {
   		return checkPastDue(this.prefHelper_.getLong(KEY_COUNTRY_DOWNLOAD_DATE), DOWNLOAD_INTERVAL);
 	}
 
+	public ArrayList<String> getIntroUrls() {
+		ArrayList<String> currUrls;
+		String serializedArray = this.prefHelper_.getString(KEY_INTRO_URLS);
+		
+		if(serializedArray.equals(NO_STRING_VALUE)) {
+			currUrls = new ArrayList<String>();
+		} else {
+			synchronized (this.prefHelper_) {
+				Type urlListType = new TypeToken<ArrayList<String>>() {}.getType();
+				currUrls = new Gson().fromJson(serializedArray, urlListType);
+			}
+		}
+		
+		return currUrls;
+	}
+	public void setIntroUrls(ArrayList<String> urls) {
+		synchronized (this.prefHelper_) {
+			Type urlListType = new TypeToken<ArrayList<String>>() {}.getType();
+			String serializedArray = new Gson().toJson(urls, urlListType);
+			this.prefHelper_.setString(KEY_INTRO_URLS, serializedArray);
+		}
+	}
+	
 	public ArrayList<String> getCountries() {
 		ArrayList<String> currCountries;
 		String serializedArray = this.prefHelper_.getString(KEY_COUNTRIES);

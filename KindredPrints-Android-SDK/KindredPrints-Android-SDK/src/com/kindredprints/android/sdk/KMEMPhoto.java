@@ -7,9 +7,9 @@ import android.os.Parcelable;
 public class KMEMPhoto extends KPhoto {
 	private Bitmap bm;
 	
-	public KMEMPhoto (String id, Bitmap bm) {
+	public KMEMPhoto (Bitmap bm) {
 		this.type = TYPE_LOCAL_MEM;
-		this.id = id;
+		this.id = String.valueOf(bm.hashCode());
 		this.bm = bm;
 	}
 

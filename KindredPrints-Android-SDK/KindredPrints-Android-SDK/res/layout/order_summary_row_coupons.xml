@@ -14,6 +14,7 @@
        	android:layout_toLeftOf="@+id/cmdEditApplyCoupon"
         android:textSize="@dimen/order_summary_text_size" 
         android:hint="@string/order_summary_no_coupon"
+        android:inputType="text"
         android:imeOptions="actionDone"
     />
     <Button 
@@ -26,13 +27,5 @@
         android:text="@string/order_summary_edit"
         android:background="@drawable/cmd_rounded_button"
         />
-	<View 
-        android:id="@+id/dividerView"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_toLeftOf="@+id/cmdEditApplyCoupon"
-        android:layout_marginRight="@dimen/order_summary_padding"
-        android:layout_alignParentBottom="true"
-        android:background="@color/color_white"/>
 	
 </RelativeLayout>

@@ -8,6 +8,13 @@
     <string name="dialog_warning_title">WARNING</string>
     <string name="dialog_warning_description">An image has too low of resolution and may look pixelated or blurry in print form.</string>
     
+    <!-- INTRO PAGE -->
+    <string name="intro_page_one">Delivered straight to your door.</string>
+    <string name="intro_page_two">Bursting with color.</string>
+    <string name="intro_page_three">Premium photo prints.</string>
+    <string name="intro_page_four">Thick, quality paper.</string>
+    <string name="intro_page_start">START</string>
+    
     <!-- ORDER SUMMARY PAGE -->
     <string name="dialog_change">Change It</string>
     <string name="dialog_continue">Continue</string>
@@ -15,29 +22,24 @@
     <string name="dialog_cancel">Cancel</string>
     
     <!-- NAV BAR TITLES -->
-    <string name="nav_title_select">CHOOSE PICTURES</string>
+    <string name="nav_next_title_intro">CONTINUE</string>
     <string name="nav_next_title_select">NEXT</string>
-    
-    <string name="nav_title_cart">CHOOSE QUANTITIES</string>
-    <string name="nav_next_title_cart">NEXT</string>
-    
-    <string name="nav_title_login">CONTACT INFO</string>
+    <string name="nav_next_title_cart">CHECKOUT</string>
     <string name="nav_next_title_login">NEXT</string>
     <string name="nav_next_title_login_reset">RESET</string>
-    
-    <string name="nav_title_shipping">CHOOSE DESTINATION</string>
-    <string name="nav_next_title_shipping">NEXT</string>
-    
-    <string name="nav_title_edit_shipping">NEW ADDRESS</string>
+    <string name="nav_next_title_shipping">SAVE</string>
     <string name="nav_next_title_edit_shipping">DONE</string>
-    
-    <string name="nav_title_purchase">ORDER SUMMARY</string>
-    <string name="nav_next_title_purchase">DONE</string>
+    <string name="nav_next_title_purchase">CHECKOUT</string>
+    <string name="nav_next_title_preview">CHECKOUT</string>
     
     <!-- CART PAGE -->
-    
     <string name="cart_empty">Your print cart is empty..\nPlease go back to add an image</string>
     <string name="cart_subtotal">Subtotal</string>
+    <string name="cart_add_to_cart">Add to cart</string>
+    <string name="cart_update_in_cart">Update in cart</string>
+    <string name="cart_remove_from_cart">Remove</string>
+    <string name="cart_add_more_image">Add more images from</string>
+    <string name="cart_checkout">CHECKOUT</string>
     
     <!-- SHIPPING LIST PAGE -->
     <string name="shipping_title">Choose where to ship your prints:</string>
@@ -53,16 +55,19 @@
     <string name="shipping_hint_zip">Zip</string>
     
     <!-- ORDER SUMMARY PAGE -->
-    <string name="order_summary_title">Order info:</string>
+    <string name="order_summary_title">Order summary</string>
     <string name="order_summary_edit">EDIT</string>
     <string name="order_summary_no_coupon">Enter coupon code here</string>
     <string name="order_summary_apply">APPLY</string>
     <string name="order_summary_subtotal">Subtotal</string>
+    <string name="order_summary_shipping_header">Shipping</string>
     <string name="order_summary_shipping">Shipping to</string>
+    <string name="order_summary_coupon_header">Coupons</string>
     <string name="order_summary_credits">Credits applied</string>
     <string name="order_summary_total">Total</string>
     <string name="order_summary_blank_total">$0</string>
-    <string name="order_summary_payment">Payment:</string>
+    <string name="order_summary_payment">Payment</string>
+    <string name="order_summary_card">Card</string>
     <string name="order_summary_complete">COMPLETE ORDER</string>
     <string name="order_summary_type_lineitem">lineitem</string>
     <string name="order_summary_type_shipping">shipping</string>
@@ -90,8 +95,13 @@
     <string name="order_done">DONE</string>
     
     <!-- LOGIN PAGE -->
-    <string name="login_title">Kindred Prints needs your email address for an order confirmation and shipping notification.</string>
-    <string name="login_title_password">Looks like you already have a Kindred Prints account! Please enter your password to access your saved addresses.</string>
+    <string name="login_title">We need your email address for:</string>
+    <string name="login_title_order_conf">- Order confirmations</string>
+    <string name="login_title_shipment_conf">- Shipment notifications</string>
+    <string name="login_title_customer_support">- Customer support</string>
+    <string name="login_title_more">Please enter it below, so we can tell you about your order!</string>
+    <string name="login_title_password">Looks like you already have a Kindred Prints account!</string>
+    <string name="login_title_password_more">Please enter your password to access your saved addresses.</string>
     <string name="login_hint_email">Your email address</string>
     <string name="login_hint_password">Your password</string>
      

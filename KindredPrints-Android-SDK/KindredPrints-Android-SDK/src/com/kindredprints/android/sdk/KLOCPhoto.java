@@ -11,12 +11,6 @@ public class KLOCPhoto extends KPhoto {
 		this.type = TYPE_LOCAL_FILE;
 		this.filename = filename;
 	}
-	
-	public KLOCPhoto(String id, String filename) {
-		this.id = id;
-		this.type = TYPE_LOCAL_FILE;
-		this.filename = filename;
-	}
 
 	private KLOCPhoto(Parcel in) {
 		this.id = in.readString();

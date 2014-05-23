@@ -120,7 +120,7 @@ public class CardEditFragment extends KindredFragment {
 		this.txtError_.setVisibility(View.INVISIBLE);
 		
 		this.cmdCompleteOrder_ = (Button) view.findViewById(R.id.cmdCompleteOrder);
-		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getTextColor());
+		this.cmdCompleteOrder_.setTextColor(this.interfacePrefHelper_.getHighlightTextColor());
 		this.cmdCompleteOrder_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {

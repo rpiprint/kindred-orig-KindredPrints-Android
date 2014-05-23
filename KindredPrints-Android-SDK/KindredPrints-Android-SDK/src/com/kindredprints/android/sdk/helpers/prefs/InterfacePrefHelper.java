@@ -7,14 +7,10 @@ import android.graphics.Color;
 
 public class InterfacePrefHelper extends PrefHelper {
 	private static final String KEY_TEXT_COLOR = "kp_text_color";
+	private static final String KEY_HIGHLIGHT_TEXT_COLOR = "kp_highlight_text_color";
 	private static final String KEY_HIGHLIGHT_COLOR = "kp_highlight_color";
 	private static final String KEY_NAV_COLOR = "kp_nav_color";
 	private static final String KEY_BACKGROUND_COLOR = "kp_background_color";
-	private static final String KEY_ORDER_HIGHLIGHT = "kp_order_highlight";
-	private static final String KEY_ORDER_LOWLIGHT = "kp_order_lowlight";
-	private static final String KEY_ORDER_MEDLIGHT = "kp_order_medlight";
-	private static final String KEY_ORDER_TOTAL_HIGHLIGHT = "kp_order_total_highlight";
-	private static final String KEY_ORDER_TOTAL_MEDLIGHT = "kp_order_total_medlight";
 	
 	private static final float PREVIEW_PERC_WIDTH = 0.80f;
 	private static final float PREVIEW_PERC_HEIGHT = 0.4f;
@@ -87,10 +83,21 @@ public class InterfacePrefHelper extends PrefHelper {
 		this.prefHelper_.setBool(KEY_BORDER_ENABLED, false);
 	}
 	
+	public int getHighlightTextColor() {
+		String storedHexColor = this.prefHelper_.getString(KEY_HIGHLIGHT_TEXT_COLOR);
+		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
+			storedHexColor = "#FFFFFF";
+		}
+		return Color.parseColor(storedHexColor);
+	}
+	public void setHightlightTextColor(int border) {
+		String borderC = String.format("#%06X", (0xFFFFFF & border));
+		this.prefHelper_.setString(KEY_HIGHLIGHT_TEXT_COLOR, borderC);
+	}
 	public int getTextColor() {
 		String storedHexColor = this.prefHelper_.getString(KEY_TEXT_COLOR);
 		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#FFFFFF";
+			storedHexColor = "#666666";
 		}
 		return Color.parseColor(storedHexColor);
 	}
@@ -103,7 +110,7 @@ public class InterfacePrefHelper extends PrefHelper {
 	public int getNavColor() {
 		String storedHexColor = this.prefHelper_.getString(KEY_NAV_COLOR);
 		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#7c7e85";
+			storedHexColor = "#DDDDDD";
 		}
 		return Color.parseColor(storedHexColor);
 	}
@@ -116,7 +123,7 @@ public class InterfacePrefHelper extends PrefHelper {
 	public int getBackgroundColor() {
 		String storedHexColor = this.prefHelper_.getString(KEY_BACKGROUND_COLOR);
 		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#666666";
+			storedHexColor = "#FFFFFF";
 		}
 		return Color.parseColor(storedHexColor);
 	}
@@ -126,68 +133,4 @@ public class InterfacePrefHelper extends PrefHelper {
 		this.prefHelper_.setString(KEY_BACKGROUND_COLOR, borderC);
 	}
 	
-	public int getOrderSummaryHighlightColor() {
-		String storedHexColor = this.prefHelper_.getString(KEY_ORDER_HIGHLIGHT);
-		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#E4E5E6";
-		}
-		return Color.parseColor(storedHexColor);
-	}
-	
-	public void setOrderSummaryHighlightColor(int border) {
-		String borderC = String.format("#%06X", (0xFFFFFF & border));
-		this.prefHelper_.setString(KEY_ORDER_HIGHLIGHT, borderC);
-	}
-	
-	public int getOrderSummaryMedlightColor() {
-		String storedHexColor = this.prefHelper_.getString(KEY_ORDER_MEDLIGHT);
-		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#E0E1E3";
-		}
-		return Color.parseColor(storedHexColor);
-	}
-	
-	public void setOrderSummaryMedlightColor(int border) {
-		String borderC = String.format("#%06X", (0xFFFFFF & border));
-		this.prefHelper_.setString(KEY_ORDER_MEDLIGHT, borderC);
-	}
-	
-	public int getOrderSummaryLowlightColor() {
-		String storedHexColor = this.prefHelper_.getString(KEY_ORDER_LOWLIGHT);
-		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#D5D5D8";
-		}
-		return Color.parseColor(storedHexColor);
-	}
-	
-	public void setOrderSummaryLowlightColor(int border) {
-		String borderC = String.format("#%06X", (0xFFFFFF & border));
-		this.prefHelper_.setString(KEY_ORDER_LOWLIGHT, borderC);
-	}
-	
-	public int getOrderTotalHighlightColor() {
-		String storedHexColor = this.prefHelper_.getString(KEY_ORDER_TOTAL_HIGHLIGHT);
-		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#707172";
-		}
-		return Color.parseColor(storedHexColor);
-	}
-	
-	public void setOrderTotalHighlightColor(int border) {
-		String borderC = String.format("#%06X", (0xFFFFFF & border));
-		this.prefHelper_.setString(KEY_ORDER_TOTAL_HIGHLIGHT, borderC);
-	}
-	
-	public int getOrderTotalMedlightColor() {
-		String storedHexColor = this.prefHelper_.getString(KEY_ORDER_TOTAL_MEDLIGHT);
-		if (storedHexColor.equals(PrefHelper.NO_STRING_VALUE)) {
-			storedHexColor = "#59595A";
-		}
-		return Color.parseColor(storedHexColor);
-	}
-	
-	public void setOrderTotalMedlightColor(int border) {
-		String borderC = String.format("#%06X", (0xFFFFFF & border));
-		this.prefHelper_.setString(KEY_ORDER_TOTAL_MEDLIGHT, borderC);
-	}
 }

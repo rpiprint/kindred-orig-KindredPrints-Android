@@ -13,6 +13,54 @@
         android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
         android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
         android:gravity="left"
+        android:textSize="@dimen/login_page_edit_text_size" 
+    />
+    
+    <TextView
+        android:id="@+id/txtReasonOne"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/txtTitle"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/login_page_note_text_size" 
+        android:textStyle="bold"
+    />
+    
+    <TextView
+        android:id="@+id/txtReasonTwo"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/txtReasonOne"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/login_page_note_text_size" 
+        android:textStyle="bold"
+    />
+    
+    <TextView
+        android:id="@+id/txtReasonThree"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/txtReasonTwo"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:gravity="left"
+        android:textSize="@dimen/login_page_note_text_size" 
+        android:textStyle="bold"
+    />
+    
+    <TextView
+        android:id="@+id/txtSubtitle"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:layout_below="@+id/txtReasonThree"
+        android:layout_marginTop="@dimen/login_page_vertical_margin"
+        android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
+        android:layout_marginRight="@dimen/login_page_edit_text_side_margin"
+        android:gravity="left"
         android:textSize="@dimen/login_page_note_text_size" 
     />
     
@@ -20,7 +68,7 @@
         android:id="@+id/editTextEmail"
        	android:layout_width="match_parent"
        	android:layout_height="@dimen/login_page_edit_text_height"
-       	android:layout_below="@+id/txtTitle"
+       	android:layout_below="@+id/txtSubtitle"
        	android:layout_marginTop="@dimen/login_page_vertical_margin"
         android:layout_marginLeft="@dimen/login_page_edit_text_side_margin"
         android:layout_marginRight="@dimen/login_page_edit_text_side_margin"

@@ -6,6 +6,7 @@ import com.kindredprints.android.sdk.R;
 import com.kindredprints.android.sdk.customviews.CheckBoxView;
 import com.kindredprints.android.sdk.data.Address;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper;
+import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.BackButtonPressInterrupter;
 import com.kindredprints.android.sdk.fragments.KindredFragmentHelper.NextButtonPressInterrupter;
 import com.kindredprints.android.sdk.helpers.prefs.DevPrefHelper;
 import com.kindredprints.android.sdk.helpers.prefs.InterfacePrefHelper;
@@ -32,6 +33,8 @@ public class ShippingAddressAdapter extends BaseAdapter {
 	private ArrayList<Address> selectedAddresses_;
 	private ArrayList<Address> addresses_;
 	
+	private boolean save_;
+	
 	public ShippingAddressAdapter(Activity activity, KindredFragmentHelper fragmentHelper) {
 		this.context_ = activity;
 		this.interfacePrefHelper_ = new InterfacePrefHelper(activity);
@@ -44,10 +47,20 @@ public class ShippingAddressAdapter extends BaseAdapter {
 		for (Address addr : this.selectedAddresses_) {
 			this.prevSelectedAddresses_.add(addr.copy());
 		}
+		this.save_ = false;
 		this.fragmentHelper_.setNextButtonDreamCatcher_(new NextButtonPressInterrupter() {
 			@Override
 			public boolean interruptNextButton() {
 				setNeedUpdateOrderId();
+				save_ = true;
+				return false;
+			}
+		});
+		this.fragmentHelper_.setBackButtonDreamCatcher_(new BackButtonPressInterrupter() {
+			@Override
+			public boolean interruptBackButton() {
+				if (!save_)
+					userPrefHelper_.setSelectedShippingAddresses(prevSelectedAddresses_);
 				return false;
 			}
 		});

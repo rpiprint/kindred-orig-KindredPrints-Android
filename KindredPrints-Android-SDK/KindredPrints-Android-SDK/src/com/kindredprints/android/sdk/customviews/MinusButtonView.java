@@ -54,8 +54,8 @@ public class MinusButtonView extends Button {
         
         canvas.drawCircle(px, py, px-2, this.strokePaint_);
         
-		//if (isPressed()) {
-		//	canvas.drawCircle(px, py, px-2, fillPaint_);
-		//}
+		if (isPressed()) {
+			canvas.drawCircle(px, py, px-2, fillPaint_);
+		}
 	}
 }

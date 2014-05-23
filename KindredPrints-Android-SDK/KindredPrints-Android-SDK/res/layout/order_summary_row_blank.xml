@@ -3,5 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/order_summary_blank_row_height" >
 
+    <View
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/shipping_edit_divider_height"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/order_summary_small_padding"
+        android:background="@color/color_grey"
+        />
     
 </RelativeLayout>

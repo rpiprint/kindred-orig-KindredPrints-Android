@@ -18,6 +18,7 @@
        	android:layout_width="wrap_content"
        	android:layout_height="match_parent"
 		android:layout_toRightOf="@+id/txtLineItemQuantity"
+		android:layout_marginLeft="@dimen/order_summary_padding"
 		android:paddingLeft="@dimen/order_summary_padding"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/order_summary_text_size" 

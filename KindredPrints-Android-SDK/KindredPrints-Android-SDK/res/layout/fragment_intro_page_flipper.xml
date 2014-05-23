@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/viewPager"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" />
+    
+	<Button
+        android:id="@+id/cmdStart"
+       	android:layout_width="wrap_content"
+       	android:layout_height="@dimen/intro_tab_height"
+       	android:layout_alignParentBottom="true"
+       	android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/intro_vertical_padding"
+        android:paddingLeft="@dimen/cart_page_image_vertical_padding"
+        android:paddingRight="@dimen/cart_page_image_vertical_padding"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="@dimen/intro_title_text_size" 
+        android:text="@string/intro_page_start"
+        android:background="@drawable/cmd_blue_filled_button"
+    />
+</RelativeLayout>
