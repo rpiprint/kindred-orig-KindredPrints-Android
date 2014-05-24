@@ -313,7 +313,8 @@ public class ImageManager {
 		}
 		
 		this.cartManager_.imageWasUpdatedWithSizes(image, sizesToCrop);
-		ImageUploadHelper.getInstance(this.context_).imageReadyForUpload(image);
+		if (this.cartManager_.hasPartnerIdInCart(image.getPartnerId()) >= 0)
+			ImageUploadHelper.getInstance(this.context_).imageReadyForUpload(image);
 		
 		assignAnyWaitingViewsForId(prevId);
 		try {

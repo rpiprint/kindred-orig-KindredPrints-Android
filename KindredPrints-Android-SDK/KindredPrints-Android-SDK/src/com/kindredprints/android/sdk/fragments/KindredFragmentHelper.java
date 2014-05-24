@@ -144,7 +144,6 @@ public class KindredFragmentHelper {
 				if (numPending > 1) {
 					this.currFragHash_ = FRAG_SELECT;
 				} else {
-					Log.i("KindredSDK", "init root fragment to preview screen");
 					this.currFragHash_ = FRAG_PREVIEW;
 				}
 			} else {

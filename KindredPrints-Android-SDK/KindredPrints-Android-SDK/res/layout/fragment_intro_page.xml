@@ -35,5 +35,17 @@
         android:background="@color/color_white_half_transparency"
     />
 	
+	<TextView
+        android:id="@+id/txtSubtitle"
+       	android:layout_width="wrap_content"
+       	android:layout_height="wrap_content"
+       	android:layout_alignParentBottom="true"
+       	android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/intro_vertical_padding"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="@dimen/intro_subtitle_text_size" 
+        android:textColor="@color/color_white"
+    />
 
 </RelativeLayout>

@@ -413,6 +413,7 @@ public class CartManager {
 	}
 	
 	public void cleanUpCart() {
+		this.pendingPhotos.clear();
 		this.selectedOrders = new ArrayList<PrintableImage>();
 		this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
 	}

@@ -18,6 +18,7 @@ import com.kindredprints.android.sdk.remote.NetworkCallback;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.util.Log;
 
 public class OrderProcessingHelper {
 	private static final int MAX_ATTEMPTS = 3;
@@ -67,7 +68,7 @@ public class OrderProcessingHelper {
 	
 	public void initiateCheckoutSequence() {
 		this.currUser_ = this.userPrefHelper_.getUserObject();
-		if (this.currUser_.isPaymentSaved()) {	
+		//if (this.currUser_.isPaymentSaved()) {	
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -81,9 +82,9 @@ public class OrderProcessingHelper {
 					}
 				}
 			}).start();
-		} else {
-			this.callback_.orderNeedsPayment();
-		}
+		//} else {
+		//	this.callback_.orderNeedsPayment();
+		//}
 	}
 	
 	public void initiateOrderCreationOrUpdateSequence() {
@@ -247,6 +248,7 @@ public class OrderProcessingHelper {
 									userPrefHelper_.setCurrentOrderId(UserPrefHelper.NO_STRING_VALUE);
 									
 									if (callback_ != null) {
+										Log.i("KindredSDK", "order processed!!");
 										callback_.orderProcessed();
 									}
 								} else {

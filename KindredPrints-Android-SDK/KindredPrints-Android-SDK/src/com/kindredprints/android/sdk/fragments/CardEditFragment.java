@@ -141,7 +141,7 @@ public class CardEditFragment extends KindredFragment {
 		if (this.currUser_.isPaymentSaved()) {
 			payImmediately_ = false;
 			this.cmdCompleteOrder_.setVisibility(View.INVISIBLE);
-		} else {
+		} else if (this.userPrefHelper_.getSelectedAddresses().size() > 0){
 			payImmediately_ = true;
 		}
 		

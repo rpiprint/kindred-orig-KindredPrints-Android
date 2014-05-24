@@ -1,8 +1,6 @@
 package com.kindredprints.android.sdk.fragments;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +8,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -49,11 +46,11 @@ public class IntroPageFlipperFragment extends KindredFragment {
 	private DevPrefHelper devPrefHelper_;
 	
 	private Context context_;
-	private Timer pageFlipTimer_;
 	
 	private MixpanelAPI mixpanel_;
 	
 	private boolean scrollIdle_;
+	private boolean nextRequest_;
 	
 	private KindredFragmentHelper fragmentHelper_;
 
@@ -77,6 +74,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		this.cartManager_.setCartUpdatedCallback(new IntroUpdatedListener());
 		
 		this.scrollIdle_ = true;
+		this.nextRequest_ = false;
 		this.currIndex_ = 0;
 		fragmentHelper.setNextButtonDreamCatcher_(new IntroNextButtonHandler());
 		fragmentHelper.setBackButtonDreamCatcher_(null);
@@ -98,8 +96,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 		this.cmdNext_.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_start_click", null);
-				fragmentHelper_.triggerNextButton();
+				goNext();
 			}
 		});
 		
@@ -112,6 +109,10 @@ public class IntroPageFlipperFragment extends KindredFragment {
 					scrollIdle_ = false;
 				} else {
 					scrollIdle_ = true;
+					if (nextRequest_) {
+						nextRequest_ = false;
+						goNext();
+					}
 				}
 			} 
 			@Override
@@ -123,39 +124,17 @@ public class IntroPageFlipperFragment extends KindredFragment {
 			}
 		});
 		this.pageFlipper_.setCurrentItem(this.currIndex_);
-		
-		startFlips();
-		
+				
 		return view;
 	}
 	
-	@Override
-	public void onStop() {
-		super.onStop();
-		if (this.pageFlipTimer_ != null)
-			this.pageFlipTimer_.cancel();
-	}
-	
-	private void startFlips() {
-		this.pageFlipTimer_ = new Timer();
-		this.pageFlipTimer_.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if (scrollIdle_) {
-					Handler mainHandler = new Handler(getActivity().getMainLooper());
-					mainHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							int count = 4;
-							if (pageUrls_.size() > 0)
-								count = pageUrls_.size();
-							currIndex_ = (currIndex_+1)%count;
-							pageFlipper_.setCurrentItem(currIndex_, true);
-						}
-					});
-				}
-			}
-		}, 0, 3000);
+	private void goNext() {
+		if (scrollIdle_) {
+			MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_start_click", null);
+			fragmentHelper_.triggerNextButton();
+		} else {
+			nextRequest_ = true;
+		}
 	}
 	
 	private class IntroNextButtonHandler implements NextButtonPressInterrupter {
@@ -204,7 +183,7 @@ public class IntroPageFlipperFragment extends KindredFragment {
 				e.printStackTrace();
 			}
 			MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("intro_page_view", introPage);
-			pageFrag.setBackgroundImage(pageUrls_.get(position), introTitles_.get(position%introTitles_.size()));
+			pageFrag.setBackgroundImage(pageUrls_.get(position), introTitles_.get(position%introTitles_.size()), position+1);
 			return pageFrag;
 		}
 

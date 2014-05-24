@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -82,8 +81,6 @@ public class CartPreviewFragment extends KindredFragment {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
 				if (currObject_ != null) {
-					Log.i("KindredSDK", "ALL orders has been updated init");
-
 					initInterface();
 				}
 			}

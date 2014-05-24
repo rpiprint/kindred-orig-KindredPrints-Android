@@ -88,7 +88,7 @@ public class CartItemListAdapter extends BaseAdapter {
 		if (position < this.cartObjects_.size()) {
 			productView = prepareProductView(productView, position);
 		} else {
-			productView = prepareAddRow(productView);
+			productView = prepareAddRow(productView, position);
 		}
 		
 		productView.setOnClickListener(new OnClickListener() {
@@ -101,7 +101,7 @@ public class CartItemListAdapter extends BaseAdapter {
 		return productView;
 	}
 	
-	private View prepareAddRow(View productView) {
+	private View prepareAddRow(View productView, final int position) {
 		TextView txtHeaderTitle = (TextView) productView.findViewById(R.id.txtHeaderTitle);
 		PlusButtonView plusButton = (PlusButtonView) productView.findViewById(R.id.cmdPlusQuantity);
 		txtHeaderTitle.setVisibility(View.VISIBLE);
@@ -114,6 +114,13 @@ public class CartItemListAdapter extends BaseAdapter {
 		imgWarning.setVisibility(View.INVISIBLE);
 		txtTitle.setVisibility(View.INVISIBLE);
 		txtSubtitle.setVisibility(View.INVISIBLE);
+		
+		plusButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if (printClickCallback_ != null) printClickCallback_.printWasClicked(position);
+			}
+		}); 
 		
 		txtHeaderTitle.setText(this.context_.getResources().getString(R.string.cart_add_more_image) + " " + this.devPrefHelper_.getPartnerName());
 		txtHeaderTitle.setTextColor(this.interfacePrefHelper_.getTextColor());

@@ -23,9 +23,11 @@ public class IntroImageFragment extends KindredFragment {
 	private ImageManager imManager_;
 	private ImageView imgBackground_;
 	private TextView txtTitle_;
+	private TextView txtSubtitle_;
 	private ProgressBar progressBar_;
 	private String imageUrl_;
 	private String title_;
+	private int pageIndex_;
 	private boolean drawn_;
 	
 	private ImageManagerCallback imageSetCallback_;
@@ -45,6 +47,7 @@ public class IntroImageFragment extends KindredFragment {
 		imgBackground_.setImageBitmap(null);
 		
 		this.txtTitle_ = (TextView) view.findViewById(R.id.txtTitle);		
+		this.txtSubtitle_ = (TextView) view.findViewById(R.id.txtSubtitle);
 		this.progressBar_ = (ProgressBar) view.findViewById(R.id.progressBar);
 
 		setImageVisible(false);
@@ -67,9 +70,10 @@ public class IntroImageFragment extends KindredFragment {
 		return view;
 	}
 	
-	public void setBackgroundImage(String url, String text) {
+	public void setBackgroundImage(String url, String text, int index) {
 		this.imageUrl_ = url;
 		this.title_ = text;
+		this.pageIndex_ = index;
 		if (this.drawn_) {
 			loadImage();
 		}
@@ -78,10 +82,12 @@ public class IntroImageFragment extends KindredFragment {
 	private void setImageVisible(boolean visible) {
 		if (visible) {
 			this.txtTitle_.setVisibility(View.VISIBLE);
+			this.txtSubtitle_.setVisibility(View.VISIBLE);
 			this.imgBackground_.setVisibility(View.VISIBLE);
 			this.progressBar_.setVisibility(View.INVISIBLE);
 		} else {
 			this.txtTitle_.setVisibility(View.INVISIBLE);
+			this.txtSubtitle_.setVisibility(View.INVISIBLE);
 			this.imgBackground_.setVisibility(View.INVISIBLE);
 			this.progressBar_.setVisibility(View.VISIBLE);
 		}
@@ -91,6 +97,7 @@ public class IntroImageFragment extends KindredFragment {
 		this.drawn_ = true;
 		if (this.imageUrl_ != null) {
 			this.txtTitle_.setText(this.title_);
+			this.txtSubtitle_.setText("Page " + this.pageIndex_);
 			
 			String[] sections = this.imageUrl_.split("/");
 			String pid = sections[sections.length-1];
