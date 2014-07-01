@@ -142,6 +142,11 @@ public class DevPrefHelper extends PrefHelper {
 		}
 		String fixedUp = key + ":";
 		byte[] encodedArray = Base64.encode(fixedUp.getBytes(), Base64.NO_WRAP);
+		String newKey = new String(encodedArray);
+		String oldKey = getAppKey();
+		if (oldKey.equals(NO_STRING_VALUE) || !newKey.equals(oldKey)) {
+			clearSizeDownloadStatus();
+		}
 		this.prefHelper_.setString(KEY_APP_KEY, new String(encodedArray));
 	}
 	public String getAppKey() {
@@ -186,6 +191,9 @@ public class DevPrefHelper extends PrefHelper {
 	}
 	public void resetSizeDownloadStatus() {
 		this.prefHelper_.setLong(KEY_DOWNLOAD_IMAGE_SIZE_DATE, Calendar.getInstance().getTimeInMillis());
+	}
+	public void clearSizeDownloadStatus() {
+		this.prefHelper_.setLong(KEY_DOWNLOAD_IMAGE_SIZE_DATE, Calendar.getInstance().getTimeInMillis()-2*DOWNLOAD_INTERVAL*1000);
 	}
 	public boolean needDownloadSizes() {
   		return checkPastDue(this.prefHelper_.getLong(KEY_DOWNLOAD_IMAGE_SIZE_DATE), DOWNLOAD_INTERVAL);

@@ -81,6 +81,7 @@ public class CartPreviewFragment extends KindredFragment {
 			@Override
 			public void ordersHaveAllBeenUpdated() { 
 				if (currObject_ != null) {
+					imageManager_.startPrefetchingOrigImageToCache(currObject_.getImage());
 					initInterface();
 				}
 			}

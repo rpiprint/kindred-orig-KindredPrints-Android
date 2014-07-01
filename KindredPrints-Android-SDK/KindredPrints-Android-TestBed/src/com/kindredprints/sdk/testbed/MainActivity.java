@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
         this.cmdShowCart.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
 				Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
 				startActivityForResult(i, 0);
 			}

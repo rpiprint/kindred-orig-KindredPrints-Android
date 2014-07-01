@@ -112,6 +112,8 @@ public class ImageManager {
 					}
 				}).start();
 			}
+		} else if (this.fCache_.hasImageForKey(origId)) {
+			processImageInStorage(image, null);
 		}
 	}
 	

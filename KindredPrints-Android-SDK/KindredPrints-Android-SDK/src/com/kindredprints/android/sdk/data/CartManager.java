@@ -65,6 +65,18 @@ public class CartManager {
 	}
 	
 	public void updateAllOrdersWithNewSizes() {
+		try {
+			this.selOrdersSema_.acquire();
+			ImageManager imManager = ImageManager.getInstance(context_);
+			for (PrintableImage printImage : this.selectedOrders) {
+				imManager.startPrefetchingOrigImageToCache(printImage.getImage());
+			}
+			this.devPrefHelper_.setNeedUpdateOrderId(true);
+			this.userPrefHelper_.setSelectedOrders(this.selectedOrders);
+			this.selOrdersSema_.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		Handler mainHandler = new Handler(Looper.getMainLooper());
 		mainHandler.post(new Runnable() {
 			@Override
