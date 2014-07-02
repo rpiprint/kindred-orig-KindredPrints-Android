@@ -195,7 +195,6 @@ public class CartPreviewFragment extends KindredFragment {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				MixpanelAPI.getInstance(context_, context_.getResources().getString(R.string.mixpanel_token)).track("cart_preview_quant_changed", quant);
 				adjustButtonState();
 			}
 		});
