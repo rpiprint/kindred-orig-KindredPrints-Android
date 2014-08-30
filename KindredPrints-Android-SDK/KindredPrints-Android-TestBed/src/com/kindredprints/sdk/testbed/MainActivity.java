@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 	private static int RESULT_GALLERY_LOAD_IMAGE = 1;
 	private static int RESULT_IMAGE_CAPTURE = 2;
 	
-	private final static String KINDRED_APP_KEY = "YOUR TEST KEY";
+	private final static String KINDRED_APP_KEY = "test_SDHdPzfxotJ8xAQ674ABbXap";
 	
 	EditText editTxtUrl;
 	Button cmdAddUrl;
@@ -97,8 +97,8 @@ public class MainActivity extends Activity {
 			public void onClick(View arg0) {
 				KindredOrderFlow orderFlow  = new KindredOrderFlow(activity_, KINDRED_APP_KEY);
 			    orderFlow.setImageBorderDisabled(false);
-				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
-				orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
+				//orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/horizRect.jpg", "http://dev.kindredprints.com/img/horizRect.jpg"));
+				//orderFlow.addImageToCart(new KURLPhoto("http://dev.kindredprints.com/img/squareTest.jpg", "http://dev.kindredprints.com/img/squareTest.jpg"));
 				orderFlow.addImageToCart(new KURLPhoto("http://kindredprints.com/img/alex.png", "http://kindredprints.com/img/alex.png"));
 				Intent i = new Intent(getApplicationContext(), KindredOrderFlowActivity.class);
 				startActivityForResult(i, 0);
