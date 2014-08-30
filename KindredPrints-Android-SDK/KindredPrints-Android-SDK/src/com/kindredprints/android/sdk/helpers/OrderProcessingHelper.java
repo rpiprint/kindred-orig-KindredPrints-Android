@@ -68,7 +68,7 @@ public class OrderProcessingHelper {
 	
 	public void initiateCheckoutSequence() {
 		this.currUser_ = this.userPrefHelper_.getUserObject();
-		//if (this.currUser_.isPaymentSaved()) {	
+		if (this.currUser_.isPaymentSaved()) {	
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -82,9 +82,9 @@ public class OrderProcessingHelper {
 					}
 				}
 			}).start();
-		//} else {
-		//	this.callback_.orderNeedsPayment();
-		//}
+		} else {
+			this.callback_.orderNeedsPayment();
+		}
 	}
 	
 	public void initiateOrderCreationOrUpdateSequence() {
