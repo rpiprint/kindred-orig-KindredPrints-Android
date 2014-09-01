@@ -233,6 +233,15 @@ public class LoginViewFragment extends KindredFragment {
 				postObj.put("sdk", true);
 				postObj.put("send_welcome", true);
 				kindredRemoteInterface_.createUser(postObj);
+			} else {
+				Handler mainHandler = new Handler(getActivity().getMainLooper());
+				mainHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						fragmentHelper_.hideProgressBar();
+						handleErrors(422);
+					}
+				});
 			}
 		} catch (JSONException e) {
 			Log.i(getClass().getSimpleName(), "JSON exception: " + e.getMessage());
@@ -249,6 +258,15 @@ public class LoginViewFragment extends KindredFragment {
 				postObj.put("sdk", true);
 				postObj.put("send_welcome", true);
 				kindredRemoteInterface_.loginUser(postObj);
+			} else {
+				Handler mainHandler = new Handler(getActivity().getMainLooper());
+				mainHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						fragmentHelper_.hideProgressBar();
+						handleErrors(424);
+					}
+				});
 			}
 		} catch (JSONException e) {
 			Log.i(getClass().getSimpleName(), "JSON exception: " + e.getMessage());

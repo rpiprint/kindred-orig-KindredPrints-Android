@@ -196,7 +196,6 @@ public class ShippingEditFragment extends KindredFragment {
 		
 		this.editSpinnerCountry_ = (Spinner) view.findViewById(R.id.spinCountry);
 		this.editSpinnerCountry_.setBackgroundColor(Color.TRANSPARENT);
-		
 		String addressStr = getArguments().getString("address");
 		if (addressStr != null) {
 			this.currAddress_ = new Address(addressStr);
